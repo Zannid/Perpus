@@ -3,7 +3,7 @@
 
 <div class="container mt-4">
     <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header text-white">
             <h4 class="mb-0">
                 {{ isset($peminjaman) ? 'Edit Data Barang Keluar' : 'Tambah Data Barang Keluar' }}
             </h4>
@@ -16,17 +16,31 @@
                 @endif
 
                 <div class="mb-3">
-                    <label for="id_buku" class="form-label">Buku</label>
-                    <select name="id_buku" id="id_buku" class="form-control" required>
-                        <option value="">-- Pilih Buku --</option>
-                        @foreach($buku as $b)
-                            <option value="{{ $b->id }}" 
-                                {{ (isset($peminjaman) && $peminjaman->id_buku == $b->id) ? 'selected' : '' }}>
-                                {{ $b->judul }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+    <label for="id_buku" class="form-label">Buku</label>
+    <div class="dropdown">
+        <button class="text-start dropdown-toggle form-control" type="button" id="bukuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ isset($peminjaman) ? $peminjaman->buku->judul : '-- Pilih Buku --' }}
+        </button>
+        <ul class="dropdown-menu w-100" aria-labelledby="bukuDropdown">
+            @foreach ($buku as $b)
+                <li style="display: flex; gap: 10px;" class="m-3">
+                    <img src="{{ asset('storage/buku/' . $b->foto) }}" alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                    <a class="dropdown-item pilih-buku" href="#" 
+                       data-id="{{ $b->id }}" 
+                       data-judul="{{ $b->judul }}" 
+                       data-stok="{{ $b->stok }}">
+                        <div>
+                            <strong>{{ $b->judul }}</strong><br>
+                            <small>Stok: {{ $b->stok }}</small>
+                        </div>
+                    </a>
+                </li>
+                <hr class="my-0">
+            @endforeach
+        </ul>
+    </div>
+    <input type="hidden" name="id_buku" id="id_buku" value="{{ old('id_buku', isset($peminjaman) ? $peminjaman->id_buku : '') }}" required>
+</div>
 
                 <div class="mb-3">
                     <label for="jumlah" class="form-label">Jumlah</label>
@@ -61,7 +75,24 @@
         </div>
     </div>
 </div>
+<script>
+    // Event untuk pilih buku
+    document.querySelectorAll('.pilih-buku').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
 
+            let id = this.dataset.id;
+            let judul = this.dataset.judul;
+            let stok = this.dataset.stok;
+
+            // isi value ke hidden input
+            document.getElementById('id_buku').value = id;
+
+            // ubah tulisan tombol dropdown
+            document.getElementById('bukuDropdown').textContent = `${judul} (Stok: ${stok})`;
+        });
+    });
+</script>
 <script>
 document.getElementById('tgl_pinjam').addEventListener('change', function() {
     let tglPinjam = new Date(this.value);

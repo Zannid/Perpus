@@ -6,18 +6,39 @@ use Illuminate\Http\Request;
 use App\Models\Buku;
 use App\Models\Kategori;
 use App\Models\Lokasi;
+use App\Exports\BukuExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 class BukuController extends Controller
 {
+    
+    public function exportExcel()
+    {
+        return Excel::download(new BukuExport, 'data-buku.xlsx');
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $buku = Buku::all();
-        $kategori = Kategori::all();
-        $lokasi = Lokasi::all();
-        return view('buku.index', compact('buku', 'lokasi','kategori'));
+public function index(Request $request)
+{
+    $kategori = Kategori::all();
+    $lokasi   = Lokasi::all();
+
+    $query = Buku::query();
+
+    if ($request->get('search')) {
+        $search = $request->get('search');
+        $query->where('judul', 'LIKE', "%$search%")
+              ->orWhereHas('kategori', function($q) use ($search) {
+                  $q->where('nama_kategori', 'LIKE', "%$search%");
+              });
     }
+
+    $buku = $query->get();
+
+    return view('buku.index', compact('buku', 'lokasi', 'kategori', 'request'));
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -65,7 +86,8 @@ class BukuController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $buku = Buku::findOrFail($id);
+        return view('buku.show', compact('buku'));
     }
 
     /**

@@ -1,113 +1,162 @@
 @extends('layouts.backend')
 @section('content')
-<div class="container">
-  <div class="row">
-    <div class="col">
-      <a href="{{ route('peminjaman.create') }}" class="btn btn-primary mb-3">Tambah</a>
-
-<div class="table-responsive mt-3">
-  <table class="table table-bordered table-striped">
-    <thead class="table-dark">
-      <tr>
-        <th>No</th>
-        <th>Kode</th>
-        <th>Nama Peminjam</th>
-        <th>Buku</th>
-        <th>Jumlah</th>
-        <th>Tanggal Pinjam</th>
-        <th>Tenggat</th>
-        <th>Status</th>
-        <th>Denda</th>
-        <th>Aksi</th>
-      </tr>
-    </thead>
-        <tbody>
-          @php $no = 1; @endphp
-          @foreach($peminjaman as $data)
-          <tr>
-            <td>{{ $no++ }}</td>
-            <td>{{ $data->kode_peminjaman }}</td>
-            <td>{{ $data->user->name ?? '-' }}</td>
-            <td>{{ $data->buku->judul ?? '-' }}</td>
-            <td>{{ $data->jumlah }}</td>
-            <td>{{ $data->formatted_tanggal_pinjam ?? $data->tgl_pinjam }}</td>
-            <td>{{ $data->formatted_tanggal_kembali ?? $data->tenggat }}</td>
-            <td>
-              @if($data->status == 'Sudah Dikembalikan')
-                <span class="badge bg-success">{{ $data->status }}</span>
-              @elseif($data->status == 'Sedang Dipinjam')
-                <span class="badge bg-warning text-dark">{{ $data->status }}</span>
-              @elseif($data->status == 'Denda Lunas')
-                <span class="badge bg-info">{{ $data->status }}</span>
-              @else
-                <span class="badge bg-secondary">{{ $data->status }}</span>
-              @endif
-            </td>
-            <td>
-              @if($data->denda > 0)
-                <span class="text-danger">Rp {{ number_format($data->denda, 0, ',', '.') }}</span>
-              @else
-                -
-              @endif
-            </td>
-            <td>
-              <div class="d-flex flex-wrap gap-2">
-
-                {{-- Tombol Edit --}}
-                <a href="{{ route('peminjaman.edit', $data->id) }}" 
-                   class="btn btn-sm btn-warning">
-                  <i class="mdi mdi-pencil"></i> Edit
+<div class="col-md-12">
+    <nav>
+        <ol class="breadcrumb bg-light p-3 rounded shadow-sm mb-3">
+            <li class="breadcrumb-item">
+                <a href="{{ route('peminjaman.index') }}" class="text-decoration-none text-primary fw-semibold">
+                    Peminjaman
                 </a>
+            </li>
+            <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">
+                Data Peminjaman
+            </li>
+        </ol>
+    </nav>
 
-                {{-- Tombol Kembalikan + pilih kondisi --}}
-                @if($data->status == 'Sedang Dipinjam')
-                  <form action="{{ route('peminjaman.return', $data->id) }}" 
-                        method="post" class="d-flex gap-2">
-                    @csrf
-                    <select name="kondisi" class="form-select form-select-sm w-auto" required>
-                      <option value="">Kondisi</option>
-                      <option value="Bagus">Bagus</option>
-                      <option value="Rusak">Rusak</option>
-                      <option value="Hilang">Hilang</option>
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-primary"
-                            onclick="return confirm('Kembalikan buku ini?')">
-                      <i class="lni lni-undo"></i> Kembalikan
-                    </button>
-                  </form>
-                @endif
+    <div class="card shadow-lg">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Data Peminjaman</h5>
+            <div class="d-flex align-items-center gap-2">
 
-                {{-- Tombol Bayar Denda --}}
-                @if($data->status == 'Sudah Dikembalikan' && $data->denda > 0)
-                  <a href="{{ route('peminjaman.pay', $data->id) }}" 
-                    class="btn btn-sm btn-danger"
-                    onclick="return confirm('Bayar denda ini?')">
-                    <i class="lni lni-credit-cards"></i> Bayar Denda
-                  </a>
-                @endif
+                {{-- Form Filter & Search --}}
+                <form action="{{ route('peminjaman.index') }}" method="get" class="d-flex gap-2">
 
+                    {{-- Filter Tanggal --}}
+                    <input type="date" name="tanggal_awal" class="form-control form-control-sm" 
+                        value="{{ request('tanggal_awal') }}" placeholder="Tanggal Awal">
+                    <input type="date" name="tanggal_akhir" class="form-control form-control-sm" 
+                        value="{{ request('tanggal_akhir') }}" placeholder="Tanggal Akhir">
 
-                {{-- Tombol Delete --}}
-                <form action="{{ route('peminjaman.destroy', $data->id) }}" 
-                      method="post" style="display:inline;">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit" class="btn btn-sm btn-outline-danger"
-                          onclick="return confirm('Apakah anda yakin?')">
-                    <i class="lni lni-trash-can"></i> Delete
-                  </button>
+                    {{-- Search --}}
+                    <div class="input-group input-group-sm">
+                        <input type="text" name="search" class="form-control" placeholder="Cari peminjaman..."
+                            value="{{ request('search') }}">
+                        <button class="btn btn-outline-primary" type="submit">
+                            <i class="bx bx-search-alt"></i>
+                        </button>
+                    </div>
+
+                    {{-- Reset --}}
+                    <a href="{{ route('peminjaman.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
                 </form>
 
-              </div>
-            </td>
-          </tr>
-          @endforeach
-        </tbody>
-  </table>
-</div>
+                {{-- Tambah & Export --}}
+                <a href="{{ route('peminjaman.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
+                    <i class="bx bx-plus me-1"></i> Tambah Peminjaman
+                </a>
+                <a href="{{ route('peminjaman.export') }}" target="_blank" class="btn btn-danger btn-sm rounded-pill px-3">
+                    <i class="bx bx-file"></i> Buat PDF
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="display table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Peminjam</th>
+                            <th>Buku</th>
+                            <th>Jumlah</th>
+                            <th>Tanggal Pinjam</th>
+                            <th>Tenggat</th>
+                            <th>Status</th>
+                            <th>Denda</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+                        @php $no = ($peminjaman->currentPage() - 1) * $peminjaman->perPage() + 1;
+                        use Illuminate\Support\Str;
+                        @endphp
+                        @foreach($peminjaman as $data)
+                        <tr>
+                            <td>{{ $no++ }}</td>
+                            <td>{{ $data->user->name ?? '-' }}</td>
+                            <td>{{ Str::limit($data->buku->judul ?? '-', 15) }}</td>
+                            <td class="text-center">{{ $data->jumlah }}</td>
+                            <td>{{ $data->formatted_tanggal_pinjam ?? $data->tgl_pinjam }}</td>
+                            <td>{{ $data->formatted_tanggal_kembali ?? $data->tenggat }}</td>
+                            <td class="text-center">
+                                @switch($data->status)
+                                    @case('Dikembalikan')
+                                        <span class="badge bg-success">{{ $data->status }}</span>
+                                        @break
+                                    @case('Dipinjam')
+                                        <span class="badge bg-warning text-dark">{{ $data->status }}</span>
+                                        @break
+                                    @case('Denda Lunas')
+                                        <span class="badge bg-info">{{ $data->status }}</span>
+                                        @break
+                                    @default
+                                        <span class="badge bg-secondary">{{ $data->status }}</span>
+                                @endswitch
+                            </td>
+                            <td class="text-center">
+                                @if($data->denda > 0 && $data->status != 'Denda Lunas')
+
+                                    <span class="text-danger">Rp {{ number_format($data->denda, 0, ',', '.') }}</span>
+                                @else
+                                    <span>-</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-1 flex-wrap">
+
+                                    {{-- Edit --}}
+                                    <a href="{{ route('peminjaman.edit', $data->id) }}" class="btn btn-sm btn-warning" title="Edit">
+                                        <i class="bx bx-pencil"></i>
+                                    </a>
+
+                                    {{-- Kembalikan --}}
+                                    @if($data->status == 'Dipinjam')
+                                    <form action="{{ route('peminjaman.return', $data->id) }}" method="post" class="d-flex gap-1">
+                                        @csrf
+                                        <select name="kondisi" class="form-select form-select-sm w-auto" required>
+                                            <option value="">Kondisi</option>
+                                            <option value="Bagus">Bagus</option>
+                                            <option value="Rusak">Rusak</option>
+                                            <option value="Hilang">Hilang</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Kembalikan buku ini?')">
+                                            <i class="bx bx-undo"></i>
+                                        </button>
+                                    </form>
+                                    @endif
+
+                                    {{-- Bayar Denda --}}
+                                    @if($data->denda > 0 && $data->status != 'Denda Lunas')
+                                    <a href="{{ route('peminjaman.pay', $data->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Bayar denda ini?')">
+                                        <i class="bx bx-credit-card"></i>
+                                    </a>
+                                    @endif
 
 
+                                    {{-- Hapus --}}
+                                    <form action="{{ route('peminjaman.destroy', $data->id) }}" method="post" onsubmit="return confirm('Apakah anda yakin?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bx bx-trash"></i>
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Pagination --}}
+            <div class="mt-4">
+                {{ $peminjaman->appends(request()->all())->links('vendor.pagination.bootstrap-5') }}
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 @endsection

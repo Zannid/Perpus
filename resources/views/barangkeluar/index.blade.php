@@ -1,6 +1,18 @@
 @extends('layouts.backend')
 @section('content')
 <div class="col-md-12">
+   <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light p-3 rounded shadow-sm mb-3">
+          <li class="breadcrumb-item">
+            <a href="{{ route('barangkeluar.index') }}" class="text-decoration-none text-primary fw-semibold">
+              Barang Keluar
+            </a>
+          </li>
+          <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">
+            Data Barang Keluar
+          </li>
+        </ol>
+</nav>
   <div class="card shadow-lg">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Data Barang Keluar</h5>

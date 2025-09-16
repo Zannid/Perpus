@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <h2>Halo, {{ $user->name }}</h2>
-
-    @if($jenis == 'H-1')
-      <p>Pengingat: Buku <b>{{ $buku->judul }}</b> yang Anda pinjam akan jatuh tempo besok.</p>
-    @elseif($jenis == 'H')
-      <p>Perhatian: Buku <b>{{ $buku->judul }}</b> yang Anda pinjam sudah jatuh tempo hari ini.</p>
-    @endif
-
-    <p>Harap segera mengembalikan buku agar tidak terkena denda.</p>
-  </body>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+    <p>Halo {{ $peminjaman->user->name }},</p>
+    <p>Buku <strong>{{ $peminjaman->buku->judul }}</strong> yang anda pinjam akan jatuh tempo pada <strong>{{ \Carbon\Carbon::parse($peminjaman->tenggat)->translatedFormat('d F Y') }}</strong>.</p>
+    <p>Silakan kembalikan tepat waktu agar tidak terkena denda.</p>
+    <p>Terima kasih.</p>
+</body>
 </html>

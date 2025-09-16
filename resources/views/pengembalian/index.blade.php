@@ -1,14 +1,31 @@
 @extends('layouts.backend')
 @section('content')
 <div class="col-md-12">
+  <nav>
+    <ol class="breadcrumb bg-light p-3 rounded shadow-sm mb-3">
+      <li class="breadcrumb-item">
+        <a href="{{ route('pengembalian.index') }}" class="text-decoration-none text-primary fw-semibold">
+          Pengembalian
+        </a>
+      </li>
+      <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">
+        Data Pengembalian
+      </li>
+    </ol>
+  </nav>
+
   <div class="card shadow-lg">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Data Pengembalian</h5>
-      {{-- Jika nanti ada fitur tambah, tinggal aktifkan --}}
-      {{-- <a href="{{ route('pengembalian.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
-        <i class="lni lni-plus me-1"></i> Tambah Pengembalian
-      </a> --}}
+
+      {{-- Form Search --}}
+      <form action="{{ route('pengembalian.index') }}" method="GET" class="d-flex">
+        <input type="text" name="search" class="form-control me-2"
+               value="{{ request('search') }}" placeholder="Cari nama / judul / kondisi...">
+        <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+      </form>
     </div>
+
     <div class="card-body">
       <div class="table-responsive">
         <table id="basic-datatables" class="display table table-striped table-hover">
@@ -25,7 +42,7 @@
             </tr>
           </thead>
           <tbody>
-            @foreach($pengembalian as $i => $data)
+            @forelse($pengembalian as $i => $data)
             <tr>
               <td>{{ $i+1 }}</td>
               <td>{{ $data->peminjaman->kode_peminjaman }}</td>
@@ -33,7 +50,7 @@
               <td>{{ $data->buku->judul ?? '-' }}</td>
               <td>{{ $data->tgl_pinjam }}</td>
               <td>{{ $data->tgl_kembali }}</td>
-              <td>{{ $data->jumlah }}</td>
+              <td class="text-center">{{ $data->jumlah }}</td>
               <td>
                 @if($data->denda > 0)
                   <span class="badge bg-danger">Rp {{ number_format($data->denda, 0, ',', '.') }}</span>
@@ -42,10 +59,17 @@
                 @endif
               </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+              <td colspan="8" class="text-center text-muted">Tidak ada data pengembalian</td>
+            </tr>
+            @endforelse
           </tbody>
         </table>
       </div>
+
+      {{-- Pagination --}}
+      
     </div>
   </div>
 </div>

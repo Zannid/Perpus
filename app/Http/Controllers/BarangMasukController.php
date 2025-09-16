@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\BarangMasuk;
 use App\Models\Buku;
 use Illuminate\Http\Request;
+use App\Exports\BarangMasukExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class BarangMasukController extends Controller
 {
@@ -13,6 +16,10 @@ class BarangMasukController extends Controller
         $buku        = Buku::all();
         return view('barangmasuk.index', compact('barangmasuk', 'buku'));
     }
+    public function exportExcel()
+{
+    return Excel::download(new BarangMasukExport, 'barang-masuk.xlsx');
+}
 
     public function create()
     {
@@ -53,6 +60,11 @@ class BarangMasukController extends Controller
         $buku = Buku::all();
         return view('barangmasuk._form', compact('bm', 'buku'));
     }
+public function show($id)
+{
+    $barangMasuk = BarangMasuk::with('buku')->findOrFail($id);
+    return view('barangmasuk.show', compact('barangMasuk'));
+}
 
     public function update(Request $request, string $id)
     {
