@@ -9,3 +9,20 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+/* Sidebar collapsed mode */
+.layout-menu.collapsed {
+    width: 80px;
+    transition: width 0.3s ease;
+}
+
+.layout-menu.collapsed .menu-header-text,
+.layout-menu.collapsed .menu-link div {
+    display: none;
+    /* Sembunyikan teks menu */
+}
+
+.layout-menu.collapsed .menu-icon {
+    margin-right: 0;
+    text-align: center;
+    width: 100%;
+}

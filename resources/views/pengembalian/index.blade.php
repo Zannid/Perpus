@@ -17,13 +17,24 @@
   <div class="card shadow-lg">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Data Pengembalian</h5>
-
-      {{-- Form Search --}}
-      <form action="{{ route('pengembalian.index') }}" method="GET" class="d-flex">
-        <input type="text" name="search" class="form-control me-2"
-               value="{{ request('search') }}" placeholder="Cari nama / judul / kondisi...">
-        <button type="submit" class="btn btn-primary btn-sm">Cari</button>
-      </form>
+      <div class="d-flex align-items-center gap-2">
+        {{-- Form Search --}}
+        <form action="{{ route('pengembalian.index') }}" method="get" class="d-flex">
+          <div class="input-group input-group-sm">
+            <input type="text" name="search" class="form-control" placeholder="Cari pengembalian..."
+              value="{{ request('search') }}">
+            <button class="btn btn-outline-primary" type="submit">
+              <i class="bx bx-search-alt"></i>
+            </button>
+          </div>
+        </form>
+        <a href="{{ route('pengembalian.export', request()->query()) }}" 
+                target="_blank" 
+                class="btn btn-danger btn-sm rounded-pill px-3">
+                <i class="bx bx-file"></i> Buat PDF
+                </a>
+        
+    </div>
     </div>
 
     <div class="card-body">

@@ -6,11 +6,23 @@
     <div class="card shadow-lg">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Data user</h5>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          {{-- Form Search --}}
+          <form action="{{ route('user.index') }}" method="get" class="d-flex">
+            <div class="input-group input-group-sm">
+              <input type="text" name="search" class="form-control"
+                     placeholder="Cari User..." value="{{ request('search') }}">
+              <button class="btn btn-outline-primary" type="submit">
+                <i class="bx bx-search-alt"></i>
+              </button>
+            </div>
+          </form>
         <a href="{{ route('user.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
           <i class="lni lni-plus me-1"></i> Tambah user
         </a>
       </div>
-      <div class="card-body">
+      </div>
+        <div class="card-body">
         <div class="table-responsive">
           <table id="basic-datatables" class="display table table-striped table-hover">
             <thead class="table-light">

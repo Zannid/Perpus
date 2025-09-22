@@ -10,10 +10,19 @@ class LokasiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $lokasi   = Lokasi::all();
         $kategori = Kategori::all();
+         if ($request->has('search')) {
+            $lokasi = Lokasi::whereHas('kategori', function ($q) use ($request) {
+                $q->where('nama_kategori', 'LIKE', '%' . $request->search . '%');
+            })
+            ->orWhere('kode_rak', 'LIKE', '%' . $request->search . '%')
+            ->orWhere('keterangan', 'LIKE', '%' . $request->search . '%')
+            ->orderBy('id', 'desc')
+            ->get();
+        }
         return view('lokasi.index', compact('lokasi', 'kategori'));
     }
 

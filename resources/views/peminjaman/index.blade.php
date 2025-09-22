@@ -45,9 +45,12 @@
                 <a href="{{ route('peminjaman.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
                     <i class="bx bx-plus me-1"></i> Tambah Peminjaman
                 </a>
-                <a href="{{ route('peminjaman.export') }}" target="_blank" class="btn btn-danger btn-sm rounded-pill px-3">
-                    <i class="bx bx-file"></i> Buat PDF
+                <a href="{{ route('peminjaman.export', request()->query()) }}" 
+                target="_blank" 
+                class="btn btn-danger btn-sm rounded-pill px-3">
+                <i class="bx bx-file"></i> Buat PDF
                 </a>
+
             </div>
         </div>
 
@@ -65,6 +68,7 @@
                             <th>Status</th>
                             <th>Denda</th>
                             <th class="text-center">Aksi</th>
+                            <th class="text-center">Kembali</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,36 +86,69 @@
                             <td>{{ $data->formatted_tanggal_kembali ?? $data->tenggat }}</td>
                             <td class="text-center">
                                 @switch($data->status)
-                                    @case('Dikembalikan')
+                                    @case('Kembali')
                                         <span class="badge bg-success">{{ $data->status }}</span>
                                         @break
                                     @case('Dipinjam')
                                         <span class="badge bg-warning text-dark">{{ $data->status }}</span>
                                         @break
-                                    @case('Denda Lunas')
+                                    @case('Lunas')
                                         <span class="badge bg-info">{{ $data->status }}</span>
                                         @break
                                     @default
                                         <span class="badge bg-secondary">{{ $data->status }}</span>
                                 @endswitch
                             </td>
-                            <td class="text-center">
-                                @if($data->denda > 0 && $data->status != 'Denda Lunas')
-
-                                    <span class="text-danger">Rp {{ number_format($data->denda, 0, ',', '.') }}</span>
+                           <td class="text-center">
+                                @if($data->denda_berjalan > 0)
+                                    <span class="text-danger">
+                                        Rp {{ number_format($data->denda_berjalan, 0, ',', '.') }}
+                                    </span>
                                 @else
                                     <span>-</span>
                                 @endif
                             </td>
                             <td class="text-center">
-                                <div class="d-flex justify-content-center gap-1 flex-wrap">
+                                <div class="d-flex justify-content-center align-items-center gap-2 flex-nowrap">
 
                                     {{-- Edit --}}
-                                    <a href="{{ route('peminjaman.edit', $data->id) }}" class="btn btn-sm btn-warning" title="Edit">
+                                    <a href="{{ route('peminjaman.edit', $data->id) }}" 
+                                    class="btn btn-sm btn-warning d-flex align-items-center justify-content-center" 
+                                    title="Edit">
                                         <i class="bx bx-pencil"></i>
                                     </a>
 
-                                    {{-- Kembalikan --}}
+                                    {{-- Bayar Denda --}}
+                                    @if($data->denda > 0 && $data->status != 'Lunas')
+                                    <form action="{{ route('peminjaman.confirmPay', $data->id) }}" 
+                                        method="POST" 
+                                        class="d-inline m-0"
+                                        onsubmit="return confirm('Bayar denda ini?')">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-danger d-flex align-items-center justify-content-center">
+                                            <i class="bx bx-credit-card"></i>
+                                        </button>
+                                    </form>
+                                    @endif
+
+
+                                    {{-- Hapus --}}
+                                    <form action="{{ route('peminjaman.destroy', $data->id) }}" 
+                                        method="post" 
+                                        class="d-inline m-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-danger d-flex align-items-center justify-content-center">
+                                            <i class="bx bx-trash"></i>
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </td>
+
+                                <td class="text-center">
+                                <div class="d-flex justify-content-center gap-1 flex-wrap">
                                     @if($data->status == 'Dipinjam')
                                     <form action="{{ route('peminjaman.return', $data->id) }}" method="post" class="d-flex gap-1">
                                         @csrf
@@ -125,27 +162,10 @@
                                             <i class="bx bx-undo"></i>
                                         </button>
                                     </form>
+                                    @else
+                                    <span>-</span>
                                     @endif
-
-                                    {{-- Bayar Denda --}}
-                                    @if($data->denda > 0 && $data->status != 'Denda Lunas')
-                                    <a href="{{ route('peminjaman.pay', $data->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Bayar denda ini?')">
-                                        <i class="bx bx-credit-card"></i>
-                                    </a>
-                                    @endif
-
-
-                                    {{-- Hapus --}}
-                                    <form action="{{ route('peminjaman.destroy', $data->id) }}" method="post" onsubmit="return confirm('Apakah anda yakin?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="bx bx-trash"></i>
-                                        </button>
-                                    </form>
-
                                 </div>
-                            </td>
                         </tr>
                         @endforeach
                     </tbody>

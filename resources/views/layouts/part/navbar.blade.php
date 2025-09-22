@@ -1,3 +1,10 @@
+<style>
+/* Hilangkan caret/arrow dari dropdown */
+.navbar .dropdown-toggle::after {
+    display: none !important;
+}
+</style>
+
 <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
     id="layout-navbar">
 
@@ -8,83 +15,110 @@
     </div>
 
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-        <!-- Search -->
-
-        <!-- /Search -->
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
+
+            <!-- Notifikasi -->
+             @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
+            <li class="nav-item dropdown me-3">
+                <a class="nav-link dropdown-toggle position-relative" href="#" data-bs-toggle="dropdown">
+                    <i class="bx bx-bell bx-sm"></i>
+                    @if(!empty($jumlahNotifikasi) && $jumlahNotifikasi > 0)
+                        <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">
+                            {{ $jumlahNotifikasi }}
+                        </span>
+                    @endif
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                    <li class="dropdown-header fw-semibold">
+                        Notifikasi Peminjaman
+                    </li>
+
+                    @forelse($notifikasiPeminjaman ?? [] as $notif)
+                        <li>
+                            <a class="dropdown-item d-flex justify-content-between" href="{{ route('petugas.acc', $notif->id) }}">
+                                <div>
+                                    <span class="fw-semibold d-block">{{ $notif->user->name }}</span>
+                                    <small class="text-muted">
+                                        Mengajukan peminjaman: {{ $notif->buku->judul }}
+                                    </small>
+                                </div>
+                                <small class="text-muted">{{ $notif->created_at->diffForHumans() }}</small>
+                            </a>
+                        </li>
+                    @empty
+                        <li>
+                            <span class="dropdown-item text-muted text-center">
+                                Tidak ada pengajuan baru
+                            </span>
+                        </li>
+                    @endforelse
+
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-center fw-semibold" href="{{ route('peminjaman.index') }}">
+                            Lihat Semua
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endif
+            <!-- Nama User -->
             <li class="nav-item lh-1 me-3">
                 Hi, {{ Auth::user()->name }}
             </li>
 
-            <!-- User Dropdown -->
-            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+            <!-- Dropdown User -->
+            <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
                         @if(Auth::user()->role == 'admin')
-                            <img src="{{ asset('assets/img/avatars/1.png') }}" 
-                                alt class="w-px-40 h-auto rounded-circle" />
+                            <img src="{{ asset('storage/admin/' . Auth::user()->foto) }}" class="w-px-40 h-auto rounded-circle" />
                         @elseif(Auth::user()->role == 'petugas')
-                            <img src="{{ asset('storage/petugas/' . Auth::user()->foto) }}" 
-                                alt class="w-px-40 h-auto rounded-circle" />
+                            <img src="{{ asset('storage/petugas/' . Auth::user()->foto) }}" class="w-px-40 h-auto rounded-circle" />
                         @else
-                            <img src="{{ asset('storage/user/' . Auth::user()->foto) }}" 
-                                alt class="w-px-40 h-auto rounded-circle" />
+                            <img src="{{ asset('storage/user/' . Auth::user()->foto) }}" class="w-px-40 h-auto rounded-circle" />
                         @endif
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                        <a class="dropdown-item" href="#">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0 me-3">
-                                    <div class="avatar avatar-online">
-                                        @if(Auth::user()->role == 'admin')
-                                            <img src="{{ asset('assets/img/avatars/1.png') }}" 
-                                                alt class="w-px-40 h-auto rounded-circle" />
-                                        @elseif(Auth::user()->role == 'petugas')
-                                            <img src="{{ asset('storage/petugas/' . Auth::user()->foto) }}" 
-                                                alt class="w-px-40 h-auto rounded-circle" />
-                                        @else
-                                            <img src="{{ asset('storage/user/' . Auth::user()->foto) }}" 
-                                                alt class="w-px-40 h-auto rounded-circle" />
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <span class="fw-semibold d-block">{{ Auth::user()->name }}</span>
-                                    <small class="text-muted">{{ Auth::user()->email }}</small>
-                                </div>
-                            </div>
-                        </a>
-                    </li>
-                    <li><div class="dropdown-divider"></div></li>
-
-                    <li>
                         <a class="dropdown-item" href="{{ route('profile.index') }}">
-                            <i class="bx bx-user me-2"></i>
-                            <span class="align-middle">My Profile</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <i class="bx bx-cog me-2"></i>
-                            <span class="align-middle">Settings</span>
+                            <i class="bx bx-user me-2"></i> My Profile
                         </a>
                     </li>
                     <li><div class="dropdown-divider"></div></li>
                     <li>
                         <a class="dropdown-item" href="{{ route('logout') }}"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="bx bx-power-off me-2"></i>
-                            <span class="align-middle">Log Out</span>
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="bx bx-power-off me-2"></i> Log Out
                         </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
                     </li>
                 </ul>
             </li>
         </ul>
     </div>
 </nav>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleBtn = document.querySelector('.layout-menu-toggle');
+    const layoutMenu = document.getElementById('layout-menu'); // pastikan sidebar punya id="layout-menu"
+
+    if (toggleBtn && layoutMenu) {
+        toggleBtn.addEventListener('click', function () {
+            layoutMenu.classList.toggle('collapsed');
+            
+            // Simpan state di localStorage supaya tetap collapsed walaupun refresh
+            localStorage.setItem('sidebarCollapsed',
+                layoutMenu.classList.contains('collapsed') ? 'true' : 'false'
+            );
+        });
+
+        // Saat halaman reload, cek state sebelumnya
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            layoutMenu.classList.add('collapsed');
+        }
+    }
+});
+</script>

@@ -16,9 +16,27 @@
   <div class="card shadow-lg">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Data Barang Keluar</h5>
+      <div class="d-flex align-items-center gap-2">
+        {{-- Form Search --}}
+        <form action="{{ route('barangkeluar.index') }}" method="get" class="d-flex">
+          <div class="input-group input-group-sm">
+            <input type="text" name="search" class="form-control" placeholder="Cari barang keluar..."
+              value="{{ request('search') }}">
+            <button class="btn btn-outline-primary" type="submit">
+              <i class="bx bx-search-alt"></i>
+            </button>
+          </div>
+        </form>
+        {{-- Tombol Tambah --}}
       <a href="{{ route('barangkeluar.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
         <i class="lni lni-plus me-1"></i> Tambah Barang Keluar
       </a>
+       <a href="{{ route('barangkeluar.export', request()->query()) }}" 
+                target="_blank" 
+                class="btn btn-danger btn-sm rounded-pill px-3">
+                <i class="bx bx-file"></i> Buat PDF
+                </a>
+    </div>
     </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -31,7 +49,7 @@
               <th>Jumlah</th>
               <th>Tanggal Keluar</th>
               <th>Keterangan</th>
-              <th>Aksi</th>
+              <th class="text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -44,21 +62,20 @@
               <td>{{ $data->jumlah }}</td>
               <td>{{ $data->tgl_keluar }}</td>
               <td>{{ $data->ket }}</td>
-              <td>
-                <div class="d-flex gap-2">
-                  <a href="{{ route('barangkeluar.edit', $data->id) }}" class="btn btn-sm btn-warning">
-                    <i class="mdi mdi-pencil"></i> Edit
+              <td class="text-center">
+                  <a href="{{ route('barangkeluar.edit', $data->id) }}" class="btn btn-sm btn-warning me-1">
+                    <i class="bx bx-pencil"></i>
                   </a>
-                  <form action="{{ route('barangkeluar.destroy', $data->id) }}" method="post" style="display:inline;">
+                  <form action="{{ route('barangkeluar.destroy', $data->id) }}" method="post"
+                        style="display:inline;" onsubmit="return confirm('Apakah anda yakin?')">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah anda yakin?')">
-                      <i class="lni lni-trash-can"></i> Delete
+                    <button type="submit" class="btn btn-sm btn-danger">
+                      <i class="bx bx-trash"></i>
                     </button>
                   </form>
-                </div>
-              </td>
-            </tr>
+                </td>
+              </tr>
             @endforeach
           </tbody>
         </table>

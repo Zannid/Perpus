@@ -68,6 +68,7 @@ public function index(Request $request)
         $buku->id_kategori  = $request->id_kategori;
         $buku->foto         = $request->foto;
         $buku->id_lokasi    = $request->id_lokasi;
+        $buku->deskripsi     = $request->deskripsi;
         $buku->stok         = $request->stok;
 
         if ($request->hasFile('foto')) {
@@ -116,6 +117,7 @@ public function index(Request $request)
         $buku->id_kategori  = $request->id_kategori;
         $buku->id_lokasi    = $request->id_lokasi;
         $buku->stok         = $request->stok;
+        $buku->deskripsi     = $request->deskripsi;
 
        if ($request->hasFile('foto')) {
             if ($buku->foto && file_exists(public_path('storage/buku/' . $buku->foto))) {

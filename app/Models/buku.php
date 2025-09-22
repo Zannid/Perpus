@@ -16,6 +16,7 @@ class buku extends Model
     'foto',
     'id_lokasi',
     'stok',
+    'deskripsi',
     ];
 
     public function kategori()

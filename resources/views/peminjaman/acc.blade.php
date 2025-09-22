@@ -1,7 +1,7 @@
 @extends('layouts.backend')
 
 @section('content')
-<div class="container mt-4">
+<div class="container">
 
   {{-- Breadcrumb --}}
   <nav aria-label="breadcrumb">
@@ -20,6 +20,18 @@
   <div class="card shadow-lg border-0 rounded-3">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Daftar Peminjaman Pending</h5>
+      <div class="d-flex flex-wrap align-items-center gap-2">
+          {{-- Form Search --}}
+          <form action="{{ route('petugas.acc') }}" method="get" class="d-flex">
+            <div class="input-group input-group-sm">
+              <input type="text" name="search" class="form-control"
+                     placeholder="Cari Pengajuan..." value="{{ request('search') }}">
+              <button class="btn btn-outline-primary" type="submit">
+                <i class="bx bx-search-alt"></i>
+              </button>
+            </div>
+          </form>
+      </div>
     </div>
 
     <div class="card-body">

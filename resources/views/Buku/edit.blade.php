@@ -105,6 +105,11 @@
                 <input type="number" class="form-control" name="stok"
                        value="{{ old('stok', $buku->stok) }}" placeholder="Masukkan jumlah stok">
               </div>
+              {{-- Deskripsi --}}
+              <div class="col-12">
+                <label class="form-label">Deskripsi</label>
+                <textarea name="deskripsi" class="form-control" rows="4" placeholder="Masukkan deskripsi buku (opsional)">{{ old('deskripsi', $buku->deskripsi) }}</textarea>
+              </div>
 
               {{-- Preview Cover (jika ada) --}}
               @if($buku->foto)

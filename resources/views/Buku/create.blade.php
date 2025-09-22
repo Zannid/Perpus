@@ -86,11 +86,15 @@
               </div>
 
               {{-- Stok --}}
-              <div class="col-md-6">
+            <div class="col-md-6">
                 <label class="form-label">Stok</label>
                 <input type="number" name="stok" class="form-control" placeholder="Masukkan jumlah stok" required>
               </div>
             </div>
+            {{-- Deskripsi --}}
+            <div class="mb-3 mt-3">
+              <label for="deskripsi" class="form-label">Deskripsi</label>
+              <textarea name="deskripsi" id="deskripsi" rows="4" class="form-control" placeholder="Masukkan deskripsi buku (opsional)"></textarea>
 
             {{-- Tombol --}}
             <div class="d-flex justify-content-end mt-4">

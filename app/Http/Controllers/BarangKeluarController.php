@@ -3,16 +3,40 @@ namespace App\Http\Controllers;
 
 use App\Models\BarangKeluar;
 use App\Models\Buku;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
+// Tambahkan ini
 
 class BarangKeluarController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $bk   = BarangKeluar::all();
+        $bk   = BarangKeluar::with('buku')->get();
         $buku = Buku::all();
+        if ($request->has('search')) {
+            $bk = BarangKeluar::whereHas('buku', function ($q) use ($request) {
+                $q->where('judul', 'LIKE', '%' . $request->search . '%');
+            })
+                ->orWhere('kode_keluar', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('tgl_keluar', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('ket', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('id', 'desc')
+                ->get();
+        }
         return view('barangkeluar.index', compact('bk', 'buku'));
+    }
+
+    public function exportPdf()
+    {
+        // Ambil semua data barang keluar
+        $bk = BarangKeluar::with('buku')->orderBy('tgl_keluar', 'desc')->get();
+
+        // Buat PDF dari view
+        $pdf = Pdf::loadView('pdf.barangkeluar', compact('bk'))->setPaper('A4', 'landscape');
+
+        // Download langsung
+        return $pdf->download('laporan-barang-keluar.pdf');
     }
 
     public function create()

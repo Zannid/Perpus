@@ -1,25 +1,70 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Exports\BarangMasukExport;
 use App\Models\BarangMasuk;
 use App\Models\Buku;
-use Illuminate\Http\Request;
-use App\Exports\BarangMasukExport;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request; // ✅ Tambahkan ini untuk PDF
 use Maatwebsite\Excel\Facades\Excel;
-
 
 class BarangMasukController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $barangmasuk = BarangMasuk::all();
+        $barangmasuk = BarangMasuk::with('buku')->orderBy('id', 'desc')->get();
         $buku        = Buku::all();
+
+        if ($request->has('search')) {
+            $barangmasuk = BarangMasuk::with('buku')
+                ->whereHas('buku', function ($q) use ($request) {
+                    $q->where('judul', 'LIKE', '%' . $request->search . '%');
+                })
+                ->orWhere('kode_masuk', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('tgl_masuk', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('ket', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('id', 'desc')
+                ->get();
+        }
+
         return view('barangmasuk.index', compact('barangmasuk', 'buku'));
     }
+
     public function exportExcel()
-{
-    return Excel::download(new BarangMasukExport, 'barang-masuk.xlsx');
-}
+    {
+        return Excel::download(new BarangMasukExport, 'barang-masuk.xlsx');
+    }
+
+    // ✅ Tambahkan Export PDF
+    public function exportPdf(Request $request)
+    {
+        $query = BarangMasuk::with('buku')->orderBy('id', 'desc');
+
+        // Filter pencarian jika ada
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('buku', function ($q) use ($request) {
+                    $q->where('judul', 'LIKE', '%' . $request->search . '%');
+                })
+                    ->orWhere('kode_masuk', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('tgl_masuk', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('ket', 'LIKE', '%' . $request->search . '%');
+            });
+        }
+
+        $barangmasuk = $query->get();
+
+        // Format tanggal biar rapi
+        foreach ($barangmasuk as $bm) {
+            $bm->formatted_tanggal = Carbon::parse($bm->tgl_masuk)->translatedFormat('l, d F Y');
+        }
+
+        $pdf = Pdf::loadView('pdf.barangmasuk', compact('barangmasuk'))
+            ->setPaper('A4', 'portrait'); // bisa ubah jadi 'landscape' kalau tabel lebar
+
+        return $pdf->download('laporan-barang-masuk.pdf');
+    }
 
     public function create()
     {
@@ -60,11 +105,12 @@ class BarangMasukController extends Controller
         $buku = Buku::all();
         return view('barangmasuk._form', compact('bm', 'buku'));
     }
-public function show($id)
-{
-    $barangMasuk = BarangMasuk::with('buku')->findOrFail($id);
-    return view('barangmasuk.show', compact('barangMasuk'));
-}
+
+    public function show($id)
+    {
+        $barangMasuk = BarangMasuk::with('buku')->findOrFail($id);
+        return view('barangmasuk.show', compact('barangMasuk'));
+    }
 
     public function update(Request $request, string $id)
     {

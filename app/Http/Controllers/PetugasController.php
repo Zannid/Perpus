@@ -13,12 +13,23 @@ class PetugasController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = User::where('role', 'petugas');
-        $petugas = $query->get();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $petugas = $query->orderBy('id', 'desc')->get();
+
         return view('petugas.index', compact('petugas'));
     }
+
 
     /**
      * Show the form for creating a new resource.

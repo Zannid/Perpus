@@ -20,6 +20,7 @@ return new class extends Migration
             $table->year('tahun_terbit');
             $table->unsignedBigInteger('id_kategori');
             $table->string('foto');
+            $table->text('deskripsi')->nullable();
             $table->unsignedBigInteger('id_lokasi');
             $table->unsignedBigInteger('stok')->default(0);
             $table->foreign('id_lokasi')->references('id')->on('lokasis')->onDelete('cascade');

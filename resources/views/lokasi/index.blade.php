@@ -18,9 +18,22 @@
     <div class="card shadow-lg">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Data Lokasi</h5>
-        <a href="{{ route('lokasi.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
-          <i class="lni lni-plus me-1"></i> Tambah Lokasi
-        </a>
+        <div class="d-flex align-items-center gap-2">
+          {{-- Form Search --}}
+          <form action="{{ route('lokasi.index') }}" method="get" class="d-flex">
+            <div class="input-group input-group-sm">
+              <input type="text" name="search" class="form-control" placeholder="Cari lokasi..."
+                value="{{ request('search') }}">
+              <button class="btn btn-outline-primary" type="submit">
+                <i class="bx bx-search-alt"></i>
+              </button>
+            </div>
+          </form>
+            {{-- Tombol Tambah --}}
+          <a href="{{ route('lokasi.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
+            <i class="bx bx-plus me-1"></i> Tambah Lokasi
+          </a>
+      </div>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -31,7 +44,7 @@
                 <th>Kode Rak</th>
                 <th>Kategori</th>
                 <th>Keterangan</th>
-                <th>Aksi</th>
+                <th class="text-center">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -42,19 +55,18 @@
                 <td>{{ $data->kode_rak }}</td>
                 <td>{{ $data->kategori->nama_kategori }}</td>
                 <td>{{ $data->keterangan }}</td>
-                <td>
-                  <div class="d-flex gap-2">
-                    <a href="{{ route('lokasi.edit', $data->id) }}" class="btn btn-sm btn-warning">
-                      <i class="mdi mdi-pencil"></i> Edit
-                    </a>
-                    <form action="{{ route('lokasi.destroy', $data->id) }}" method="post" style="display:inline;">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah anda yakin?')">
-                        <i class="lni lni-trash-can"></i> Delete
-                      </button>
-                    </form>
-                  </div>
+                <td class="text-center">
+                  <a href="{{ route('lokasi.edit', $data->id) }}" class="btn btn-sm btn-warning me-1">
+                    <i class="bx bx-pencil"></i>
+                  </a>
+                  <form action="{{ route('lokasi.destroy', $data->id) }}" method="post"
+                        style="display:inline;" onsubmit="return confirm('Apakah anda yakin?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-danger">
+                      <i class="bx bx-trash"></i>
+                    </button>
+                  </form>
                 </td>
               </tr>
               @endforeach

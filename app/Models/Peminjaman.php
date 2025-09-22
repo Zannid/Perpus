@@ -61,5 +61,22 @@ class Peminjaman extends Model
 
         return $denda * $this->jumlah;
     }
+    
+    public function getDendaBerjalanAttribute()
+    {
+        if ($this->status !== 'Dipinjam') {
+            return $this->denda ?? 0; // kalau sudah dikembalikan, pakai denda yang tersimpan
+        }
+
+        $today = Carbon::today();
+        $tenggat = Carbon::parse($this->tenggat);
+
+        if ($today->lessThanOrEqualTo($tenggat)) {
+            return 0;
+        }
+
+        $daysLate = $tenggat->diffInDays($today);
+        return $daysLate * 2000 * $this->jumlah; // misal Rp 2000/hari per buku
+    }
 
 }

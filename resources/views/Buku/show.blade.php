@@ -40,6 +40,10 @@
                 <td class="fw-semibold">{{ $buku->judul }}</td>
               </tr>
               <tr>
+                <th class="text-muted">Deskripsi</th>
+                <td class="fw-semibold">{{ $buku->deskripsi ?? '-' }}</td>
+              </tr>
+              <tr>
                 <th class="text-muted">Penulis</th>
                 <td>{{ $buku->penulis }}</td>
               </tr>

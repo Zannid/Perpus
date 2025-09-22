@@ -4,21 +4,23 @@
   <div class="col-md-10">
     <div class="card shadow-lg">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Data Petugas</h5>
+        <h5 class="mb-0">Data admin</h5>
+
         <div class="d-flex flex-wrap align-items-center gap-2">
           {{-- Form Search --}}
-          <form action="{{ route('petugas.index') }}" method="get" class="d-flex">
+          <form action="{{ route('admin.index') }}" method="get" class="d-flex">
             <div class="input-group input-group-sm">
               <input type="text" name="search" class="form-control"
-                     placeholder="Cari Petugas..." value="{{ request('search') }}">
+                     placeholder="Cari Admin..." value="{{ request('search') }}">
               <button class="btn btn-outline-primary" type="submit">
                 <i class="bx bx-search-alt"></i>
               </button>
             </div>
           </form>
-        <a href="{{ route('petugas.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
-          <i class="lni lni-plus me-1"></i> Tambah Petugas
+        <a href="{{ route('admin.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
+          <i class="lni lni-plus me-1"></i> Tambah Admin
         </a>
+
       </div>
       </div>
 
@@ -36,11 +38,11 @@
             </thead>
             <tbody>
               @php $no = 1; @endphp
-              @foreach($petugas as $data)
+              @foreach($admin as $data)
               <tr>
                 <th scope="row">{{ $no++ }}</th>
                 <td>
-                  <img src="{{ asset('storage/petugas/' . $data->foto) }}" 
+                  <img src="{{ asset('storage/admin/' . $data->foto) }}" 
                        alt="cover" 
                        class="img-thumbnail rounded-circle" 
                        width="50" height="50"
@@ -50,10 +52,10 @@
                 <td>{{ $data->email }}</td>
                 <td>
                   <div class="d-flex gap-2">
-                    <a href="{{ route('petugas.edit', $data->id) }}" class="btn btn-sm btn-warning">
+                    <a href="{{ route('admin.edit', $data->id) }}" class="btn btn-sm btn-warning">
                       <i class="mdi mdi-pencil"></i> Edit
                     </a>
-                    <form action="{{ route('petugas.destroy', $data->id) }}" method="post" style="display:inline;">
+                    <form action="{{ route('admin.destroy', $data->id) }}" method="post" style="display:inline;">
                       @csrf
                       @method('DELETE')
                       <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah anda yakin?')">

@@ -1,3 +1,33 @@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const body = document.body;
+    const sidebar = document.getElementById("layout-menu");
+    const sidebarToggleBtns = document.querySelectorAll(".layout-menu-toggle");
+
+    if (sidebar && sidebarToggleBtns.length > 0) {
+        // Restore state dari localStorage
+        if (localStorage.getItem("sidebarState") === "collapsed") {
+            body.classList.add("layout-menu-collapsed");
+        }
+
+        // Toggle semua tombol yang ada
+        sidebarToggleBtns.forEach(btn => {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                body.classList.toggle("layout-menu-collapsed");
+                localStorage.setItem(
+                    "sidebarState",
+                    body.classList.contains("layout-menu-collapsed")
+                        ? "collapsed"
+                        : "expanded"
+                );
+            });
+        });
+    }
+});
+</script>
+
+
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
   <div class="app-brand demo">
     <a href="{{ url('/') }}" class="app-brand-link">
@@ -79,12 +109,14 @@
     </li>
 
     @if(Auth::user()->role == 'petugas' || Auth::user()->role == 'admin')
-      <li class="menu-item {{ Request::is('pengajuan*') ? 'active' : '' }}">
-        <a href="{{ route('acc') }}" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-check-circle"></i>
-          <div data-i18n="Basic">Pengajuan</div>
-        </a>
-      </li>
+<li class="menu-item {{ request()->routeIs('acc') ? 'active' : '' }}">
+    <a href="{{ route('petugas.acc') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-check-circle"></i>
+        <div data-i18n="Basic">Pengajuan</div>
+    </a>
+</li>
+
+
     @endif
 
     @if(Auth::user()->role == 'admin')
@@ -92,6 +124,12 @@
         <span class="menu-header-text">Pengguna</span>
       </li>
 
+      <li class="menu-item {{ Request::is('admin*') ? 'active' : '' }}">
+        <a href="{{ route('admin.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-shield-quarter"></i>
+          <div data-i18n="Basic">Admin</div>
+        </a>
+      </li>
       <li class="menu-item {{ Request::is('user*') ? 'active' : '' }}">
         <a href="{{ route('user.index') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-user"></i>
@@ -99,11 +137,11 @@
         </a>
       </li>
 
-      <li class="menu-item {{ Request::is('petugas*') ? 'active' : '' }}">
-        <a href="{{ route('petugas.index') }}" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-user-check"></i>
-          <div data-i18n="Basic">Petugas</div>
-        </a>
+      <li class="menu-item {{ request()->routeIs('petugas.*') ? 'active' : '' }}">
+          <a href="{{ route('petugas.index') }}" class="menu-link">
+              <i class="menu-icon tf-icons bx bx-user-check"></i>
+              <div data-i18n="Basic">Petugas</div>
+          </a>
       </li>
     @endif
   </ul>
