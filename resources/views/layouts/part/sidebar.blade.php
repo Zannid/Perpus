@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
     </li>
 
     <li class="menu-item {{ Request::is('buku*') ? 'active' : '' }}">
-      <a href="{{ route('buku.index') }}" class="menu-link">
+      <a href="{{ url('buku/daftarbuku') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-book"></i>
         <div data-i18n="Basic">Buku</div>
       </a>

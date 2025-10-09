@@ -1,5 +1,5 @@
 @extends('layouts.backend')
-
+@section('title', 'E-Perpus - Peminjaman Pending')
 @section('content')
 <div class="container">
 
@@ -21,22 +21,14 @@
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Daftar Peminjaman Pending</h5>
       <div class="d-flex flex-wrap align-items-center gap-2">
-          {{-- Form Search --}}
-          <form action="{{ route('petugas.acc') }}" method="get" class="d-flex">
-            <div class="input-group input-group-sm">
-              <input type="text" name="search" class="form-control"
-                     placeholder="Cari Pengajuan..." value="{{ request('search') }}">
-              <button class="btn btn-outline-primary" type="submit">
-                <i class="bx bx-search-alt"></i>
-              </button>
-            </div>
-          </form>
+          {{-- Search Input JS --}}
+          <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari Pengajuan...">
       </div>
     </div>
 
     <div class="card-body">
       <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
+        <table class="table table-striped table-hover align-middle" id="peminjamanTable">
           <thead class="table-light">
             <tr>
               <th>No</th>
@@ -54,9 +46,9 @@
             @forelse($peminjaman as $data)
               <tr>
                 <td>{{ $no++ }}</td>
-                <td>{{ $data->kode_peminjaman }}</td>
-                <td>{{ $data->user->name ?? '-' }}</td>
-                <td>{{ $data->buku->judul ?? '-' }}</td>
+                <td class="kode">{{ $data->kode_peminjaman }}</td>
+                <td class="nama">{{ $data->user->name ?? '-' }}</td>
+                <td class="buku">{{ $data->buku->judul ?? '-' }}</td>
                 <td>{{ $data->jumlah }}</td>
                 <td>{{ $data->formatted_tanggal_pinjam ?? $data->tgl_pinjam }}</td>
                 <td>{{ $data->formatted_tanggal_kembali ?? $data->tenggat }}</td>
@@ -82,4 +74,27 @@
   </div>
 
 </div>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('peminjamanTable').getElementsByTagName('tbody')[0];
+
+    searchInput.addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        const rows = table.getElementsByTagName('tr');
+
+        Array.from(rows).forEach(row => {
+            const kode = row.querySelector('.kode')?.textContent.toLowerCase() ?? '';
+            const nama = row.querySelector('.nama')?.textContent.toLowerCase() ?? '';
+            const buku = row.querySelector('.buku')?.textContent.toLowerCase() ?? '';
+
+            if(kode.includes(filter) || nama.includes(filter) || buku.includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+
 @endsection

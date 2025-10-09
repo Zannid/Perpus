@@ -1,5 +1,5 @@
 @extends('layouts.backend')
-
+@section('title', 'E-Perpus - Profil Saya')
 @section('content')
 <div class="container mt-4">
   <div class="card shadow-lg">

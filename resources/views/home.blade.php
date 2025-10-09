@@ -7,7 +7,7 @@
   <title>Dashboard - Analytics</title>
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+  <link rel="icon" href="../assets/img/logo1.png" />b
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -210,7 +210,7 @@
           <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
             <div class="mb-2 mb-md-0">
               © <script>document.write(new Date().getFullYear());</script>,
-              dibuat dengan ❤️ oleh <a href="https://themeselection.com" class="footer-link fw-bolder">ThemeSelection</a>
+              ZannId<a href="https://themeselection.com" class="footer-link fw-bolder"></a>
             </div>
           </div>
         </footer>

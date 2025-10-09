@@ -28,6 +28,7 @@ class BarangMasukController extends Controller
                 ->get();
         }
 
+        session()->flash('success', 'Data berhasil dimuat.');
         return view('barangmasuk.index', compact('barangmasuk', 'buku'));
     }
 
@@ -148,7 +149,7 @@ class BarangMasukController extends Controller
         $buku->save();
 
         $bm->delete();
-
+        session()->flash('success', 'Data berhasil dihapus.');
         return redirect()->route('barangmasuk.index')->with('success', 'Data berhasil dihapus.');
     }
 }

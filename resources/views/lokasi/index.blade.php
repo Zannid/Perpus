@@ -1,4 +1,5 @@
 @extends('layouts.backend')
+@section('title', 'E-Perpus - Data Lokasi')
 @section('content')
 <div class="row d-flex justify-content-center">
 

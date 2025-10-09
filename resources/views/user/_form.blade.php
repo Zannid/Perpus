@@ -1,4 +1,5 @@
 @extends('layouts.backend')
+@section('title', isset($user) ? 'E-Perpus - Edit User' : 'E-Perpus - Tambah User')
 @section('content')
 
 <div class="container mt-4">

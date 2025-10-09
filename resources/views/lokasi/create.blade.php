@@ -1,4 +1,5 @@
 @extends('layouts.backend')
+@section('title', 'E-Perpus - Tambah Lokasi')
 @section('content')
 <div class="container mt-4">
   <div class="row justify-content-center">

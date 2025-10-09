@@ -101,6 +101,11 @@ class PeminjamanController extends Controller
         $tglPinjam = Carbon::parse($request->tgl_pinjam);
         $tenggat   = $tglPinjam->copy()->addDays(7);
 
+        validate($request, [
+            'id_buku'   => 'required|exists:bukus,id',
+            'tgl_pinjam'=> 'required|date|after_or_equal:today',
+            'jumlah'    => 'required|integer|min:1',
+        ]);
         Peminjaman::create([
             'kode_peminjaman' => $kodePinjam,
             'tgl_pinjam'      => $tglPinjam,
@@ -377,6 +382,29 @@ class PeminjamanController extends Controller
         return view('peminjaman.qris', compact('peminjaman', 'snapToken'));
     }
 
-
-
+    public function edit($id)
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
+        $buku       = Buku::all();
+        return view('peminjaman._form', compact('peminjaman', 'buku'));
+    }
+    public function update(Request $request, $id)
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
+        $request->validate([
+            'id_buku'   => 'required|exists:bukus,id',
+            'tgl_pinjam'=> 'required|date|after_or_equal:today',
+            'jumlah'    => 'required|integer|min:1',
+        ]);
+        $tglPinjam = Carbon::parse($request->tgl_pinjam);
+        $tenggat   = $tglPinjam->copy()->addDays(7);
+        $peminjaman->update([
+            'id_buku'   => $request->id_buku,
+            'tgl_pinjam'=> $tglPinjam,
+            'tenggat'   => $tenggat,
+            'jumlah'    => $request->jumlah,
+        ]);
+        return redirect()->route('peminjaman.index')
+            ->with('success', 'Peminjaman berhasil diperbarui');
+    }
 }

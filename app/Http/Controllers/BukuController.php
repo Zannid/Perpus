@@ -1,48 +1,43 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Exports\BukuExport;
 use App\Models\Buku;
 use App\Models\Kategori;
 use App\Models\Lokasi;
-use App\Exports\BukuExport;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Auth;
+
 
 class BukuController extends Controller
 {
-    
     public function exportExcel()
     {
         return Excel::download(new BukuExport, 'data-buku.xlsx');
     }
-    /**
-     * Display a listing of the resource.
-     */
-public function index(Request $request)
-{
-    $kategori = Kategori::all();
-    $lokasi   = Lokasi::all();
 
-    $query = Buku::query();
+    public function index(Request $request)
+    {
+        $kategori = Kategori::all();
+        $lokasi   = Lokasi::all();
 
-    if ($request->get('search')) {
-        $search = $request->get('search');
-        $query->where('judul', 'LIKE', "%$search%")
-              ->orWhereHas('kategori', function($q) use ($search) {
-                  $q->where('nama_kategori', 'LIKE', "%$search%");
-              });
+        $query = Buku::query();
+
+        if ($request->get('search')) {
+            $search = $request->get('search');
+            $query->where('judul', 'LIKE', "%$search%")
+                ->orWhereHas('kategori', function ($q) use ($search) {
+                    $q->where('nama_kategori', 'LIKE', "%$search%");
+                });
+        }
+
+        $buku = $query->get();
+
+        return view('buku.index', compact('buku', 'lokasi', 'kategori', 'request'));
     }
 
-    $buku = $query->get();
-
-    return view('buku.index', compact('buku', 'lokasi', 'kategori', 'request'));
-}
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $kategori = Kategori::all();
@@ -50,26 +45,35 @@ public function index(Request $request)
         return view('buku.create', compact('lokasi', 'kategori'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        // ✅ Validasi input
+        $validated = $request->validate([
+            'judul'        => 'required|string|max:255',
+            'penulis'      => 'required|string|max:255',
+            'penerbit'     => 'required|string|max:255',
+            'tahun_terbit' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
+            'id_kategori'  => 'required|exists:kategoris,id',
+            'id_lokasi'    => 'required|exists:lokasis,id',
+            'stok'         => 'required|integer|min:0',
+            'deskripsi'    => 'nullable|string',
+            'foto'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
         $buku       = new Buku();
         $lastRecord = Buku::latest('id')->first();
         $lastId     = $lastRecord ? $lastRecord->id : 0;
         $kodeBuku   = 'BK-' . str_pad($lastId + 1, 3, '0', STR_PAD_LEFT);
 
         $buku->kode_buku    = $kodeBuku;
-        $buku->judul        = $request->judul;
-        $buku->penulis      = $request->penulis;
-        $buku->penerbit     = $request->penerbit;
-        $buku->tahun_terbit = $request->tahun_terbit;
-        $buku->id_kategori  = $request->id_kategori;
-        $buku->foto         = $request->foto;
-        $buku->id_lokasi    = $request->id_lokasi;
-        $buku->deskripsi     = $request->deskripsi;
-        $buku->stok         = $request->stok;
+        $buku->judul        = $validated['judul'];
+        $buku->penulis      = $validated['penulis'];
+        $buku->penerbit     = $validated['penerbit'];
+        $buku->tahun_terbit = $validated['tahun_terbit'];
+        $buku->id_kategori  = $validated['id_kategori'];
+        $buku->id_lokasi    = $validated['id_lokasi'];
+        $buku->stok         = $validated['stok'];
+        $buku->deskripsi    = $validated['deskripsi'] ?? null;
 
         if ($request->hasFile('foto')) {
             $img  = $request->file('foto');
@@ -77,49 +81,55 @@ public function index(Request $request)
             $img->move('storage/buku', $name);
             $buku->foto = $name;
         }
-        $buku->save();
-        return redirect()->route('buku.index')->with('success', 'buku berhasil ditambahkan.');
 
+        $buku->save();
+
+        Alert::success('Berhasil', 'Buku berhasil ditambahkan');
+        session()->flash('success', 'Buku berhasil ditambahkan');
+        return redirect()->route('buku.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $buku = Buku::findOrFail($id);
         return view('buku.show', compact('buku'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        $buku = Buku::findOrFail($id);
+        $buku     = Buku::findOrFail($id);
         $kategori = Kategori::all();
         $lokasi   = Lokasi::all();
-        return view('buku.edit', compact('buku','lokasi', 'kategori'));
-
+        return view('buku.edit', compact('buku', 'lokasi', 'kategori'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        $buku       = Buku::findOrFail($id);
+        // ✅ Validasi input
+        $validated = $request->validate([
+            'judul'        => 'required|string|max:255',
+            'penulis'      => 'required|string|max:255',
+            'penerbit'     => 'required|string|max:255',
+            'tahun_terbit' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
+            'id_kategori'  => 'required|exists:kategoris,id',
+            'id_lokasi'    => 'required|exists:lokasis,id',
+            'stok'         => 'required|integer|min:0',
+            'deskripsi'    => 'nullable|string',
+            'foto'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-        $buku->judul        = $request->judul;
-        $buku->penulis      = $request->penulis;
-        $buku->penerbit     = $request->penerbit;
-        $buku->tahun_terbit = $request->tahun_terbit;
-        $buku->id_kategori  = $request->id_kategori;
-        $buku->id_lokasi    = $request->id_lokasi;
-        $buku->stok         = $request->stok;
-        $buku->deskripsi     = $request->deskripsi;
+        $buku = Buku::findOrFail($id);
 
-       if ($request->hasFile('foto')) {
+        $buku->judul        = $validated['judul'];
+        $buku->penulis      = $validated['penulis'];
+        $buku->penerbit     = $validated['penerbit'];
+        $buku->tahun_terbit = $validated['tahun_terbit'];
+        $buku->id_kategori  = $validated['id_kategori'];
+        $buku->id_lokasi    = $validated['id_lokasi'];
+        $buku->stok         = $validated['stok'];
+        $buku->deskripsi    = $validated['deskripsi'] ?? null;
+
+        if ($request->hasFile('foto')) {
             if ($buku->foto && file_exists(public_path('storage/buku/' . $buku->foto))) {
                 unlink(public_path('storage/buku/' . $buku->foto));
             }
@@ -131,17 +141,22 @@ public function index(Request $request)
         }
 
         $buku->save();
-        return redirect()->route('buku.index')->with('success', 'buku berhasil diubah');
 
+        Alert::success('Berhasil', 'Buku berhasil diperbarui');
+        return redirect()->route('buku.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $buku = Buku::findOrFail($id);
+
+        if ($buku->foto && file_exists(public_path('storage/buku/' . $buku->foto))) {
+            unlink(public_path('storage/buku/' . $buku->foto));
+        }
+
         $buku->delete();
-        return redirect()->route('buku.index')->with('success', 'Data berhasil dihapus');
+
+        Alert::success('Berhasil', 'Buku berhasil dihapus');
+        return redirect()->route('buku.index');
     }
 }

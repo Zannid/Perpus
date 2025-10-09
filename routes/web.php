@@ -13,13 +13,18 @@ use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FrontController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     return view('auth.login');
 });
 
 Auth::routes();
+
+Route::get('/welcome', [FrontController::class, 'index'])->name('welcome');
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard & Profile
@@ -65,7 +70,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/export-excel', [BukuController::class, 'exportExcel'])->name('export.excel');
     });
-    
+
     // Barang Masuk
     Route::prefix('barangmasuk')->name('barangmasuk.')->group(function () {
         Route::get('/daftarbarangmasuk', [BarangMasukController::class, 'index'])->name('index');
@@ -74,11 +79,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{barangmasuk}/edit', [BarangMasukController::class, 'edit'])->name('edit');
         Route::put('/{barangmasuk}', [BarangMasukController::class, 'update'])->name('update');
         Route::delete('/{barangmasuk}', [BarangMasukController::class, 'destroy'])->name('destroy');
-
         Route::get('/export-excel', [BarangMasukController::class, 'exportExcel'])->name('export.excel');
     });
+
     Route::get('/barangmasuk/export-pdf', [BarangMasukController::class, 'exportPdf'])->name('barangmasuk.export');
     Route::get('/barangkeluar/export-pdf', [BarangKeluarController::class, 'exportPdf'])->name('barangkeluar.export');
+
     // Barang Keluar
     Route::prefix('barangkeluar')->name('barangkeluar.')->group(function () {
         Route::get('/daftarbarangkeluar', [BarangKeluarController::class, 'index'])->name('index');
@@ -97,18 +103,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{peminjaman}/edit', [PeminjamanController::class, 'edit'])->name('edit');
         Route::put('/{peminjaman}', [PeminjamanController::class, 'update'])->name('update');
         Route::delete('/{peminjaman}', [PeminjamanController::class, 'destroy'])->name('destroy');
-
         Route::get('/export', [PeminjamanController::class, 'export'])->name('export');
         Route::get('/{id}/pay', [PeminjamanController::class, 'pay'])->name('pay');
         Route::post('/{id}/pay', [PeminjamanController::class, 'confirmPay'])->name('confirmPay');
         Route::get('/{id}/pay/qris', [PeminjamanController::class, 'payQris'])->name('pay.qris');
         Route::post('/{id}/return', [PeminjamanController::class, 'return'])->name('return');
     });
+
     Route::get('/pengembalian', [PeminjamanController::class, 'pengembalianIndex'])->name('pengembalian.index');
-    Route::get('/pengembalian/export', [App\Http\Controllers\PengembalianController::class, 'export'])->name('pengembalian.export');
+    Route::get('/pengembalian/export', [PengembalianController::class, 'export'])->name('pengembalian.export');
+
+    // Petugas
     Route::prefix('petugas')->name('petugas.')->group(function () {
-        Route::get('/pengajuan', [PeminjamanController::class, 'pending'])
-    ->name('acc');
+        Route::get('/pengajuan', [PeminjamanController::class, 'pending'])->name('acc');
         Route::get('/peminjaman', [PeminjamanController::class, 'pending'])->name('peminjaman.pending');
         Route::post('/peminjaman/{id}/approve', [PeminjamanController::class, 'approve'])->name('peminjaman.approve');
     });
@@ -118,7 +125,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/user', UserController::class);
     Route::resource('/petugas', PetugasController::class);
 });
-
 
 // Google OAuth
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');

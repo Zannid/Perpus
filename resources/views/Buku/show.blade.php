@@ -1,4 +1,5 @@
 @extends('layouts.backend')
+@section('title', 'E-Perpus - Detail Buku')
 @section('content')
 <div class="col-md-8 offset-md-2">
   <div class="card shadow-lg border-0 rounded-4 overflow-hidden">

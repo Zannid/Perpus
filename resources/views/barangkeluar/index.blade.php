@@ -1,4 +1,5 @@
 @extends('layouts.backend')
+@section('title', 'E-Perpus - Data Barang Keluar')
 @section('content')
 <div class="col-md-12">
    <nav aria-label="breadcrumb">
@@ -12,7 +13,8 @@
             Data Barang Keluar
           </li>
         </ol>
-</nav>
+    </nav>
+
   <div class="card shadow-lg">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Data Barang Keluar</h5>
@@ -27,17 +29,21 @@
             </button>
           </div>
         </form>
+
         {{-- Tombol Tambah --}}
-      <a href="{{ route('barangkeluar.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
-        <i class="lni lni-plus me-1"></i> Tambah Barang Keluar
-      </a>
-       <a href="{{ route('barangkeluar.export', request()->query()) }}" 
-                target="_blank" 
-                class="btn btn-danger btn-sm rounded-pill px-3">
-                <i class="bx bx-file"></i> Buat PDF
-                </a>
+        <a href="{{ route('barangkeluar.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
+          <i class="lni lni-plus me-1"></i> Tambah Barang Keluar
+        </a>
+
+        {{-- Tombol Export PDF --}}
+        <a href="{{ route('barangkeluar.export', request()->query()) }}" 
+           target="_blank" 
+           class="btn btn-danger btn-sm rounded-pill px-3">
+           <i class="bx bx-file"></i> Buat PDF
+        </a>
+      </div>
     </div>
-    </div>
+
     <div class="card-body">
       <div class="table-responsive">
         <table id="basic-datatables" class="display table table-striped table-hover">
@@ -66,11 +72,14 @@
                   <a href="{{ route('barangkeluar.edit', $data->id) }}" class="btn btn-sm btn-warning me-1">
                     <i class="bx bx-pencil"></i>
                   </a>
-                  <form action="{{ route('barangkeluar.destroy', $data->id) }}" method="post"
-                        style="display:inline;" onsubmit="return confirm('Apakah anda yakin?')">
+                  {{-- FORM DELETE --}}
+                  <form id="form-delete-{{ $data->id }}" 
+                        action="{{ route('barangkeluar.destroy', $data->id) }}" 
+                        method="post" 
+                        style="display:inline;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger">
+                    <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="{{ $data->id }}">
                       <i class="bx bx-trash"></i>
                     </button>
                   </form>
@@ -83,4 +92,37 @@
     </div>
   </div>
 </div>
+
+{{-- SweetAlert Success --}}
+@if(session('success'))
+<script>
+Swal.fire({
+    title: 'Berhasil!',
+    text: "{{ session('success') }}",
+    icon: 'success',
+    confirmButtonText: 'OK'
+});
+</script>
+@endif
+
+{{-- SweetAlert Konfirmasi Delete --}}
+<script>
+document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.addEventListener('click', function(){
+        const id = this.getAttribute('data-id');
+        Swal.fire({
+            title: 'Apa Anda yakin?',
+            text: "Data akan dihapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-delete-'+id).submit();
+            }
+        })
+    });
+});
+</script>
 @endsection

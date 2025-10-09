@@ -1,4 +1,5 @@
 @extends('layouts.backend')
+@section('title', 'E-Perpus - Data Pengembalian')
 @section('content')
 <div class="col-md-12">
   <nav>
@@ -21,9 +22,8 @@
         {{-- Form Search --}}
         <form action="{{ route('pengembalian.index') }}" method="get" class="d-flex">
           <div class="input-group input-group-sm">
-            <input type="text" name="search" class="form-control" placeholder="Cari pengembalian..."
-              value="{{ request('search') }}">
-            <button class="btn btn-outline-primary" type="submit">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari peminjaman...">
+            <button class="btn btn-primary" type="submit">
               <i class="bx bx-search-alt"></i>
             </button>
           </div>
@@ -84,4 +84,24 @@
     </div>
   </div>
 </div>
+<script>
+  const searchInput = document.getElementById('searchInput');
+  const table = document.getElementById('basic-datatables').getElementsByTagName('tbody')[0];
+  searchInput.addEventListener('keyup', function() {
+      const filter = this.value.toLowerCase();
+      const tableRows = table.getElementsByTagName('tr');
+
+      Array.from(tableRows).forEach(row => {
+          const kodePeminjaman = row.cells[1].textContent.toLowerCase();
+          const namaPeminjam = row.cells[2].textContent.toLowerCase();
+          const judulBuku = row.cells[3].textContent.toLowerCase();
+
+          if (kodePeminjaman.includes(filter) || namaPeminjam.includes(filter) || judulBuku.includes(filter)) {
+              row.style.display = '';
+          } else {
+              row.style.display = 'none';
+          }
+      });
+  });
+</script>
 @endsection

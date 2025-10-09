@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'E-Perpus - Bayar Denda dengan QRIS')
 @section('content')
 <div class="container">
     <h4>Bayar Denda dengan QRIS</h4>

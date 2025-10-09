@@ -24,6 +24,7 @@ class BarangKeluarController extends Controller
                 ->orderBy('id', 'desc')
                 ->get();
         }
+        session()->flash('success', 'Data berhasil dimuat.');
         return view('barangkeluar.index', compact('bk', 'buku'));
     }
 
@@ -130,7 +131,7 @@ class BarangKeluarController extends Controller
         $buku->save();
 
         $bk->delete();
-
+        session()->flash('success', 'Data berhasil dihapus.');
         return redirect()->route('barangkeluar.index')->with('success', 'Data berhasil dihapus');
     }
 }

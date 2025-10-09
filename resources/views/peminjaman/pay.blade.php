@@ -1,5 +1,5 @@
 @extends('layouts.backend')
-
+@section('title', 'E-Perpus - Pembayaran Denda')
 @section('content')
 <div class="container mt-4">
     <div class="card shadow-lg">
@@ -35,4 +35,3 @@
     </div>
 </div>
 @endsection
-w

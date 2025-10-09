@@ -1,4 +1,5 @@
 @extends('layouts.backend')
+@section('title', 'E-Perpus - wDaftar Buku')
 @section('content')
 <div class="col-md-12">
   <nav aria-label="breadcrumb">
@@ -22,9 +23,8 @@
         {{-- Form Search --}}
         <form action="{{ route('buku.index') }}" method="get" class="d-flex">
           <div class="input-group input-group-sm">
-            <input type="text" name="search" class="form-control" placeholder="Cari buku..."
-              value="{{ $request->get('search') }}">
-            <button class="btn btn-outline-primary" type="submit">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari buku...">
+            <button class="btn btn-primary" type="submit">
               <i class="bx bx-search-alt"></i>
             </button>
           </div>
@@ -32,7 +32,7 @@
 
         {{-- Tombol Tambah Buku --}}
         @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
-        <a href="{{ route('buku.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
+        <a href="{{ url('buku/tambah') }}" class="btn btn-primary btn-sm rounded-pill px-3">
           <i class="bx bx-plus me-1"></i> Tambah Buku
         </a>
         @endif
@@ -79,11 +79,10 @@
                     <i class="bx bx-pencil"></i>
                   </a>
                   {{-- Delete --}}
-                  <form action="{{ route('buku.destroy', $data->id) }}" method="post" style="display:inline;">
+                  <form id="form-delete-{{ $data->id }}" action="{{ route('buku.destroy', $data->id) }}" method="post" style="display:inline;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger" title="Hapus"
-                      onclick="return confirm('Apakah anda yakin?')">
+                    <button type="button" data-id="{{ $data->id }}" class="btn btn-sm btn-danger btn-delete" title="Hapus">
                       <i class="bx bx-trash"></i>
                     </button>
                   </form>
@@ -98,4 +97,57 @@
     </div>
   </div>
 </div>
+
+{{-- SweetAlert untuk Session Success --}}
+@if(session('success'))
+<script>
+Swal.fire({
+    title: 'Berhasil!',
+    text: "{{ session('success') }}",
+    icon: 'success',
+    confirmButtonText: 'OK'
+});
+</script>
+@endif
+
+{{-- SweetAlert untuk Konfirmasi Delete --}}
+<script>
+document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.addEventListener('click', function(){
+        const id = this.getAttribute('data-id');
+        Swal.fire({
+            title: 'Apa Anda yakin?',
+            text: "Data akan dihapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-delete-'+id).submit();
+            }
+        })
+    });
+});
+</script>
+<script>
+const searchInput = document.getElementById('searchInput');
+const table = document.getElementById('basic-datatables').getElementsByTagName('tbody')[0];
+searchInput.addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = table.getElementsByTagName('tr');
+
+    Array.from(rows).forEach(row => {
+        const kode = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() ?? '';
+        const judul = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() ?? '';
+        const kategori = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() ?? '';
+
+        if(kode.includes(filter) || judul.includes(filter) || kategori.includes(filter)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+</script>
 @endsection

@@ -1,11 +1,12 @@
 @extends('layouts.backend')
+@section('title', isset($peminjaman) ? 'E-Perpus - Edit Peminjaman' : 'E-Perpus - Tambah Peminjaman')
 @section('content')
 
 <div class="container mt-4">
     <div class="card shadow-lg">
         <div class="card-header text-white">
             <h4 class="mb-0">
-                {{ isset($peminjaman) ? 'Edit Data Barang Keluar' : 'Tambah Data Barang Keluar' }}
+                {{ isset($peminjaman) ? 'Edit Data Peminjaman' : 'Tambah Data Peminjaman' }}
             </h4>
         </div>
         <div class="card-body">
@@ -16,31 +17,36 @@
                 @endif
 
                 <div class="mb-3">
-    <label for="id_buku" class="form-label">Buku</label>
-    <div class="dropdown">
-        <button class="text-start dropdown-toggle form-control" type="button" id="bukuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ isset($peminjaman) ? $peminjaman->buku->judul : '-- Pilih Buku --' }}
-        </button>
-        <ul class="dropdown-menu w-100" aria-labelledby="bukuDropdown">
-            @foreach ($buku as $b)
-                <li style="display: flex; gap: 10px;" class="m-3">
-                    <img src="{{ asset('storage/buku/' . $b->foto) }}" alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
-                    <a class="dropdown-item pilih-buku" href="#" 
-                       data-id="{{ $b->id }}" 
-                       data-judul="{{ $b->judul }}" 
-                       data-stok="{{ $b->stok }}">
-                        <div>
-                            <strong>{{ $b->judul }}</strong><br>
-                            <small>Stok: {{ $b->stok }}</small>
-                        </div>
-                    </a>
-                </li>
-                <hr class="my-0">
-            @endforeach
-        </ul>
-    </div>
-    <input type="hidden" name="id_buku" id="id_buku" value="{{ old('id_buku', isset($peminjaman) ? $peminjaman->id_buku : '') }}" required>
-</div>
+                    <label for="id_buku" class="form-label">Buku</label>
+                    <div class="dropdown">
+                        <button class="text-start dropdown-toggle form-control" type="button" id="bukuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ isset($peminjaman) ? $peminjaman->buku->judul : '-- Pilih Buku --' }}
+                        </button>
+                        <ul class="dropdown-menu w-100 p-2" aria-labelledby="bukuDropdown" id="bukuList" style="max-height: 300px; overflow-y: auto;">
+                            <!-- Search input di dalam dropdown -->
+                            <li class="px-2 mb-2">
+                                <input type="text" id="searchBuku" class="form-control" placeholder="Cari buku...">
+                            </li>
+                            <hr class="my-0">
+                            @foreach ($buku as $b)
+                                <li style="display: flex; gap: 10px;" class="m-2 buku-item" data-judul="{{ strtolower($b->judul) }}">
+                                    <img src="{{ asset('storage/buku/' . $b->foto) }}" alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                    <a class="dropdown-item pilih-buku" href="#" 
+                                       data-id="{{ $b->id }}" 
+                                       data-judul="{{ $b->judul }}" 
+                                       data-stok="{{ $b->stok }}">
+                                        <div>
+                                            <strong>{{ $b->judul }}</strong><br>
+                                            <small>Stok: {{ $b->stok }}</small>
+                                        </div>
+                                    </a>
+                                </li>
+                                <hr class="my-0">
+                            @endforeach
+                        </ul>
+                    </div>
+                    <input type="hidden" name="id_buku" id="id_buku" value="{{ old('id_buku', isset($peminjaman) ? $peminjaman->id_buku : '') }}" required>
+                </div>
 
                 <div class="mb-3">
                     <label for="jumlah" class="form-label">Jumlah</label>
@@ -75,40 +81,44 @@
         </div>
     </div>
 </div>
+
 <script>
-    // Event untuk pilih buku
+    // Event pilih buku
     document.querySelectorAll('.pilih-buku').forEach(item => {
         item.addEventListener('click', function(e) {
             e.preventDefault();
-
             let id = this.dataset.id;
             let judul = this.dataset.judul;
             let stok = this.dataset.stok;
 
-            // isi value ke hidden input
             document.getElementById('id_buku').value = id;
-
-            // ubah tulisan tombol dropdown
             document.getElementById('bukuDropdown').textContent = `${judul} (Stok: ${stok})`;
         });
     });
-</script>
-<script>
-document.getElementById('tgl_pinjam').addEventListener('change', function() {
-    let tglPinjam = new Date(this.value);
-    if (!isNaN(tglPinjam.getTime())) {
-        // tambah 7 hari
-        tglPinjam.setDate(tglPinjam.getDate() + 7);
 
-        // format ke yyyy-mm-dd
-        let year = tglPinjam.getFullYear();
-        let month = String(tglPinjam.getMonth() + 1).padStart(2, '0');
-        let day = String(tglPinjam.getDate()).padStart(2, '0');
-        let formatted = `${year}-${month}-${day}`;
+    // Search/filter buku di dropdown
+    const searchInput = document.getElementById('searchBuku');
+    const bukuItems = document.querySelectorAll('.buku-item');
 
-        document.getElementById('tenggat').value = formatted;
-    }
-});
+    searchInput.addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        bukuItems.forEach(item => {
+            const judul = item.dataset.judul;
+            item.style.display = judul.includes(filter) ? 'flex' : 'none';
+        });
+    });
+
+    // Auto hitung tanggal kembali +7 hari
+    document.getElementById('tgl_pinjam').addEventListener('change', function() {
+        let tglPinjam = new Date(this.value);
+        if (!isNaN(tglPinjam.getTime())) {
+            tglPinjam.setDate(tglPinjam.getDate() + 7);
+            let year = tglPinjam.getFullYear();
+            let month = String(tglPinjam.getMonth() + 1).padStart(2, '0');
+            let day = String(tglPinjam.getDate()).padStart(2, '0');
+            document.getElementById('tenggat').value = `${year}-${month}-${day}`;
+        }
+    });
 </script>
 
 @endsection

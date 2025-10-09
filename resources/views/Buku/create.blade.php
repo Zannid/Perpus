@@ -1,4 +1,5 @@
 @extends('layouts.backend')
+@section('title', 'E-Perpus - Tambah Buku')
 @section('content')
 <div class="container">
   <div class="row justify-content-center">
@@ -98,7 +99,7 @@
 
             {{-- Tombol --}}
             <div class="d-flex justify-content-end mt-4">
-              <a href="{{ route('buku.index') }}" class="btn btn-dark me-2">Kembali</a>
+              <a href="{{ url('buku/daftar') }}" class="btn btn-dark me-2">Kembali</a>
               <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
           </form>
