@@ -1,1077 +1,1569 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.frontend')
 
-<head>
-	<title>BookSaw - Free Book Store HTML CSS Template</title>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="format-detection" content="telephone=no">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="author" content="">
-	<meta name="keywords" content="">
-	<meta name="description" content="">
+@section('content')
+<main class="main">
 
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
-		integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <!-- Hero Section -->
+    <section id="hero" class="hero section mt-5">
+  <div class="container-fluid px-0" data-aos="fade-up" data-aos-delay="100">
+    <div class="row justify-content-center mx-0">
+      <div class="col-12" data-aos="zoom-in" data-aos-delay="200">
+        <div class="hero-content text-center">
+          <div class="hero-badge" data-aos="fade-down" data-aos-delay="300">
+            <i class="bi bi-star-fill"></i>
+            <span>Platform Perpustakaan Digital Terpercaya</span>
+          </div>
+          <h1 class="hero-title" data-aos="fade-up" data-aos-delay="400">E-Perpustakaan</h1>
+          <p class="hero-description" data-aos="fade-up" data-aos-delay="500">Akses mudah ke ribuan koleksi buku digital terpercaya. Pinjam, baca, dan kembangkan pengetahuan Anda kapan saja, dimana saja dengan platform perpustakaan digital kami.</p>
 
-	<link rel="stylesheet" type="text/css" href="{{ asset('css/normalize.css')}}">
-	<link rel="stylesheet" type="text/css" href="{{ asset('icomoon/icomoon.css')}}">
-	<link rel="stylesheet" type="text/css" href="{{ asset('css/vendor.css')}}">
-	<link rel="stylesheet" type="text/css" href="{{ asset('style.css')}}">
+          <!-- Book Slider Banner -->
+          <div class="book-slider-banner" data-aos="fade-up" data-aos-delay="600">
+            <div class="slider-container">
+              <button class="slider-nav prev" onclick="moveSlide(-1)" aria-label="Slide sebelumnya">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+
+              <div class="slider-wrapper">
+                <div class="book-slides" id="bookSlides">
+                  @foreach($buku as $b)
+                  <div class="book-slide active">
+                    <div class="book-image">
+                      <img src="{{ asset('/storage/buku/'. $b->foto) }}" alt="{{ $b->judul }}" loading="lazy">
+                    </div>
+                    <div class="book-details">
+                      <h4 class="book-title">{{ $b->judul }}</h4>
+                      <p class="book-author">oleh {{ $b->penulis }}</p>
+                      <div class="book-rating">
+                        <div class="stars">
+                          <i class="bi bi-star-fill"></i>
+                          <i class="bi bi-star-fill"></i>
+                          <i class="bi bi-star-fill"></i>
+                          <i class="bi bi-star-fill"></i>
+                          <i class="bi bi-star-half"></i>
+                        </div>
+                        <span class="rating-value">4.5</span>
+                      </div>
+                      <p class="book-desc">{{ $b->deskripsi }}</p>
+                      <span class="book-badge">Tersedia</span>
+                    </div>
+                  </div>
+                  @endforeach
+                </div>
+              </div>
+
+              <button class="slider-nav next" onclick="moveSlide(1)" aria-label="Slide berikutnya">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+
+            <div class="slider-dots" id="sliderDots"></div>
+          </div>
+
+          <div class="hero-metrics" data-aos="fade-up" data-aos-delay="700">
+            <div class="metric-item">
+              <div class="metric-icon">
+                <i class="bi bi-book"></i>
+              </div>
+              <div class="metric-content">
+                <span class="metric-number">5000+</span>
+                <span class="metric-label">Koleksi Buku</span>
+              </div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-icon">
+                <i class="bi bi-people"></i>
+              </div>
+              <div class="metric-content">
+                <span class="metric-number">2500+</span>
+                <span class="metric-label">Anggota Aktif</span>
+              </div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-icon">
+                <i class="bi bi-download"></i>
+              </div>
+              <div class="metric-content">
+                <span class="metric-number">15K+</span>
+                <span class="metric-label">Peminjaman</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+    <!-- About Section -->
+    <section id="about" class="about section">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row align-items-center gy-5">
+
+          <div class="col-lg-5" data-aos="fade-right" data-aos-delay="200">
+            <div class="image-section">
+              <div class="primary-image">
+                <img src="{{ asset('assetsf/img/about/about-14.webp') }}" alt="Perpustakaan Digital Modern" class="img-fluid" loading="lazy">
+                <div class="experience-badge">
+                  <div class="badge-content">
+                    <span class="years">10+</span>
+                    <span class="text">Tahun Melayani</span>
+                  </div>
+                </div>
+              </div>
+              <div class="image-grid">
+                <img src="{{ asset('assetsf/img/about/about-3.webp') }}" alt="Koleksi Buku Digital" class="img-fluid grid-img" loading="lazy">
+                <img src="{{ asset('assetsf/img/about/about-7.webp') }}" alt="Akses Mudah" class="img-fluid grid-img" loading="lazy">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-7" data-aos="fade-left" data-aos-delay="300">
+            <div class="content-section">
+              <div class="section-intro">
+                @if($about)
+                  <div class="company-badge">TENTANG KAMI</div>
+                  <h2>{{ $about->title }}</h2>
+                  <p class="intro-text">{{ $about->content }}</p>
+                @endif
+              </div>
+
+              <div class="achievement-list">
+                <div class="achievement-item">
+                  <div class="achievement-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                  </div>
+                  <div class="achievement-content">
+                    <h4>Pertumbuhan Berkelanjutan</h4>
+                    <p>Kami terus mengembangkan koleksi dan fitur untuk memberikan pengalaman terbaik bagi setiap pengguna dalam mengakses pengetahuan.</p>
+                  </div>
+                </div>
+                <div class="achievement-item">
+                  <div class="achievement-icon">
+                    <i class="bi bi-people-fill"></i>
+                  </div>
+                  <div class="achievement-content">
+                    <h4>Tim Profesional</h4>
+                    <p>Didukung oleh pustakawan berpengalaman dan teknisi IT handal yang siap membantu kebutuhan literasi digital Anda.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="action-section">
+                <a href="#" class="btn btn-primary">Pelajari Lebih Lanjut</a>
+                <div class="contact-info">
+                  <span class="contact-label">Hubungi kami:</span>
+                  <strong class="phone-number">+62 812-3456-7890</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="metrics-section" data-aos="fade-up" data-aos-delay="400">
+          <div class="row text-center">
+            <div class="col-lg-3 col-md-6">
+              <div class="metric-card">
+                <div class="metric-value">5000+</div>
+                <div class="metric-label">Koleksi Buku Digital</div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <div class="metric-card">
+                <div class="metric-value">98%</div>
+                <div class="metric-label">Kepuasan Pengguna</div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <div class="metric-card">
+                <div class="metric-value">2500+</div>
+                <div class="metric-label">Anggota Terdaftar</div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <div class="metric-card">
+                <div class="metric-value">24/7</div>
+                <div class="metric-label">Akses Online</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /About Section -->
+
+    <!-- Services Section -->
+    <section id="services" class="services section">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Buku Terpopuler</h2>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="services-tabs">
+          <ul class="nav nav-pills justify-content-center mb-5" id="services-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="services-development-tab" data-bs-toggle="pill" data-bs-target="#services-development" type="button" role="tab">Semua Buku</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="services-marketing-tab" data-bs-toggle="pill" data-bs-target="#services-marketing" type="button" role="tab">Fiksi</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="services-support-tab" data-bs-toggle="pill" data-bs-target="#services-support" type="button" role="tab">Non-Fiksi</button>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="services-tabs-content">
+            <div class="tab-pane fade show active" id="services-development" role="tabpanel">
+              <div class="row g-4">
+                @foreach($bukuTerpopuler as $b)
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                  <div class="book-card">
+                    <div class="book-cover-wrapper">
+                      <img src="{{ asset('/storage/buku/'. $b->foto) }}" alt="{{ $b->judul }}" class="book-cover-img" loading="lazy">
+                      <div class="book-overlay-hover">
+                        <div class="book-quick-info">
+                          <h5 class="book-title">{{ $b->judul }}</h5>
+                          <p class="book-author">{{ $b->penulis }}</p>
+                          <span class="book-status {{ $b->stok > 0 ? 'available' : 'unavailable' }}">
+                            {{ $b->stok > 0 ? 'Tersedia' : 'Kosong' }}
+                          </span>
+                        </div>
+                        <div class="book-actions">
+                          <a href="#" class="btn-action btn-cover" title="Lihat Cover">
+                            <i class="bi bi-image"></i> Lihat Cover
+                          </a>
+                          <a href="{{ route('detail_buku', $b->id) }}" class="btn-action btn-detail" title="Detail Buku">
+                            <i class="bi bi-info-circle"></i> Detail Buku
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                @endforeach
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="services-marketing" role="tabpanel">
+              <div class="row g-4">
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                  <div class="tab-service-card">
+                    <div class="service-icon">
+                      <i class="bi bi-book"></i>
+                    </div>
+                    <h5>Novel & Cerita</h5>
+                    <p>Koleksi novel dan cerita fiksi dari berbagai genre yang menghibur dan menginspirasi pembaca.</p>
+                    <a href="service-details.html" class="tab-service-link">Lihat Detail</a>
+                  </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                  <div class="tab-service-card">
+                    <div class="service-icon">
+                      <i class="bi bi-stars"></i>
+                    </div>
+                    <h5>Fantasi & Sci-Fi</h5>
+                    <p>Jelajahi dunia imajinasi dengan koleksi buku fantasi dan fiksi ilmiah terpilih.</p>
+                    <a href="service-details.html" class="tab-service-link">Lihat Detail</a>
+                  </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                  <div class="tab-service-card">
+                    <div class="service-icon">
+                      <i class="bi bi-heart"></i>
+                    </div>
+                    <h5>Romansa</h5>
+                    <p>Kumpulan kisah cinta yang menyentuh hati dan menghangatkan perasaan pembaca.</p>
+                    <a href="service-details.html" class="tab-service-link">Lihat Detail</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="services-support" role="tabpanel">
+              <div class="row g-4">
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                  <div class="tab-service-card">
+                    <div class="service-icon">
+                      <i class="bi bi-mortarboard"></i>
+                    </div>
+                    <h5>Pendidikan</h5>
+                    <p>Buku-buku pendidikan dan akademik untuk mendukung proses pembelajaran di berbagai jenjang.</p>
+                    <a href="service-details.html" class="tab-service-link">Lihat Detail</a>
+                  </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                  <div class="tab-service-card">
+                    <div class="service-icon">
+                      <i class="bi bi-lightbulb"></i>
+                    </div>
+                    <h5>Pengembangan Diri</h5>
+                    <p>Koleksi buku motivasi dan pengembangan diri untuk meningkatkan kualitas hidup Anda.</p>
+                    <a href="service-details.html" class="tab-service-link">Lihat Detail</a>
+                  </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                  <div class="tab-service-card">
+                    <div class="service-icon">
+                      <i class="bi bi-globe"></i>
+                    </div>
+                    <h5>Sejarah & Budaya</h5>
+                    <p>Pelajari sejarah dan budaya dari berbagai belahan dunia melalui koleksi buku pilihan.</p>
+                    <a href="service-details.html" class="tab-service-link">Lihat Detail</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features section">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Fitur Unggulan</h2>
+        <p>E-Perpustakaan dilengkapi fitur canggih untuk memberikan pengalaman membaca dan peminjaman buku yang mudah, nyaman, dan efisien.</p>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row align-items-center">
+
+          <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right" data-aos-delay="200">
+            <div class="features-content">
+              <h2>Akses Mudah ke Ribuan Koleksi Buku Digital</h2>
+              <p class="lead">Nikmati kemudahan mengakses ribuan buku dari berbagai kategori kapan saja dan dimana saja dengan koneksi internet.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-6" data-aos="fade-left" data-aos-delay="300">
+            <div class="features-image">
+              <img src="{{ asset('assetsf/img/features/features-4.webp') }}" alt="Fitur E-Perpustakaan" class="img-fluid" loading="lazy">
+            </div>
+          </div>
+
+        </div>
+
+        <div class="features-grid" data-aos="fade-up" data-aos-delay="400">
+          <div class="feature-item" data-aos="zoom-in" data-aos-delay="100">
+            <div class="feature-icon">
+              <i class="bi bi-lightning-charge"></i>
+            </div>
+            <div class="feature-content">
+              <h4>Akses Cepat</h4>
+              <p>Sistem pencarian canggih untuk menemukan buku dalam hitungan detik dengan filter kategori, penulis, dan tahun terbit.</p>
+            </div>
+          </div>
+
+          <div class="feature-item" data-aos="zoom-in" data-aos-delay="200">
+            <div class="feature-icon">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <div class="feature-content">
+              <h4>Aman & Terpercaya</h4>
+              <p>Data dan privasi Anda terlindungi dengan sistem keamanan berlapis. Setiap transaksi tercatat dengan aman dan akurat.</p>
+            </div>
+          </div>
+
+          <div class="feature-item" data-aos="zoom-in" data-aos-delay="300">
+            <div class="feature-icon">
+              <i class="bi bi-gem"></i>
+            </div>
+            <div class="feature-content">
+              <h4>Koleksi Premium</h4>
+              <p>Akses koleksi buku berkualitas dari penerbit ternama, termasuk buku-buku langka dan edisi terbatas.</p>
+            </div>
+          </div>
+
+          <div class="feature-item" data-aos="zoom-in" data-aos-delay="400">
+            <div class="feature-icon">
+              <i class="bi bi-rocket-takeoff"></i>
+            </div>
+            <div class="feature-content">
+              <h4>Peminjaman Instan</h4>
+              <p>Proses peminjaman yang sangat mudah dan cepat. Hanya dengan beberapa klik, buku favorit siap dibaca.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Features Section -->
+
+    <!-- Features 2 Section -->
+    <section id="features-2" class="features-2 section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="features-list row gy-4">
+          <div class="col-md-6">
+            <div class="feature-item" data-aos="fade-up" data-aos-delay="100">
+              <div class="feature-icon">
+                <i class="bi bi-phone"></i>
+              </div>
+              <div class="feature-content">
+                <h4>Aplikasi Mobile Friendly</h4>
+                <p>Akses E-Perpustakaan melalui smartphone atau tablet Anda dengan tampilan yang responsif dan user-friendly untuk pengalaman membaca yang optimal di mana saja.</p>
+                <div class="feature-tags">
+                  <span>Responsif</span>
+                  <span>Mudah Digunakan</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="feature-item" data-aos="fade-up" data-aos-delay="200">
+              <div class="feature-icon">
+                <i class="bi bi-bell"></i>
+              </div>
+              <div class="feature-content">
+                <h4>Notifikasi Otomatis</h4>
+                <p>Dapatkan pengingat otomatis tentang batas waktu pengembalian buku, ketersediaan buku yang Anda inginkan, dan update koleksi terbaru di perpustakaan.</p>
+                <div class="feature-tags">
+                  <span>Tepat Waktu</span>
+                  <span>Informatif</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="feature-item" data-aos="fade-up" data-aos-delay="300">
+              <div class="feature-icon">
+                <i class="bi bi-bookmark"></i>
+              </div>
+              <div class="feature-content">
+                <h4>Bookmark & Histori</h4>
+                <p>Simpan halaman favorit Anda dan lihat riwayat bacaan untuk melanjutkan membaca dari terakhir kali Anda berhenti. Semua tersinkronisasi di semua perangkat.</p>
+                <div class="feature-tags">
+                  <span>Praktis</span>
+                  <span>Tersinkronisasi</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="feature-item" data-aos="fade-up" data-aos-delay="400">
+              <div class="feature-icon">
+                <i class="bi bi-star"></i>
+              </div>
+              <div class="feature-content">
+                <h4>Rating & Review</h4>
+                <p>Baca review dari pembaca lain dan berikan penilaian Anda sendiri untuk membantu anggota lain menemukan buku-buku berkualitas yang sesuai minat mereka.</p>
+                <div class="feature-tags">
+                  <span>Komunitas</span>
+                  <span>Interaktif</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-section" data-aos="fade-up" data-aos-delay="500">
+          <a href="#" class="btn-primary">Mulai Sekarang</a>
+          <a href="#" class="btn-secondary">Lihat Demo</a>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section light-background">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Hubungi Kami</h2>
+        <p>Ada pertanyaan atau butuh bantuan? Tim kami siap membantu Anda dengan senang hati</p>
+      </div>
+    <section id="faq" class="faq section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+
+            <div class="faq-container">
+
+              <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
+                <div class="question-wrapper">
+                  <div class="icon-wrapper">
+                    <i class="bi bi-patch-question"></i>
+                  </div>
+                  <div class="content-wrapper">
+                    <h3 class="question">Bagaimana cara mendaftar sebagai anggota E-Perpustakaan?</h3>
+                    <div class="answer">
+                      <p>Anda dapat mendaftar dengan mudah melalui website kami. Cukup klik tombol "Daftar" di halaman utama, isi formulir pendaftaran dengan data diri yang valid, verifikasi email Anda, dan pilih paket keanggotaan yang sesuai. Setelah pembayaran dikonfirmasi, akun Anda akan aktif dan siap digunakan.</p>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- End FAQ Item -->
+
+              <div class="faq-item" data-aos="fade-up" data-aos-delay="250">
+                <div class="question-wrapper">
+                  <div class="icon-wrapper">
+                    <i class="bi bi-patch-question"></i>
+                  </div>
+                  <div class="content-wrapper">
+                    <h3 class="question">Berapa lama durasi peminjaman buku dan bagaimana cara perpanjangannya?</h3>
+                    <div class="answer">
+                      <p>Durasi peminjaman tergantung paket keanggotaan Anda, mulai dari 14 hingga 30 hari. Anda dapat memperpanjang peminjaman melalui dashboard akun Anda selama buku tersebut tidak sedang dipesan oleh anggota lain. Sistem akan mengirimkan notifikasi otomatis 3 hari sebelum masa peminjaman berakhir.</p>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- End FAQ Item -->
+
+              <div class="faq-item" data-aos="fade-up" data-aos-delay="300">
+                <div class="question-wrapper">
+                  <div class="icon-wrapper">
+                    <i class="bi bi-patch-question"></i>
+                  </div>
+                  <div class="content-wrapper">
+                    <h3 class="question">Apakah saya bisa mengakses E-Perpustakaan dari perangkat mobile?</h3>
+                    <div class="answer">
+                      <p>Tentu saja! E-Perpustakaan dirancang dengan teknologi responsive yang dapat diakses dari berbagai perangkat seperti smartphone, tablet, laptop, dan komputer desktop. Anda dapat membaca buku favorit kapan saja dan dimana saja dengan pengalaman yang optimal di semua perangkat.</p>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- End FAQ Item -->
+
+              <div class="faq-item" data-aos="fade-up" data-aos-delay="350">
+                <div class="question-wrapper">
+                  <div class="icon-wrapper">
+                    <i class="bi bi-patch-question"></i>
+                  </div>
+                  <div class="content-wrapper">
+                    <h3 class="question">Apa yang terjadi jika saya terlambat mengembalikan buku?</h3>
+                    <div class="answer">
+                      <p>Jika Anda terlambat mengembalikan buku, akan dikenakan denda keterlambatan sebesar Rp 1.000 per hari per buku. Namun, sistem kami akan mengirimkan pengingat otomatis sebelum jatuh tempo untuk membantu Anda menghindari denda. Anda juga dapat mengajukan perpanjangan sebelum masa peminjaman berakhir.</p>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- End FAQ Item -->
+
+              <div class="faq-item" data-aos="fade-up" data-aos-delay="400">
+                <div class="question-wrapper">
+                  <div class="icon-wrapper">
+                    <i class="bi bi-patch-question"></i>
+                  </div>
+                  <div class="content-wrapper">
+                    <h3 class="question">Apakah koleksi buku di E-Perpustakaan terus diperbarui?</h3>
+                    <div class="answer">
+                      <p>Ya, kami secara rutin menambah koleksi buku baru setiap bulan dari berbagai kategori dan penerbit terkemuka. Anggota akan mendapatkan notifikasi tentang buku-buku terbaru yang ditambahkan. Anda juga dapat mengajukan usulan buku yang ingin ditambahkan ke dalam koleksi kami melalui fitur Request Book.</p>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- End FAQ Item -->
+
+              <div class="faq-item" data-aos="fade-up" data-aos-delay="450">
+                <div class="question-wrapper">
+                  <div class="icon-wrapper">
+                    <i class="bi bi-patch-question"></i>
+                  </div>
+                  <div class="content-wrapper">
+                    <h3 class="question">Bagaimana cara membatalkan keanggotaan jika sudah tidak membutuhkan?</h3>
+                    <div class="answer">
+                      <p>Anda dapat membatalkan keanggotaan kapan saja melalui menu pengaturan akun. Pastikan Anda telah mengembalikan semua buku yang dipinjam dan tidak memiliki tunggakan denda. Setelah pembatalan, akses Anda akan tetap aktif hingga akhir periode berlangganan yang telah dibayar, dan tidak akan ada perpanjangan otomatis.</p>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- End FAQ Item -->
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Faq Section -->
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section light-background">
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Hubungi Kami</h2>
+        <p>Ada pertanyaan atau butuh bantuan? Tim kami siap membantu Anda dengan senang hati</p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row g-0">
+          <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="200">
+            <div class="contact-info-panel">
+              <div class="panel-content">
+                <div class="info-header">
+                  <h2>Mari Terhubung!</h2>
+                  <p>Kami senang mendengar dari Anda. Hubungi kami melalui berbagai saluran komunikasi yang tersedia atau kunjungi langsung kantor kami untuk diskusi lebih lanjut.</p>
+                </div>
+
+                <div class="info-grid">
+                  <div class="info-card" data-aos="slide-up" data-aos-delay="250">
+                    <div class="card-icon">
+                      <i class="bi bi-house-door"></i>
+                    </div>
+                    <div class="card-content">
+                      <h4>Kunjungi Kantor Kami</h4>
+                      <p>Jl. Merdeka No. 123<br>Bandung, Jawa Barat 40111</p>
+                    </div>
+                  </div>
+
+                  <div class="info-card" data-aos="slide-up" data-aos-delay="300">
+                    <div class="card-icon">
+                      <i class="bi bi-chat-dots"></i>
+                    </div>
+                    <div class="card-content">
+                      <h4>Kirim Email</h4>
+                      <p>info@eperpustakaan.id<br>support@eperpustakaan.id</p>
+                    </div>
+                  </div>
+
+                  <div class="info-card" data-aos="slide-up" data-aos-delay="350">
+                    <div class="card-icon">
+                      <i class="bi bi-headset"></i>
+                    </div>
+                    <div class="card-content">
+                      <h4>Hubungi Langsung</h4>
+                      <p>+62 812-3456-7890<br>+62 22-7654-3210</p>
+                    </div>
+                  </div>
+
+                  <div class="info-card" data-aos="slide-up" data-aos-delay="400">
+                    <div class="card-icon">
+                      <i class="bi bi-calendar3"></i>
+                    </div>
+                    <div class="card-content">
+                      <h4>Jam Operasional</h4>
+                      <p>Senin-Jumat: 08.00-17.00 WIB<br>Sabtu: 09.00-15.00 WIB</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="social-section" data-aos="fade-in" data-aos-delay="450">
+                  <h5>Ikuti Media Sosial Kami</h5>
+                  <div class="social-icons">
+                    <a href="#" class="social-icon">
+                      <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                      <i class="bi bi-twitter-x"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                      <i class="bi bi-linkedin"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                      <i class="bi bi-instagram"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6" data-aos="slide-left" data-aos-delay="300">
+            <div class="contact-form-wrapper">
+              <div class="form-header">
+                <h3>Kirim Pesan</h3>
+                <div class="header-line"></div>
+              </div>
+
+              <form action="forms/contact.php" method="post" class="php-email-form modern-form">
+                <div class="form-group">
+                  <input type="text" name="name" class="form-control" id="fullName" placeholder="Nama Lengkap" required="">
+                </div>
+
+                <div class="form-group">
+                  <input type="email" class="form-control" name="email" id="emailAddress" placeholder="Alamat Email" required="">
+                </div>
+
+                <div class="form-group">
+                  <input type="tel" class="form-control" name="phone" id="phoneNumber" placeholder="Nomor Telepon">
+                </div>
+
+                <div class="form-group">
+                  <input type="text" class="form-control" name="subject" id="emailSubject" placeholder="Subjek" required="">
+                </div>
+
+                <div class="form-group">
+                  <textarea class="form-control" name="message" id="messageContent" rows="6" placeholder="Tulis pesan Anda di sini..." required=""></textarea>
+                </div>
+
+                <div class="my-3">
+                  <div class="loading">Mengirim...</div>
+                  <div class="error-message"></div>
+                  <div class="sent-message">Pesan Anda telah terkirim. Terima kasih!</div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                  <span class="btn-text">Kirim Pesan</span>
+                  <span class="btn-icon">
+                    <i class="bi bi-arrow-right"></i>
+                  </span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- /Contact Section -->
 
 </head>
 
-<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
-
-	<div id="header-wrap">
-
-		<div class="top-content">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-md-6">
-						<div class="social-links">
-							<ul>
-								<li>
-									<a href="#"><i class="icon icon-facebook"></i></a>
-								</li>
-								<li>
-									<a href="#"><i class="icon icon-twitter"></i></a>
-								</li>
-								<li>
-									<a href="#"><i class="icon icon-youtube-play"></i></a>
-								</li>
-								<li>
-									<a href="#"><i class="icon icon-behance-square"></i></a>
-								</li>
-							</ul>
-						</div><!--social-links-->
-					</div>
-					<div class="col-md-6">
-						<div class="right-element">
-							<a href="#" class="user-account for-buy"><i
-									class="icon icon-user"></i><span>Account</span></a>
-							<a href="#" class="cart for-buy"><i class="icon icon-clipboard"></i><span>Cart:(0
-									$)</span></a>
-
-							<div class="action-menu">
-
-								<div class="search-bar">
-									<a href="#" class="search-button search-toggle" data-selector="#header-wrap">
-										<i class="icon icon-search"></i>
-									</a>
-									<form role="search" method="get" class="search-box">
-										<input class="search-field text search-input" placeholder="Search"
-											type="search">
-									</form>
-								</div>
-							</div>
-
-						</div><!--top-right-->
-					</div>
-
-				</div>
-			</div>
-		</div><!--top-content-->
-
-		<header id="header">
-			<div class="container-fluid">
-				<div class="row">
-
-					<div class="col-md-2">
-						<div class="main-logo">
-							<a href="index.html"><img src="{{ asset('storage/e-Perpus1.png')}}" width="200px" alt="logo"></a>
-						</div>
-
-					</div>
-
-					<div class="col-md-10">
-
-						<nav id="navbar">
-							<div class="main-menu stellarnav">
-								<ul class="menu-list">
-									<li class="menu-item active"><a href="#home">Home</a></li>
-									<li class="menu-item has-sub">
-										<a href="#pages" class="nav-link">Pages</a>
-
-										<ul>
-											<li class="active"><a href="index.html">Home</a></li>
-											<li><a href="index.html">About</a></li>
-											<li><a href="index.html">Styles</a></li>
-											<li><a href="index.html">Blog</a></li>
-											<li><a href="index.html">Post Single</a></li>
-											<li><a href="index.html">Our Store</a></li>
-											<li><a href="index.html">Product Single</a></li>
-											<li><a href="index.html">Contact</a></li>
-											<li><a href="index.html">Thank You</a></li>
-										</ul>
-
-									</li>
-									<li class="menu-item"><a href="#featured-books" class="nav-link">Featured</a></li>
-									<li class="menu-item"><a href="#popular-books" class="nav-link">Popular</a></li>
-									<li class="menu-item"><a href="#special-offer" class="nav-link">Offer</a></li>
-									<li class="menu-item"><a href="#latest-blog" class="nav-link">Articles</a></li>
-									<li class="menu-item"><a href="#download-app" class="nav-link">Download App</a></li>
-								</ul>
-
-								<div class="hamburger">
-									<span class="bar"></span>
-									<span class="bar"></span>
-									<span class="bar"></span>
-								</div>
-
-							</div>
-						</nav>
-
-					</div>
-
-				</div>
-			</div>
-		</header>
-
-	</div><!--header-wrap-->
-
-	<section id="billboard">
-
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-
-					<button class="prev slick-arrow">
-						<i class="icon icon-arrow-left"></i>
-					</button>
-
-					<div class="main-slider pattern-overlay">
-						<div class="slider-item">
-							<div class="banner-content">
-								<h2 class="banner-title">Life of the Wild</h2>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu feugiat amet, libero
-									ipsum enim pharetra hac. Urna commodo, lacus ut magna velit eleifend. Amet, quis
-									urna, a eu.</p>
-								<div class="btn-wrap">
-									<a href="#" class="btn btn-outline-accent btn-accent-arrow">Read More<i
-											class="icon icon-ns-arrow-right"></i></a>
-								</div>
-							</div><!--banner-content-->
-							<img src="{{ asset('images/main-banner1.jpg')}}" alt="banner" class="banner-image">
-						</div><!--slider-item-->
-
-						<div class="slider-item">
-							<div class="banner-content">
-								<h2 class="banner-title">Birds gonna be Happy</h2>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu feugiat amet, libero
-									ipsum enim pharetra hac. Urna commodo, lacus ut magna velit eleifend. Amet, quis
-									urna, a eu.</p>
-								<div class="btn-wrap">
-									<a href="#" class="btn btn-outline-accent btn-accent-arrow">Read More<i
-											class="icon icon-ns-arrow-right"></i></a>
-								</div>
-							</div><!--banner-content-->
-							<img src="{{ asset('images/main-banner2.jpg')}}" alt="banner" class="banner-image">
-						</div><!--slider-item-->
-
-					</div><!--slider-->
-
-					<button class="next slick-arrow">
-						<i class="icon icon-arrow-right"></i>
-					</button>
-
-				</div>
-			</div>
-		</div>
-
-	</section>
-
-	<section id="client-holder" data-aos="fade-up">
-		<div class="container">
-			<div class="row">
-				<div class="inner-content">
-					<div class="logo-wrap">
-						<div class="grid">
-							<a href="#"><img src="{{ asset('images/client-image1.png')}}" alt="client"></a>
-							<a href="#"><img src="{{ asset('images/client-image2.png')}}" alt="client"></a>
-							<a href="#"><img src="{{ asset('images/client-image3.png')}}" alt="client"></a>
-							<a href="#"><img src="{{ asset('images/client-image4.png')}}" alt="client"></a>
-							<a href="#"><img src="{{ asset('images/client-image5.png')}}" alt="client"></a>
-						</div>
-					</div><!--image-holder-->
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<section id="featured-books" class="py-5 my-5">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-
-					<div class="section-header align-center">
-						<div class="title">
-							<span>Some quality items</span>
-						</div>
-						<h2 class="section-title">Featured Books</h2>
-					</div>
-
-					<div class="product-list" data-aos="fade-up">
-						<div class="row">
-                            @foreach($buku->take(4) as $data)
-							<div class="col-md-3">
-								<div class="product-item">
-									<figure class="product-style">
-										<img src="{{ asset('storage/buku/'. $data->foto)}}" alt="Books" class="product-item" height="300px" width="200px">
-										<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-											Cart</button>
-									</figure>
-									<figcaption>
-										<h3>{{ $data->judul }}</h3>
-										<span>{{ $data->penulis }}</span>
-										<div class="item-price">{{ $data->stok }}</div>
-									</figcaption>
-								</div>
-							</div>
-                            @endforeach
-
-						</div><!--ft-books-slider-->
-					</div><!--grid-->
-
-
-				</div><!--inner-content-->
-			</div>
-
-			<div class="row">
-				<div class="col-md-12">
-
-					<div class="btn-wrap align-right">
-						<a href="#" class="btn-accent-arrow">View all products <i
-								class="icon icon-ns-arrow-right"></i></a>
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<section id="popular-books" class="bookshelf py-5 my-5">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-
-					<div class="section-header align-center">
-						<div class="title">
-							<span>Some quality items</span>
-						</div>
-						<h2 class="section-title">Popular Books</h2>
-					</div>
-
-					<ul class="tabs">
-						<li data-tab-target="all" class="active tab">All Genre</li>
-						@foreach($kategori as $data)
-							<li data-tab-target="{{ $data->id }}" class="tab">{{ $data->nama_kategori }}</li>
-						@endforeach
-					</ul>
-
-
-					<div class="tab-content">
-						<div id="all-genre" data-tab-content class="active">
-							<div class="row">
-                                @foreach($buku as $data)
-								<div class="col-md-3 buku-item" data-kategori="{{ $data->id_kategori }}">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('storage/buku/'. $data->foto)}}" alt="Books" class="product-item" height="300px" width="200px">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>{{ $data->judul }}</h3>
-											<span>{{ $data->penulis }}</span>
-											<div class="item-price">{{ $data->stok }}</div>
-										</figcaption>
-									</div>
-								</div>
-                                @endforeach
-
-							</div>
-
-						</div>
-						<div id="business" data-tab-content>
-							<div class="row">
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item2.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Peaceful Enlightment</h3>
-											<span>Marmik Lama</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item4.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Great travel at desert</h3>
-											<span>Sanchit Howdy</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item6.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Life among the pirates</h3>
-											<span>Armor Ramsey</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item8.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Simple way of piece life</h3>
-											<span>Armor Ramsey</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-							</div>
-						</div>
-
-						<div id="technology" data-tab-content>
-							<div class="row">
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item1.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Peaceful Enlightment</h3>
-											<span>Marmik Lama</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item3.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Great travel at desert</h3>
-											<span>Sanchit Howdy</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item5.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Life among the pirates</h3>
-											<span>Armor Ramsey</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item7.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Simple way of piece life</h3>
-											<span>Armor Ramsey</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div id="romantic" data-tab-content>
-							<div class="row">
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item1.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Peaceful Enlightment</h3>
-											<span>Marmik Lama</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item3.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Great travel at desert</h3>
-											<span>Sanchit Howdy</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item5.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Life among the pirates</h3>
-											<span>Armor Ramsey</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item7.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Simple way of piece life</h3>
-											<span>Armor Ramsey</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div id="adventure" data-tab-content>
-							<div class="row">
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item5.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Life among the pirates</h3>
-											<span>Armor Ramsey</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item7.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Simple way of piece life</h3>
-											<span>Armor Ramsey</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div id="fictional" data-tab-content>
-							<div class="row">
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item5.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Life among the pirates</h3>
-											<span>Armor Ramsey</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-
-								<div class="col-md-3">
-									<div class="product-item">
-										<figure class="product-style">
-											<img src="{{ asset('images/tab-item7.jpg')}}" alt="Books" class="product-item">
-											<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-												Cart</button>
-										</figure>
-										<figcaption>
-											<h3>Simple way of piece life</h3>
-											<span>Armor Ramsey</span>
-											<div class="item-price">$ 40.00</div>
-										</figcaption>
-									</div>
-								</div>
-							</div>
-						</div>
-
-					</div>
-
-				</div><!--inner-tabs-->
-
-			</div>
-		</div>
-	</section>
-
-	<section id="quotation" class="align-center pb-5 mb-5">
-		<div class="inner-content">
-			<h2 class="section-title divider">Quote of the day</h2>
-			<blockquote data-aos="fade-up">
-				<q>“The more that you read, the more things you will know. The more that you learn, the more places
-					you’ll go.”</q>
-				<div class="author-name">Dr. Seuss</div>
-			</blockquote>
-		</div>
-	</section>
-
-	<section id="special-offer" class="bookshelf pb-5 mb-5">
-
-		<div class="section-header align-center">
-			<div class="title">
-				<span>Grab your opportunity</span>
-			</div>
-			<h2 class="section-title">Books with offer</h2>
-		</div>
-
-		<div class="container">
-			<div class="row">
-				<div class="inner-content">
-					<div class="product-list" data-aos="fade-up">
-						<div class="grid product-grid">
-							<div class="product-item">
-								<figure class="product-style">
-									<img src="{{ asset('images/product-item5.jpg')}}" alt="Books" class="product-item">
-									<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-										Cart</button>
-								</figure>
-								<figcaption>
-									<h3>Simple way of piece life</h3>
-									<span>Armor Ramsey</span>
-									<div class="item-price">
-										<span class="prev-price">$ 50.00</span>$ 40.00
-									</div>
-								</div>
-							</figcaption>
-
-							<div class="product-item">
-								<figure class="product-style">
-									<img src="{{ asset('images/product-item6.jpg')}}" alt="Books" class="product-item">
-									<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-										Cart</button>
-								</figure>
-								<figcaption>
-									<h3>Great travel at desert</h3>
-									<span>Sanchit Howdy</span>
-									<div class="item-price">
-										<span class="prev-price">$ 30.00</span>$ 38.00
-									</div>
-								</div>
-							</figcaption>
-
-							<div class="product-item">
-								<figure class="product-style">
-									<img src="{{ asset('images/product-item7.jpg')}}" alt="Books" class="product-item">
-									<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-										Cart</button>
-								</figure>
-								<figcaption>
-									<h3>The lady beauty Scarlett</h3>
-									<span>Arthur Doyle</span>
-									<div class="item-price">
-										<span class="prev-price">$ 35.00</span>$ 45.00
-									</div>
-								</div>
-							</figcaption>
-
-							<div class="product-item">
-								<figure class="product-style">
-									<img src="{{ asset('images/product-item8.jpg')}}" alt="Books" class="product-item">
-									<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-										Cart</button>
-								</figure>
-								<figcaption>
-									<h3>Once upon a time</h3>
-									<span>Klien Marry</span>
-									<div class="item-price">
-										<span class="prev-price">$ 25.00</span>$ 35.00
-									</div>
-								</div>
-							</figcaption>
-
-							<div class="product-item">
-								<figure class="product-style">
-									<img src="{{ asset('images/product-item2.jpg')}}" alt="Books" class="product-item">
-									<button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to
-										Cart</button>
-								</figure>
-								<figcaption>
-									<h3>Simple way of piece life</h3>
-									<span>Armor Ramsey</span>
-									<div class="item-price">$ 40.00</div>
-								</figcaption>
-							</div>
-						</div><!--grid-->
-					</div>
-				</div><!--inner-content-->
-			</div>
-		</div>
-	</section>
-
-	<section id="subscribe">
-		<div class="container">
-			<div class="row justify-content-center">
-
-				<div class="col-md-8">
-					<div class="row">
-
-						<div class="col-md-6">
-
-							<div class="title-element">
-								<h2 class="section-title divider">Subscribe to our newsletter</h2>
-							</div>
-
-						</div>
-						<div class="col-md-6">
-
-							<div class="subscribe-content" data-aos="fade-up">
-								<p>Sed eu feugiat amet, libero ipsum enim pharetra hac dolor sit amet, consectetur. Elit
-									adipiscing enim pharetra hac.</p>
-								<form id="form">
-									<input type="text" name="email" placeholder="Enter your email addresss here">
-									<button class="btn-subscribe">
-										<span>send</span>
-										<i class="icon icon-send"></i>
-									</button>
-								</form>
-							</div>
-
-						</div>
-
-					</div>
-				</div>
-
-			</div>
-		</div>
-	</section>
-
-	<section id="latest-blog" class="py-5 my-5">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-
-					<div class="section-header align-center">
-						<div class="title">
-							<span>Read our articles</span>
-						</div>
-						<h2 class="section-title">Latest Articles</h2>
-					</div>
-
-					<div class="row">
-
-						<div class="col-md-4">
-
-							<article class="column" data-aos="fade-up">
-
-								<figure>
-									<a href="#" class="image-hvr-effect">
-										<img src="{{ asset('images/post-img1.jpg')}}" alt="post" class="post-image">
-									</a>
-								</figure>
-
-								<div class="post-item">
-									<div class="meta-date">Mar 30, 2021</div>
-									<h3><a href="#">Reading books always makes the moments happy</a></h3>
-
-									<div class="links-element">
-										<div class="categories">inspiration</div>
-										<div class="social-links">
-											<ul>
-												<li>
-													<a href="#"><i class="icon icon-facebook"></i></a>
-												</li>
-												<li>
-													<a href="#"><i class="icon icon-twitter"></i></a>
-												</li>
-												<li>
-													<a href="#"><i class="icon icon-behance-square"></i></a>
-												</li>
-											</ul>
-										</div>
-									</div><!--links-element-->
-
-								</div>
-							</article>
-
-						</div>
-						<div class="col-md-4">
-
-							<article class="column" data-aos="fade-up" data-aos-delay="200">
-								<figure>
-									<a href="#" class="image-hvr-effect">
-										<img src="{{ asset('images/post-img2.jpg')}}" alt="post" class="post-image">
-									</a>
-								</figure>
-								<div class="post-item">
-									<div class="meta-date">Mar 29, 2021</div>
-									<h3><a href="#">Reading books always makes the moments happy</a></h3>
-
-									<div class="links-element">
-										<div class="categories">inspiration</div>
-										<div class="social-links">
-											<ul>
-												<li>
-													<a href="#"><i class="icon icon-facebook"></i></a>
-												</li>
-												<li>
-													<a href="#"><i class="icon icon-twitter"></i></a>
-												</li>
-												<li>
-													<a href="#"><i class="icon icon-behance-square"></i></a>
-												</li>
-											</ul>
-										</div>
-									</div><!--links-element-->
-
-								</div>
-							</article>
-
-						</div>
-						<div class="col-md-4">
-
-							<article class="column" data-aos="fade-up" data-aos-delay="400">
-								<figure>
-									<a href="#" class="image-hvr-effect">
-										<img src="{{ asset('images/post-img3.jpg')}}" alt="post" class="post-image">
-									</a>
-								</figure>
-								<div class="post-item">
-									<div class="meta-date">Feb 27, 2021</div>
-									<h3><a href="#">Reading books always makes the moments happy</a></h3>
-
-									<div class="links-element">
-										<div class="categories">inspiration</div>
-										<div class="social-links">
-											<ul>
-												<li>
-													<a href="#"><i class="icon icon-facebook"></i></a>
-												</li>
-												<li>
-													<a href="#"><i class="icon icon-twitter"></i></a>
-												</li>
-												<li>
-													<a href="#"><i class="icon icon-behance-square"></i></a>
-												</li>
-											</ul>
-										</div>
-									</div><!--links-element-->
-
-								</div>
-							</article>
-
-						</div>
-
-					</div>
-
-					<div class="row">
-
-						<div class="btn-wrap align-center">
-							<a href="#" class="btn btn-outline-accent btn-accent-arrow" tabindex="0">Read All Articles<i
-									class="icon icon-ns-arrow-right"></i></a>
-						</div>
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<section id="download-app" class="leaf-pattern-overlay">
-		<div class="corner-pattern-overlay"></div>
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-md-8">
-					<div class="row">
-
-						<div class="col-md-5">
-							<figure>
-								<img src="{{ asset('images/device.png')}}" alt="phone" class="single-image">
-							</figure>
-						</div>
-
-						<div class="col-md-7">
-							<div class="app-info">
-								<h2 class="section-title divider">Download our app now !</h2>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sagittis sed ptibus
-									liberolectus nonet psryroin. Amet sed lorem posuere sit iaculis amet, ac urna.
-									Adipiscing fames semper erat ac in suspendisse iaculis.</p>
-								<div class="google-app">
-									<img src="{{ asset('images/google-play.jpg')}}" alt="google play">
-									<img src="{{ asset('images/app-store.jpg')}}" alt="app store">
-								</div>
-							</div>
-						</div>
-
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<footer id="footer">
-		<div class="container">
-			<div class="row">
-
-				<div class="col-md-4">
-
-					<div class="footer-item">
-						<div class="company-brand">
-							<img src="{{ asset('images/main-logo.png')}}" alt="logo" class="footer-logo">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sagittis sed ptibus liberolectus
-								nonet psryroin. Amet sed lorem posuere sit iaculis amet, ac urna. Adipiscing fames
-								semper erat ac in suspendisse iaculis.</p>
-						</div>
-					</div>
-
-				</div>
-
-				<div class="col-md-2">
-
-					<div class="footer-menu">
-						<h5>About Us</h5>
-						<ul class="menu-list">
-							<li class="menu-item">
-								<a href="#">vision</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">articles </a>
-							</li>
-							<li class="menu-item">
-								<a href="#">careers</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">service terms</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">donate</a>
-							</li>
-						</ul>
-					</div>
-
-				</div>
-				<div class="col-md-2">
-
-					<div class="footer-menu">
-						<h5>Discover</h5>
-						<ul class="menu-list">
-							<li class="menu-item">
-								<a href="#">Home</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">Books</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">Authors</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">Subjects</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">Advanced Search</a>
-							</li>
-						</ul>
-					</div>
-
-				</div>
-				<div class="col-md-2">
-
-					<div class="footer-menu">
-						<h5>My account</h5>
-						<ul class="menu-list">
-							<li class="menu-item">
-								<a href="#">Sign In</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">View Cart</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">My Wishtlist</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">Track My Order</a>
-							</li>
-						</ul>
-					</div>
-
-				</div>
-				<div class="col-md-2">
-
-					<div class="footer-menu">
-						<h5>Help</h5>
-						<ul class="menu-list">
-							<li class="menu-item">
-								<a href="#">Help center</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">Report a problem</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">Suggesting edits</a>
-							</li>
-							<li class="menu-item">
-								<a href="#">Contact us</a>
-							</li>
-						</ul>
-					</div>
-
-				</div>
-
-			</div>
-			<!-- / row -->
-
-		</div>
-	</footer>
-
-	<div id="footer-bottom">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-
-					<div class="copyright">
-						<div class="row">
-
-							<div class="col-md-6">
-								<p>© 2022 All rights reserved. Free HTML Template by <a
-										href="https://www.templatesjungle.com/" target="_blank">TemplatesJungle</a></p>
-							</div>
-
-							<div class="col-md-6">
-								<div class="social-links align-right">
-									<ul>
-										<li>
-											<a href="#"><i class="icon icon-facebook"></i></a>
-										</li>
-										<li>
-											<a href="#"><i class="icon icon-twitter"></i></a>
-										</li>
-										<li>
-											<a href="#"><i class="icon icon-youtube-play"></i></a>
-										</li>
-										<li>
-											<a href="#"><i class="icon icon-behance-square"></i></a>
-										</li>
-									</ul>
-								</div>
-							</div>
-
-						</div>
-					</div><!--grid-->
-
-				</div><!--footer-bottom-content-->
-			</div>
-		</div>
-	</div>
-
-	<script src="{{ asset('js/jquery-1.11.0.min.js')}}"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
-		crossorigin="anonymous"></script>
-	<script src="{{ asset('js/plugins.js')}}"></script>
-	<script src="{{ asset('js/script.js')}}"></script>
-	<script>
-   document.addEventListener('DOMContentLoaded', () => {
-    const tabs = document.querySelectorAll('.tabs .tab');
-    const bukus = document.querySelectorAll('.buku-item');
-    const tabContents = document.querySelectorAll('.tab-content [data-tab-content]');
-
-    // Hide all tab-content sections except the active one
-    function hideAllTabContents() {
-        tabContents.forEach(content => {
-            content.style.display = 'none';
-        });
+</main>
+
+<style>
+/* ============================================================
+   GLOBAL STYLES
+   ============================================================ */
+
+/* Hero Section */
+.hero.section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 60px 0 40px;
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  overflow: hidden;
+}
+
+.hero.section::before {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  top: -100px;
+  right: -100px;
+}
+
+.hero.section::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  bottom: -80px;
+  left: 10%;
+}
+
+.hero-content {
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 28px;
+  border-radius: 50px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #667eea;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+}
+
+.hero-badge:hover {
+  transform: translateY(-2px);
+}
+
+.hero-badge i {
+  color: #ffd700;
+  font-size: 16px;
+}
+
+.hero-title {
+  font-size: 68px;
+  font-weight: 900;
+  margin-bottom: 25px;
+  color: #fff;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: -1px;
+}
+
+.hero-description {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.95);
+  max-width: 800px;
+  margin: 0 auto 50px;
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+/* Book Slider Banner */
+.book-slider-banner {
+  margin: 60px 0;
+  padding: 0;
+  overflow: visible;
+  width: 100%;
+}
+
+.slider-container {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0 80px;
+}
+
+.slider-wrapper {
+  overflow: hidden;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.25);
+  transition: box-shadow 0.3s ease;
+}
+
+.slider-wrapper:hover {
+  box-shadow: 0 45px 130px rgba(0, 0, 0, 0.3);
+}
+
+.book-slides {
+  display: flex;
+  transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.book-slide {
+  min-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 100px;
+  padding: 70px 100px;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.book-slide.active {
+  opacity: 1;
+}
+
+.book-image {
+  flex-shrink: 0;
+  width: 340px;
+  height: 500px;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  transform: perspective(1200px) rotateY(-8deg);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.book-slide:hover .book-image {
+  transform: perspective(1200px) rotateY(0deg) scale(1.08);
+  box-shadow: 0 35px 80px rgba(0, 0, 0, 0.4);
+}
+
+.book-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.book-details {
+  flex: 1;
+  max-width: 620px;
+  text-align: left;
+  color: #2c3e50;
+}
+
+.book-title {
+  font-size: 44px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: #2c3e50;
+  line-height: 1.2;
+}
+
+.book-author {
+  font-size: 18px;
+  color: #667eea;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.book-rating {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.book-rating .stars {
+  display: flex;
+  gap: 3px;
+}
+
+.book-rating i {
+  color: #ffd700;
+  font-size: 18px;
+}
+
+.book-rating .rating-value {
+  font-weight: 700;
+  color: #2c3e50;
+  font-size: 18px;
+}
+
+.book-desc {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #666;
+  margin-bottom: 28px;
+  font-weight: 300;
+}
+
+.book-badge {
+  display: inline-block;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.book-badge:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+}
+
+/* Navigation Buttons */
+.slider-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: #667eea;
+  z-index: 10;
+}
+
+.slider-nav:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  transform: translateY(-50%) scale(1.2);
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+  border-color: transparent;
+}
+
+.slider-nav.prev {
+  left: 10px;
+}
+
+.slider-nav.next {
+  right: 10px;
+}
+
+.slider-nav i {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Dots Navigation */
+.slider-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid transparent;
+}
+
+.dot:hover {
+  background: rgba(102, 126, 234, 0.5);
+}
+
+.dot.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Hero Metrics */
+.hero-metrics {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-top: 70px;
+  flex-wrap: wrap;
+}
+
+.metric-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 24px 36px;
+  border-radius: 20px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(20px);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.metric-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.metric-icon {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  color: #fff;
+  font-size: 28px;
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.metric-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-number {
+  font-size: 32px;
+  font-weight: 900;
+  color: #2c3e50;
+}
+
+.metric-label {
+  font-size: 13px;
+  color: #999;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Features Grid */
+.feature-item {
+  padding: 30px;
+  background: #fff;
+  border-radius: 20px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid #eee;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.feature-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 50px rgba(102, 126, 234, 0.15);
+  border-color: #667eea;
+}
+
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  color: #fff;
+  font-size: 40px;
+  margin: 0 auto 20px;
+  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
+}
+
+.feature-content h4 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 12px;
+}
+
+.feature-content p {
+  font-size: 14px;
+  color: #999;
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+/* Book Card Styling */
+.book-card {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.book-cover-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #f5f7fa;
+  aspect-ratio: 3/4;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.book-cover-wrapper:hover {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.book-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.book-cover-wrapper:hover .book-cover-img {
+  transform: scale(1.08);
+}
+
+.book-overlay-hover {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  padding: 20px;
+}
+
+.book-cover-wrapper:hover .book-overlay-hover {
+  opacity: 1;
+}
+
+.book-quick-info {
+  text-align: center;
+  color: #fff;
+}
+
+.book-quick-info .book-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.book-quick-info .book-author {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.book-status {
+  display: inline-block;
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  margin-top: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.book-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.btn-action:hover {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .book-slide {
+    gap: 60px;
+    padding: 60px 80px;
+  }
+
+  .book-image {
+    width: 300px;
+    height: 450px;
+  }
+
+  .book-title {
+    font-size: 40px;
+  }
+
+  .slider-container {
+    padding: 0 60px;
+  }
+
+  .hero-title {
+    font-size: 56px;
+  }
+}
+
+@media (max-width: 992px) {
+  .hero-title {
+    font-size: 48px;
+  }
+
+  .slider-container {
+    padding: 0 50px;
+  }
+
+  .book-slide {
+    flex-direction: column;
+    text-align: center;
+    padding: 50px 30px;
+    gap: 30px;
+  }
+
+  .book-image {
+    width: 280px;
+    height: 420px;
+    transform: perspective(1000px) rotateY(0deg);
+  }
+
+  .book-details {
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .book-rating {
+    justify-content: center;
+  }
+
+  .slider-nav {
+    width: 50px;
+    height: 50px;
+  }
+
+  .slider-nav i {
+    font-size: 24px;
+  }
+
+  .hero-metrics {
+    gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero.section {
+    padding: 40px 0 20px;
+  }
+
+  .hero-title {
+    font-size: 36px;
+  }
+
+  .hero-description {
+    font-size: 16px;
+  }
+
+  .hero-metrics {
+    gap: 20px;
+  }
+
+  .slider-container {
+    padding: 0 40px;
+  }
+
+  .book-image {
+    width: 240px;
+    height: 360px;
+  }
+
+  .book-title {
+    font-size: 28px;
+  }
+
+  .book-author {
+    font-size: 16px;
+  }
+
+  .book-desc {
+    font-size: 15px;
+  }
+
+  .slider-nav {
+    width: 45px;
+    height: 45px;
+  }
+
+  .slider-nav i {
+    font-size: 20px;
+  }
+
+  .metric-item {
+    padding: 18px 24px;
+  }
+
+  .metric-number {
+    font-size: 24px;
+  }
+
+  .metric-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero.section {
+    padding: 30px 0 20px;
+    min-height: auto;
+  }
+
+  .hero-title {
+    font-size: 28px;
+    margin-bottom: 15px;
+  }
+
+  .hero-description {
+    font-size: 15px;
+    margin-bottom: 30px;
+  }
+
+  .slider-container {
+    padding: 0 30px;
+  }
+
+  .book-slide {
+    padding: 25px 15px;
+    gap: 20px;
+  }
+
+  .book-image {
+    width: 200px;
+    height: 300px;
+  }
+
+  .book-title {
+    font-size: 22px;
+  }
+
+  .book-author {
+    font-size: 14px;
+  }
+
+  .book-details {
+    max-width: 100%;
+  }
+
+  .slider-nav {
+    width: 40px;
+    height: 40px;
+  }
+
+  .slider-nav i {
+    font-size: 18px;
+  }
+
+  .hero-metrics {
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 40px;
+  }
+
+  .metric-item {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  .services-tabs {
+    align-items: center;
+  }
+
+  .nav-pills {
+    flex-wrap: wrap;
+    gap: 8px !important;
+  }
+
+  .nav-pills .nav-link {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}
+</style>
+
+<script>
+// Book Slider Functionality
+let currentSlide = 0;
+const slides = document.querySelectorAll('.book-slide');
+const totalSlides = slides.length;
+let autoSlideInterval;
+
+// Create dots
+function createDots() {
+  const dotsContainer = document.getElementById('sliderDots');
+  if (!dotsContainer) return;
+
+  for (let i = 0; i < totalSlides; i++) {
+    const dot = document.createElement('span');
+    dot.classList.add('dot');
+    if (i === 0) dot.classList.add('active');
+    dot.setAttribute('data-slide', i);
+    dot.onclick = () => goToSlide(i);
+    dot.setAttribute('role', 'button');
+    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+    dotsContainer.appendChild(dot);
+  }
+}
+
+// Update dots
+function updateDots() {
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((dot, index) => {
+    dot.classList.toggle('active', index === currentSlide);
+  });
+}
+
+// Move slide
+function moveSlide(direction) {
+  if (slides.length === 0) return;
+
+  slides[currentSlide].classList.remove('active');
+  currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+  slides[currentSlide].classList.add('active');
+
+  const slidesContainer = document.getElementById('bookSlides');
+  if (slidesContainer) {
+    slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+  }
+
+  updateDots();
+  resetAutoSlide();
+}
+
+// Go to specific slide
+function goToSlide(index) {
+  if (index < 0 || index >= totalSlides) return;
+
+  slides[currentSlide].classList.remove('active');
+  currentSlide = index;
+  slides[currentSlide].classList.add('active');
+
+  const slidesContainer = document.getElementById('bookSlides');
+  if (slidesContainer) {
+    slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+  }
+
+  updateDots();
+  resetAutoSlide();
+}
+
+// Auto slide
+function startAutoSlide() {
+  autoSlideInterval = setInterval(() => {
+    moveSlide(1);
+  }, 6000);
+}
+
+// Reset auto slide
+function resetAutoSlide() {
+  clearInterval(autoSlideInterval);
+  startAutoSlide();
+}
+
+// Touch/Swipe support
+let touchStartX = 0;
+let touchEndX = 0;
+
+function handleSwipe() {
+  if (touchEndX < touchStartX - 50) {
+    moveSlide(1); // Swipe left -> next slide
+  }
+  if (touchEndX > touchStartX + 50) {
+    moveSlide(-1); // Swipe right -> prev slide
+  }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+  if (totalSlides > 0) {
+    createDots();
+    startAutoSlide();
+
+    // Pause on hover
+    const sliderContainer = document.querySelector('.slider-container');
+    if (sliderContainer) {
+      sliderContainer.addEventListener('mouseenter', () => {
+        clearInterval(autoSlideInterval);
+      });
+
+      sliderContainer.addEventListener('mouseleave', () => {
+        startAutoSlide();
+      });
+
+      // Touch events
+      sliderContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      sliderContainer.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
     }
+  }
+});
 
-    // Show books based on the selected tab
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Remove active class from all tabs
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-
-            const target = tab.dataset.tabTarget; // "all" or category ID
-            const targetContent = document.getElementById('all-genre'); // Default to "all-genre" content
-
-            // Hide all tab contents
-            hideAllTabContents();
-
-            // Show the "all-genre" content (since it's the only dynamic one)
-            if (targetContent) {
-                targetContent.style.display = 'block';
-            }
-
-            // Filter books based on category
-            bukus.forEach(buku => {
-                if (target === 'all' || buku.dataset.kategori == target) {
-                    buku.style.display = 'block';
-                } else {
-                    buku.style.display = 'none';
-                }
-            });
-        });
-    });
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') moveSlide(-1);
+  if (e.key === 'ArrowRight') moveSlide(1);
 });
 </script>
-
-
-</body>
-
-</html>
+@endsection

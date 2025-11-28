@@ -38,50 +38,78 @@
     </div>
 
     <div class="card-body">
-      <div class="table-responsive">
-        <table id="basic-datatables" class="display table table-striped table-hover">
-          <thead class="table-light">
-            <tr>
-              <th>No</th>
-              <th>Kode Peminjaman</th>
-              <th>Nama Peminjam</th>
-              <th>Judul Buku</th>
-              <th>Tanggal Pinjam</th>
-              <th>Tanggal Kembali</th>
-              <th>Jumlah</th>
-              <th>Denda</th>
-            </tr>
-          </thead>
-          <tbody>
-            @forelse($pengembalian as $i => $data)
-            <tr>
-              <td>{{ $i+1 }}</td>
-              <td>{{ $data->peminjaman->kode_peminjaman }}</td>
-              <td>{{ $data->user->name ?? '-' }}</td>
-              <td>{{ $data->buku->judul ?? '-' }}</td>
-              <td>{{ $data->tgl_pinjam }}</td>
-              <td>{{ $data->tgl_kembali }}</td>
-              <td class="text-center">{{ $data->jumlah }}</td>
-              <td>
-                @if($data->denda > 0)
-                  <span class="badge bg-danger">Rp {{ number_format($data->denda, 0, ',', '.') }}</span>
-                @else
-                  <span class="badge bg-success">-</span>
-                @endif
-              </td>
-            </tr>
-            @empty
-            <tr>
-              <td colspan="8" class="text-center text-muted">Tidak ada data pengembalian</td>
-            </tr>
-            @endforelse
-          </tbody>
-        </table>
-      </div>
 
-      {{-- Pagination --}}
-      
+    @forelse($pengembalian as $i => $data)
+    <div class="border rounded shadow-sm mb-4 p-3">
+
+        {{-- HEADER STATUS --}}
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+            <div class="text-primary fw-semibold">
+                Pengembalian • {{ $data->peminjaman->kode_peminjaman }}
+            </div>
+            <span class="badge bg-success">DIKEMBALIKAN</span>
+        </div>
+
+        {{-- ISI DETAIL --}}
+        <div class="d-flex">
+            {{-- Foto Buku --}}
+            <div>
+                <img src="{{ asset('/storage/buku/'. $data->buku->foto) }}"
+                     width="80" class="rounded border">
+            </div>
+
+            {{-- Detail --}}
+            <div class="ms-3 flex-grow-1">
+                <h6 class="fw-bold mb-1">{{ $data->buku->judul }}</h6>
+                <div class="text-muted small">
+                    Peminjam: <strong>{{ $data->user->name }}</strong>
+                </div>
+                <div class="text-muted small">
+                    Tgl Pinjam: {{ $data->tgl_pinjam }}
+                </div>
+                <div class="text-muted small">
+                    Tgl Kembali: {{ $data->tgl_kembali }}
+                </div>
+                <div class="text-muted small">
+                    Jumlah: {{ $data->jumlah }}
+                </div>
+            </div>
+
+            {{-- Harga / Denda --}}
+            <div class="text-end">
+                @if($data->denda > 0)
+                    <div class="fw-bold text-danger">
+                        Rp {{ number_format($data->denda, 0, ',', '.') }}
+                    </div>
+                    <small class="text-muted">Denda</small>
+                @else
+                    <div class="fw-bold text-success">Tidak Ada Denda</div>
+                @endif
+            </div>
+        </div>
+
+        {{-- FOOTER TERAKHIR --}}
+        <div class="d-flex justify-content-between align-items-center border-top mt-3 pt-3">
+            <div class="fw-bold">
+                Total: 
+                <span class="text-orange" style="color:#ff5a00;">
+                    Rp {{ number_format($data->denda ?? 0, 0, ',', '.') }}
+                </span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a href="https://wa.me/" class="btn btn-outline-secondary btn-sm">Hubungi Admin</a>
+                <button class="btn btn-primary btn-sm">Detail</button>
+            </div>
+        </div>
+
     </div>
+    @empty
+        <p class="text-center text-muted">Tidak ada data pengembalian</p>
+    @endforelse
+
+</div>
+
   </div>
 </div>
 <script>

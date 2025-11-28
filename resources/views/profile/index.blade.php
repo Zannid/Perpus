@@ -16,7 +16,7 @@
 
         <div class="text-center mb-4">
             @if(Auth::user()->role == 'admin')
-                <img src="{{ asset('assets/img/avatars/1.png') }}" 
+                <img src="{{ asset('storage/admin/' . Auth::user()->foto) }}" 
                      alt="Avatar"
                      class="rounded-circle mb-3"
                      style="width: 120px; height: 120px; object-fit: cover;">

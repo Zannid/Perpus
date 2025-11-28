@@ -1,0 +1,272 @@
+
+	/* Additional styles for detail page */
+	body {
+	    background-color: #ffffff;
+	}
+
+	.product-detail {
+	    padding: 80px 0;
+	    background-color: #ffffff;
+	}
+
+	.product-image-section {
+	    position: sticky;
+	    top: 100px;
+	}
+
+	.main-image {
+	    width: 100%;
+	    border-radius: 10px;
+	    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+	    margin-bottom: 20px;
+	}
+
+	.thumbnail-images {
+	    display: flex;
+	    gap: 10px;
+	    flex-wrap: wrap;
+	}
+
+	.thumbnail-images img {
+	    width: 80px;
+	    height: 100px;
+	    object-fit: cover;
+	    border-radius: 5px;
+	    cursor: pointer;
+	    border: 2px solid transparent;
+	    transition: all 0.3s;
+	}
+
+	.thumbnail-images img:hover,
+	.thumbnail-images img.active {
+	    border-color: #c45500;
+	}
+
+	.product-info {
+	    padding-left: 40px;
+	}
+
+	.product-title {
+	    font-size: 32px;
+	    font-weight: bold;
+	    margin-bottom: 15px;
+	    color: #333;
+	}
+
+	.product-author {
+	    font-size: 18px;
+	    color: #666;
+	    margin-bottom: 10px;
+	}
+
+	.product-rating {
+	    display: flex;
+	    align-items: center;
+	    gap: 10px;
+	    margin-bottom: 20px;
+	}
+
+	.stars {
+	    color: #ffc107;
+	    font-size: 18px;
+	}
+
+	.rating-count {
+	    color: #666;
+	    font-size: 14px;
+	}
+
+	.product-meta {
+	    background-color: #f8f9fa;
+	    padding: 20px;
+	    border-radius: 8px;
+	    margin-bottom: 25px;
+	}
+
+	.meta-item {
+	    display: flex;
+	    justify-content: space-between;
+	    padding: 10px 0;
+	    border-bottom: 1px solid #e0e0e0;
+	}
+
+	.meta-item:last-child {
+	    border-bottom: none;
+	}
+
+	.meta-label {
+	    font-weight: 600;
+	    color: #333;
+	}
+
+	.meta-value {
+	    color: #666;
+	}
+
+	.stock-badge {
+	    display: inline-block;
+	    padding: 5px 15px;
+	    border-radius: 20px;
+	    font-size: 14px;
+	    font-weight: 600;
+	}
+
+	.stock-available {
+	    background-color: #d4edda;
+	    color: #155724;
+	}
+
+	.stock-low {
+	    background-color: #fff3cd;
+	    color: #856404;
+	}
+
+	.stock-out {
+	    background-color: #f8d7da;
+	    color: #721c24;
+	}
+
+	.product-description {
+	    margin-bottom: 30px;
+	}
+
+	.description-title {
+	    font-size: 20px;
+	    font-weight: bold;
+	    margin-bottom: 15px;
+	    color: #333;
+	}
+
+	.description-text {
+	    line-height: 1.8;
+	    color: #666;
+	    text-align: justify;
+	}
+
+	.action-buttons {
+	    display: flex;
+	    gap: 15px;
+	    margin-bottom: 30px;
+	}
+
+	.btn-borrow {
+	    flex: 1;
+	    padding: 15px 30px;
+	    background-color: #c45500;
+	    color: white;
+	    border: none;
+	    border-radius: 5px;
+	    font-size: 16px;
+	    font-weight: 600;
+	    cursor: pointer;
+	    transition: all 0.3s;
+	    text-transform: uppercase;
+	    letter-spacing: 1px;
+	}
+
+	.btn-borrow:hover {
+	    background-color: #8b3a00;
+	    transform: translateY(-2px);
+	    box-shadow: 0 5px 15px rgba(196, 85, 0, 0.3);
+	}
+
+	.btn-borrow:disabled {
+	    background-color: #ccc;
+	    cursor: not-allowed;
+	    transform: none;
+	}
+
+	.btn-wishlist {
+	    padding: 15px 25px;
+	    background-color: white;
+	    color: #c45500;
+	    border: 2px solid #c45500;
+	    border-radius: 5px;
+	    font-size: 16px;
+	    cursor: pointer;
+	    transition: all 0.3s;
+	}
+
+	.btn-wishlist:hover {
+	    background-color: #c45500;
+	    color: white;
+	}
+
+	.share-section {
+	    padding: 20px 0;
+	    border-top: 1px solid #e0e0e0;
+	}
+
+	.share-title {
+	    font-size: 16px;
+	    font-weight: 600;
+	    margin-bottom: 10px;
+	    color: #333;
+	}
+
+	.share-buttons {
+	    display: flex;
+	    gap: 10px;
+	}
+
+	.share-btn {
+	    width: 40px;
+	    height: 40px;
+	    border-radius: 50%;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    border: 1px solid #e0e0e0;
+	    color: #666;
+	    cursor: pointer;
+	    transition: all 0.3s;
+	}
+
+	.share-btn:hover {
+	    background-color: #c45500;
+	    color: white;
+	    border-color: #c45500;
+	}
+
+	.related-books {
+	    padding: 60px 0;
+	    background-color: #f8f9fa;
+	}
+
+	.section-title {
+	    font-size: 28px;
+	    font-weight: bold;
+	    text-align: center;
+	    margin-bottom: 40px;
+	    color: #333;
+	}
+
+	.breadcrumb {
+	    background-color: transparent;
+	    padding: 20px 0;
+	    margin-bottom: 0;
+	}
+
+	.breadcrumb-item a {
+	    color: #666;
+	    text-decoration: none;
+	}
+
+	.breadcrumb-item a:hover {
+	    color: #c45500;
+	}
+
+	.breadcrumb-item.active {
+	    color: #c45500;
+	}
+
+	@media (max-width: 768px) {
+	    .product-info {
+	        padding-left: 0;
+	        margin-top: 30px;
+	    }
+
+	    .action-buttons {
+	        flex-direction: column;
+	    }
+	}

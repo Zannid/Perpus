@@ -37,6 +37,15 @@ class HomeController extends Controller
         $dataPeminjaman[] = Peminjaman::whereMonth('tgl_pinjam', $i)->count();
         $dataPengembalian[] = Pengembalian::whereMonth('tenggat', $i)->count();
     }
+    $notifikasiPeminjaman = Peminjaman::with(['user', 'buku'])
+    ->where('status', 'pending')
+    ->latest()
+    ->get();
+
+$jumlahNotifikasi = Peminjaman::where('status', 'pending')
+    ->where('status_baca', false)
+    ->count();
+
 
     return view('home', compact('bulanLabels', 'dataPeminjaman', 'dataPengembalian'));
 }

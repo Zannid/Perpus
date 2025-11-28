@@ -25,6 +25,7 @@ class PetugasController extends Controller
             });
         }
 
+
         $petugas = $query->orderBy('id', 'desc')->get();
 
         return view('petugas.index', compact('petugas'));

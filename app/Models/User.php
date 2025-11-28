@@ -35,6 +35,19 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function notifications()
+    {
+        return $this->hasMany(\App\Models\Notification::class);
+    }
+    
+
+    /**
+     * Get jumlah notifikasi yang belum dibaca
+     */
+    public function unreadNotificationsCount()
+    {
+        return $this->notifications()->unread()->count();
+    }
      public function isAdmin()
     {
         return $this->role === 'admin';
@@ -49,6 +62,11 @@ class User extends Authenticatable
     {
         return $this->role === 'user';
     }
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
 
     /**
      * Get the attributes that should be cast.

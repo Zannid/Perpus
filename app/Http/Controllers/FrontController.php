@@ -5,18 +5,31 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Buku;
 use App\Models\Kategori;
+use App\Models\About;
 
 class FrontController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(request $request)
-    {
-        $buku = Buku::with('kategori')->get();
-        $kategori = Kategori::all();
-        return view('welcome', compact('buku', 'kategori'));
-    }
+    public function index(Request $request)
+{
+    $buku = Buku::with('kategori')->get();
+    $kategori = Kategori::all();
+
+    $bukuTerpopuler = Buku::withCount('peminjaman')
+        ->orderBy('peminjaman_count', 'DESC')
+        ->take(3)
+        ->get();
+
+   $about = About::where('is_active', true)->first();
+ // ambil data About
+
+    return view('welcome',
+        compact('bukuTerpopuler', 'buku', 'kategori', 'request', 'about')
+    );
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -37,9 +50,19 @@ class FrontController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        // Ambil data buku dengan relasi kategori
+        $buku = Buku::with('kategori')->findOrFail($id);
+        
+        // Ambil buku terkait dari kategori yang sama (exclude buku saat ini)
+        $relatedBooks = Buku::where('id_kategori', $buku->id_kategori)
+            ->where('id', '!=', $id)
+            ->where('stok', '>', 0) // hanya yang ada stoknya
+            ->take(4)
+            ->get();
+        
+        return view('detail_buku', compact('buku', 'relatedBooks'));
     }
 
     /**

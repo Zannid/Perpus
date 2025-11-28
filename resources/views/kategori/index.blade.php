@@ -29,7 +29,7 @@
             <div class="input-group input-group-sm">
               <input type="text" name="search" class="form-control"
                      placeholder="Cari kategori..." value="{{ request('search') }}">
-              <button class="btn btn-outline-primary" type="submit">
+              <button class="btn btn-primary" type="submit">
                 <i class="bx bx-search-alt"></i>
               </button>
             </div>
@@ -37,7 +37,7 @@
 
           {{-- Tombol Tambah --}}
           <a href="{{ route('kategori.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
-            <i class="lni lni-plus me-1"></i> Tambah Kategori
+            <i class="bx bx-plus me-1"></i> Tambah Kategori
           </a>
         </div>
       </div>

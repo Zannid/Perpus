@@ -25,7 +25,7 @@
             <div class="input-group input-group-sm">
               <input type="text" name="search" class="form-control" placeholder="Cari lokasi..."
                 value="{{ request('search') }}">
-              <button class="btn btn-outline-primary" type="submit">
+              <button class="btn btn-primary" type="submit">
                 <i class="bx bx-search-alt"></i>
               </button>
             </div>

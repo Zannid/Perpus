@@ -17,6 +17,8 @@ class buku extends Model
     'id_lokasi',
     'stok',
     'deskripsi',
+    'rating_avg',
+    'rating_count'
     ];
 
     public function kategori()
@@ -27,5 +29,19 @@ class buku extends Model
     {
         return $this->belongsTo(Lokasi::class, 'id_lokasi');
     }
+    public function peminjaman()
+    {
+        return $this->hasMany(Peminjaman::class, 'id');
+    }
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'buku_id');
+    }
+
+    public function averageRating()
+    {
+        return $this->ratings()->avg('rating');
+    }
+
 
 }

@@ -12,13 +12,13 @@
             <div class="input-group input-group-sm">
               <input type="text" name="search" class="form-control"
                      placeholder="Cari Petugas..." value="{{ request('search') }}">
-              <button class="btn btn-outline-primary" type="submit">
+              <button class="btn btn-primary" type="submit">
                 <i class="bx bx-search-alt"></i>
               </button>
             </div>
           </form>
         <a href="{{ route('petugas.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
-          <i class="lni lni-plus me-1"></i> Tambah Petugas
+          <i class="bx bx-plus me-1"></i>Tambah Petugas
         </a>
       </div>
       </div>

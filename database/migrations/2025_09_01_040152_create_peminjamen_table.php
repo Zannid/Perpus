@@ -19,9 +19,11 @@ return new class extends Migration
             $table->date('tenggat');
             $table->unsignedBigInteger('id_user')->nullable();
             $table->string('status');
+            $table->text('alasan_tolak')->nullable()->after('status');
             $table->unsignedBigInteger('id_buku');
             $table->enum('kondisi', ['Bagus', 'Rusak', 'Hilang'])->nullable();
             $table->integer('denda')->default(0);
+            $table->boolean('status_baca')->default(false); 
             $table->timestamps();
             $table->foreign('id_buku')->references('id')->on('bukus')->onDelete('cascade');
             $table->foreign('id_user')->references('id')->on('users')->onDelete('cascade');
@@ -35,5 +37,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('peminjamen');
+         Schema::table('peminjamen', function (Blueprint $table) {
+        $table->dropColumn('alasan_tolak');
+    });
     }
+
 };

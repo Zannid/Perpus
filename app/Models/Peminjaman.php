@@ -15,9 +15,15 @@ class Peminjaman extends Model
         'tgl_pinjam',
         'tenggat',
         'id_user',
+        'alasan_tolak',
         'status',
         'id_buku',
     ];
+
+    public function rating()
+    {
+        return $this->hasOne(Rating::class, 'peminjaman_id');
+    }
 
     public function user()
     {
@@ -65,7 +71,7 @@ class Peminjaman extends Model
     public function getDendaBerjalanAttribute()
     {
         if ($this->status !== 'Dipinjam') {
-            return $this->denda ?? 0; // kalau sudah dikembalikan, pakai denda yang tersimpan
+            return $this->denda ?? 0;
         }
 
         $today = Carbon::today();
@@ -76,7 +82,7 @@ class Peminjaman extends Model
         }
 
         $daysLate = $tenggat->diffInDays($today);
-        return $daysLate * 2000 * $this->jumlah; // misal Rp 2000/hari per buku
+        return $daysLate * 2000 * $this->jumlah; 
     }
 
 }

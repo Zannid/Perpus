@@ -1,6 +1,7 @@
 @extends('layouts.backend')
 @section('title', 'E-Perpus - Peminjaman Pending')
 @section('content')
+
 <div class="container">
 
   {{-- Breadcrumb --}}
@@ -11,18 +12,32 @@
           Peminjaman
         </a>
       </li>
-      <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">
-        Pending
-      </li>
+      <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">Pending</li>
     </ol>
   </nav>
+
+  {{-- Alert Messages --}}
+  @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="bx bx-check-circle me-2"></i>{{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  @endif
+
+  @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bx bx-error me-2"></i>{{ session('error') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  @endif
 
   <div class="card shadow-lg border-0 rounded-3">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Daftar Peminjaman Pending</h5>
+
       <div class="d-flex flex-wrap align-items-center gap-2">
-          {{-- Search Input JS --}}
-          <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari Pengajuan...">
+        <input type="text" id="searchInput" class="form-control form-control-sm"
+               placeholder="Cari Pengajuan..." style="max-width: 250px;">
       </div>
     </div>
 
@@ -41,8 +56,10 @@
               <th class="text-center">Aksi</th>
             </tr>
           </thead>
+
           <tbody>
             @php $no = 1; @endphp
+
             @forelse($peminjaman as $data)
               <tr>
                 <td>{{ $no++ }}</td>
@@ -52,49 +69,123 @@
                 <td>{{ $data->jumlah }}</td>
                 <td>{{ $data->formatted_tanggal_pinjam ?? $data->tgl_pinjam }}</td>
                 <td>{{ $data->formatted_tanggal_kembali ?? $data->tenggat }}</td>
+
                 <td class="text-center">
-                  <form action="{{ route('petugas.peminjaman.approve', $data->id) }}" method="POST" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-success btn-sm rounded-pill px-3"
-                            onclick="return confirm('Setujui peminjaman ini?')">
-                      ACC
+                  <div class="btn-group" role="group">
+
+                    {{-- Tombol ACC --}}
+                    <form action="{{ route('petugas.peminjaman.approve', $data->id) }}" 
+                          method="POST" class="d-inline">
+                      @csrf
+                      <button type="submit" class="btn btn-success btn-sm rounded-start px-3"
+                              onclick="return confirm('Setujui peminjaman ini?')">
+                        <i class="bx bx-check"></i> ACC
+                      </button>
+                    </form>
+
+                    {{-- Tombol Tolak --}}
+                    <button type="button"
+                            class="btn btn-danger btn-sm rounded-end px-3"
+                            data-bs-toggle="modal"
+                            data-bs-target="#rejectModal{{ $data->id }}">
+                      <i class="bx bx-x"></i> Tolak
                     </button>
-                  </form>
+
+                  </div>
                 </td>
               </tr>
+
+              {{-- Modal Konfirmasi Tolak --}}
+              <div class="modal fade" id="rejectModal{{ $data->id }}" tabindex="-1">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                      <h5 class="modal-title">Tolak Peminjaman</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <form action="{{ route('petugas.peminjaman.reject', $data->id) }}" method="POST">
+                      @csrf
+
+                      <div class="modal-body">
+                        <p class="fw-semibold">Apakah Anda yakin ingin menolak peminjaman ini?</p>
+
+                        <div class="alert alert-warning">
+                          <strong>Peminjam:</strong> {{ $data->user->name }} <br>
+                          <strong>Buku:</strong> {{ $data->buku->judul }} <br>
+                          <strong>Jumlah:</strong> {{ $data->jumlah }} eksemplar
+                        </div>
+
+                        <div class="mb-3">
+                          <label class="form-label" for="alasan_tolak{{ $data->id }}">
+                            Alasan Penolakan <span class="text-muted">(Opsional)</span>
+                          </label>
+
+                          <textarea class="form-control"
+                                    id="alasan_tolak{{ $data->id }}"
+                                    name="alasan_tolak"
+                                    rows="3"
+                                    placeholder="Contoh: Stok buku tidak tersedia, Buku sedang dalam perawatan, dll."></textarea>
+                        </div>
+                      </div>
+
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">
+                          <i class="bx bx-x"></i> Ya, Tolak
+                        </button>
+                      </div>
+                    </form>
+
+                  </div>
+                </div>
+              </div>
+
             @empty
               <tr>
-                <td colspan="8" class="text-center text-muted">Tidak ada peminjaman pending</td>
+                <td colspan="8" class="text-center text-muted py-4">
+                  <i class="bx bx-info-circle fs-1 d-block mb-2"></i>
+                  Tidak ada peminjaman pending
+                </td>
               </tr>
             @endforelse
+
           </tbody>
         </table>
       </div>
+
+      {{-- Pagination --}}
+      <div class="d-flex justify-content-center mt-3">
+        {{ $peminjaman->links() }}
+      </div>
+
     </div>
   </div>
 
 </div>
 
+{{-- Script Search --}}
 <script>
-    const searchInput = document.getElementById('searchInput');
-    const table = document.getElementById('peminjamanTable').getElementsByTagName('tbody')[0];
+  const searchInput = document.getElementById('searchInput');
+  const tableBody = document
+    .getElementById('peminjamanTable')
+    .getElementsByTagName('tbody')[0];
 
-    searchInput.addEventListener('keyup', function() {
-        const filter = this.value.toLowerCase();
-        const rows = table.getElementsByTagName('tr');
+  searchInput.addEventListener('keyup', function () {
+    const filter = this.value.toLowerCase();
+    const rows = tableBody.getElementsByTagName('tr');
 
-        Array.from(rows).forEach(row => {
-            const kode = row.querySelector('.kode')?.textContent.toLowerCase() ?? '';
-            const nama = row.querySelector('.nama')?.textContent.toLowerCase() ?? '';
-            const buku = row.querySelector('.buku')?.textContent.toLowerCase() ?? '';
+    Array.from(rows).forEach(row => {
+      const kode = row.querySelector('.kode')?.textContent.toLowerCase() ?? '';
+      const nama = row.querySelector('.nama')?.textContent.toLowerCase() ?? '';
+      const buku = row.querySelector('.buku')?.textContent.toLowerCase() ?? '';
 
-            if(kode.includes(filter) || nama.includes(filter) || buku.includes(filter)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
+      row.style.display = 
+        (kode.includes(filter) || nama.includes(filter) || buku.includes(filter))
+        ? '' 
+        : 'none';
     });
+  });
 </script>
 
 @endsection

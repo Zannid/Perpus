@@ -51,6 +51,7 @@
                             <th>Tenggat</th>
                             <th class="text-center">Status</th>
                             <th>Denda</th>
+                            <th class="text-center">Rating</th>
                             <th class="text-center">Aksi</th>
                             <th class="text-center">Kembali</th>
                         </tr>
@@ -81,6 +82,17 @@
                                 @else
                                     <span>-</span>
                                 @endif
+                            </td>
+                            <td class="text-center">
+                                @php
+                                    $nilai = $data->rating->rating ?? 0; // ambil kolom numeric dari Rating
+                                @endphp
+
+                                <div class="d-flex align-items-center justify-content-center gap-1">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="bx bxs-star" style="color: {{ $i <= $nilai ? '#ffc107' : '#ddd' }};"></i>
+                                    @endfor
+                                </div>
                             </td>
                             <td class="text-center">
                                 {{-- aksi seperti edit, bayar, hapus --}}

@@ -33,7 +33,7 @@
 
         {{-- Tombol Tambah & PDF --}}
         <a href="{{ route('barangmasuk.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
-          <i class="lni lni-plus me-1"></i> Tambah Barang Masuk
+          <i class="bx bx-plus me-1"></i>Tambah Barang Masuk
         </a>
         <a href="{{ route('barangmasuk.export', request()->query()) }}" target="_blank"
           class="btn btn-danger btn-sm rounded-pill px-3">

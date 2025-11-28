@@ -14,6 +14,8 @@ use App\Http\Controller\Api\KategoriApiController;
 |
 */  
 // Route::resource('/bukus', App\Http\Controllers\Api\BukuApiController::class);
+Route::post('/notifikasi/read/{id}', [PeminjamanController::class, 'readNotif'])
+    ->name('notifikasi.read');
 
 // // 
 // Route::resource('/kategoris', App\Http\Controllers\Api\KategoriApiController::class);

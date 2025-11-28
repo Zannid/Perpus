@@ -44,11 +44,11 @@
         <table id="basic-datatables" class="display table table-striped table-hover align-middle">
           <thead>
             <tr>
-              <th>No</th>
+              <th style="vertical-align: middle;">No</th>
               <th>Kode Buku</th>
-              <th>Judul</th>
-              <th class="text-center">Kategori</th>
-              <th>Cover</th>
+              <th style="vertical-align: middle;">Judul</th>
+              <th class="text-center" style="vertical-align: middle;">Kategori</th>
+              <th >Cover</th>
               <th>Lokasi</th>
               <th>Stok</th>
               <th class="text-center">Aksi</th>
