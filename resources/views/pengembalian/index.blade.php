@@ -98,8 +98,19 @@
             </div>
 
             <div class="d-flex gap-2">
-                <a href="https://wa.me/" class="btn btn-outline-secondary btn-sm">Hubungi Admin</a>
-                <button class="btn btn-primary btn-sm">Detail</button>
+                @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
+                    <a href="{{ route('pengembalian.edit', $data->id) }}" class="btn btn-warning btn-sm">
+                        <i class="bx bx-pencil me-1"></i> Edit
+                    </a>
+                    <form action="{{ route('pengembalian.destroy', $data->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus data pengembalian ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bx bx-trash"></i>
+                        </button>
+                    </form>
+                @endif
+                <a href="{{ route('peminjaman.show', $data->id_peminjaman) }}" class="btn btn-primary btn-sm">Detail PMJ</a>
             </div>
         </div>
 

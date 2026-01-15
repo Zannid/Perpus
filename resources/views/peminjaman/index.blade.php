@@ -122,14 +122,31 @@
                                        title="Detail">
                                         <i class="bx bx-show"></i>
                                     </a>
+                                    
                                     @if($data->status == 'Pending')
-                                    <a href="{{ route('peminjaman.edit', $data->id) }}" 
-                                       class="btn btn-sm btn-warning d-flex align-items-center justify-content-center" 
-                                       title="Edit">
-                                        <i class="bx bx-pencil"></i>
-                                    </a>
+                                        @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
+                                            {{-- Approve Button (Trigger Modal) --}}
+                                            <button type="button" class="btn btn-sm btn-success d-flex align-items-center justify-content-center" 
+                                                    title="Approve" data-bs-toggle="modal" data-bs-target="#approveModal{{ $data->id }}">
+                                                <i class="bx bx-check"></i>
+                                            </button>
+
+                                            {{-- Reject Button (trigger modal) --}}
+                                            <button type="button" class="btn btn-sm btn-danger d-flex align-items-center justify-content-center" 
+                                                    title="Reject" data-bs-toggle="modal" data-bs-target="#rejectModal{{ $data->id }}">
+                                                <i class="bx bx-x"></i>
+                                            </button>
+                                        @endif
+
+                                        {{-- Edit Button (User can edit if still pending) --}}
+                                        <a href="{{ route('peminjaman.edit', $data->id) }}" 
+                                           class="btn btn-sm btn-warning d-flex align-items-center justify-content-center" 
+                                           title="Edit">
+                                            <i class="bx bx-pencil"></i>
+                                        </a>
                                     @endif
-                                    @if($data->denda > 0 && $data->status != 'Lunas')
+
+                                    @if($data->denda > 0 && $data->status != 'Lunas' && $data->status != 'Pending')
                                     <form action="{{ route('peminjaman.confirmPay', $data->id) }}" method="POST" class="d-inline m-0" onsubmit="return confirm('Bayar denda ini?')">
                                         @csrf
                                         <button type="submit" class="btn btn-sm btn-success d-flex align-items-center justify-content-center" title="Bayar Denda">
@@ -137,6 +154,8 @@
                                         </button>
                                     </form>
                                     @endif
+
+                                    @if($data->status != 'Pending' && $data->status != 'Dipinjam')
                                     <form action="{{ route('peminjaman.destroy', $data->id) }}" method="post" class="d-inline m-0" onsubmit="return confirm('Hapus peminjaman ini?')">
                                         @csrf
                                         @method('DELETE')
@@ -144,6 +163,7 @@
                                             <i class="bx bx-trash"></i>
                                         </button>
                                     </form>
+                                    @endif
                                 </div>
                             </td>
 
@@ -165,26 +185,100 @@
                                 @endif
                             </td>
 
-                            {{-- KEMBALI --}}
                             <td class="text-center">
-                                @if($data->status == 'Dipinjam')
-                                <form action="{{ route('peminjaman.return', $data->id) }}" method="post" class="d-flex gap-1 justify-content-center">
-                                    @csrf
-                                    <select name="kondisi" class="form-select form-select-sm w-auto" required>
-                                        <option value="">Kondisi</option>
-                                        <option value="Bagus">Bagus</option>
-                                        <option value="Rusak">Rusak</option>
-                                        <option value="Hilang">Hilang</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Kembalikan buku ini?')" title="Kembalikan">
-                                        <i class="bx bx-undo"></i>
-                                    </button>
-                                </form>
+                                @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
+                                    @if($data->status == 'Dipinjam')
+                                    <form action="{{ route('peminjaman.return', $data->id) }}" method="post" class="d-flex gap-1 justify-content-center">
+                                        @csrf
+                                        <select name="kondisi" class="form-select form-select-sm w-auto" required>
+                                            <option value="">Kondisi</option>
+                                            <option value="Bagus">Bagus</option>
+                                            <option value="Rusak">Rusak</option>
+                                            <option value="Hilang">Hilang</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Kembalikan buku ini?')" title="Kembalikan">
+                                            <i class="bx bx-undo"></i>
+                                        </button>
+                                    </form>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
                                 @else
-                                    <span class="text-muted">-</span>
+                                    <span class="text-muted">Proses Petugas</span>
                                 @endif
                             </td>
                         </tr>
+
+                        {{-- Modal Konfirmasi ACC --}}
+                       <div class="modal fade" id="approveModal{{ $data->id }}" tabindex="-1">
+                         <div class="modal-dialog">
+                           <div class="modal-content">
+                             <div class="modal-header bg-success text-white">
+                               <h5 class="modal-title text-white"><i class="bx bx-check-circle me-2"></i>Setujui Peminjaman</h5>
+                               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                             </div>
+                             <form action="{{ route('petugas.peminjaman.approve', $data->id) }}" method="POST">
+                               @csrf
+                               <div class="modal-body text-start">
+                                 <div class="mb-3">
+                                   <label class="form-label fw-bold">Tanggal Pinjam</label>
+                                   <input type="date" name="tgl_pinjam" class="form-control" 
+                                          value="{{ date('Y-m-d') }}" required>
+                                 </div>
+                                 
+                                 <div class="mb-3">
+                                   <label class="form-label fw-bold">Tenggat Pengembalian</label>
+                                   <input type="date" name="tenggat" class="form-control" 
+                                          value="{{ date('Y-m-d', strtotime('+7 days')) }}" required>
+                                   <small class="text-muted italic">* Default 7 hari ke depan</small>
+                                 </div>
+
+                                 <div class="border-top pt-3">
+                                     <p class="mb-1 fw-bold">Peminjam: <span class="fw-normal">{{ $data->user->name }}</span></p>
+                                     <p class="mb-1 fw-bold">Buku:</p>
+                                     <ul class="small text-muted mb-0">
+                                         @foreach($data->details as $detail)
+                                             <li>{{ optional($detail->buku)->judul }} ({{ $detail->jumlah }} item)</li>
+                                         @endforeach
+                                     </ul>
+                                 </div>
+                               </div>
+                               <div class="modal-footer">
+                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                 <button type="submit" class="btn btn-success px-4">
+                                   <i class="bx bx-check me-1"></i>Setujui
+                                 </button>
+                               </div>
+                             </form>
+                           </div>
+                         </div>
+                       </div>
+
+                       {{-- MODAL REJECT --}}
+                        <div class="modal fade" id="rejectModal{{ $data->id }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title">Tolak Peminjaman</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <form action="{{ route('petugas.peminjaman.reject', $data->id) }}" method="POST">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <p>Anda yakin ingin menolak peminjaman dari <strong>{{ $data->user->name }}</strong>?</p>
+                                            <div class="mb-3">
+                                                <label class="form-label">Alasan Penolakan</label>
+                                                <textarea name="alasan_tolak" class="form-control" rows="3" required placeholder="Masukkan alasan penolakan..."></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-danger">Tolak Peminjaman</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
 
                         {{-- MODAL PERPANJANGAN --}}
                         <div class="modal fade" id="perpanjangModal{{ $data->id }}" tabindex="-1">

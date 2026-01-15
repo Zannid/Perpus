@@ -148,8 +148,13 @@ Route::prefix('rating')->name('rating.')->group(function () {
     Route::post('/store', [RatingController::class, 'store'])->name('store');
 });
     // ===== PENGEMBALIAN =====
-    Route::get('/pengembalian', [PeminjamanController::class, 'pengembalianIndex'])->name('pengembalian.index');
-    Route::get('/pengembalian/export', [PengembalianController::class, 'export'])->name('pengembalian.export');
+    Route::prefix('pengembalian')->name('pengembalian.')->group(function () {
+        Route::get('/', [PengembalianController::class, 'index'])->name('index');
+        Route::get('/{id}/edit', [PengembalianController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [PengembalianController::class, 'update'])->name('update');
+        Route::delete('/{id}', [PengembalianController::class, 'destroy'])->name('destroy');
+        Route::get('/export', [PengembalianController::class, 'export'])->name('export');
+    });
 
     // ===== PETUGAS (ACC & REJECT) =====
     Route::prefix('petugas')->name('petugas.')->group(function () {
@@ -255,6 +260,7 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
     Route::post('/keranjang/tambah/{id}', [KeranjangController::class, 'tambah'])->name('keranjang.tambah');
+    Route::post('/keranjang/kurang/{id}', [KeranjangController::class, 'kurang'])->name('keranjang.kurang');
     Route::post('/keranjang/hapus/{id}', [KeranjangController::class, 'hapus'])->name('keranjang.hapus');
     Route::post('/keranjang/submit', [KeranjangController::class, 'submit'])->name('keranjang.submit');
 });

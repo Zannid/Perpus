@@ -229,11 +229,14 @@
                           </span>
                         </div>
                         <div class="book-actions">
-                          <a href="#" class="btn-action btn-cover" title="Lihat Cover">
-                            <i class="bi bi-image"></i> Lihat Cover
-                          </a>
+                          <form action="{{ route('keranjang.tambah', $b->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn-action btn-add-cart" title="Tambah ke Keranjang">
+                              <i class="bi bi-cart-plus"></i> Pinjam
+                            </button>
+                          </form>
                           <a href="{{ route('detail_buku', $b->id) }}" class="btn-action btn-detail" title="Detail Buku">
-                            <i class="bi bi-info-circle"></i> Detail Buku
+                            <i class="bi bi-info-circle"></i> Detail
                           </a>
                         </div>
                       </div>

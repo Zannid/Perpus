@@ -38,6 +38,46 @@ class PengembalianController extends Controller
         return view('pengembalian.index', compact('pengembalian', 'search'));
     }
 
+    public function edit($id)
+    {
+        $pengembalian = Pengembalian::with(['peminjaman', 'user', 'buku'])->findOrFail($id);
+        return view('pengembalian.edit', compact('pengembalian'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $pengembalian = Pengembalian::findOrFail($id);
+        $request->validate([
+            'tgl_kembali' => 'required|date',
+            'kondisi'     => 'required|in:Bagus,Rusak,Hilang',
+            'denda'       => 'required|numeric|min:0',
+        ]);
+
+        $pengembalian->update([
+            'tgl_kembali' => $request->tgl_kembali,
+            'kondisi'     => $request->kondisi,
+            'denda'       => $request->denda,
+        ]);
+
+        // Juga update denda di tabel peminjaman jika denda berubah
+        $peminjaman = $pengembalian->peminjaman;
+        if ($peminjaman) {
+            $totalDenda = Pengembalian::where('id_peminjaman', $peminjaman->id)->sum('denda');
+            $peminjaman->update(['denda' => $totalDenda]);
+        }
+
+        return redirect()->route('pengembalian.index')
+            ->with('success', 'Data pengembalian berhasil diperbarui');
+    }
+
+    public function destroy($id)
+    {
+        $pengembalian = Pengembalian::findOrFail($id);
+        $pengembalian->delete();
+        return redirect()->route('pengembalian.index')
+            ->with('success', 'Data pengembalian berhasil dihapus');
+    }
+
     public function export(Request $request)
     {
         $tanggalAwal  = $request->input('tanggal_awal');

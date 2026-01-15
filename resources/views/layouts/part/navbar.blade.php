@@ -217,6 +217,20 @@
             @endif
         </ul>
     </li>
+    <!-- Keranjang -->
+    <li class="nav-item me-3">
+        @php
+            $cartCount = count(session('cart', []));
+        @endphp
+        <a class="nav-link position-relative" href="{{ route('keranjang.index') }}" title="Keranjang Peminjaman">
+            <i class="bx bx-cart bx-sm"></i>
+            @if($cartCount > 0)
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary" style="font-size: 0.65rem;">
+                {{ $cartCount }}
+            </span>
+            @endif
+        </a>
+    </li>
     @endif
 
     <!-- Profile User (tetap di sebelah kanan) -->

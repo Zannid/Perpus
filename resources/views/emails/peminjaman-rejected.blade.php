@@ -116,16 +116,20 @@
                     <td><strong>{{ $peminjaman->kode_peminjaman }}</strong></td>
                 </tr>
                 <tr>
-                    <td>Judul Buku</td>
-                    <td>{{ $peminjaman->buku->judul }}</td>
+                    <td colspan="2" style="background-color: #f8f9fa; font-weight: bold; text-align: center; font-size: 14px; color: #333;">Daftar Buku yang Diajukan</td>
                 </tr>
+                @foreach($peminjaman->details as $detail)
                 <tr>
-                    <td>Penulis</td>
-                    <td>{{ $peminjaman->buku->penulis }}</td>
+                    <td style="font-weight: normal; color: #333;">
+                        {{ optional($detail->buku)->judul ?? 'Buku tidak ditemukan' }}
+                        <br><small style="color: #777;">Penulis: {{ optional($detail->buku)->penulis ?? '-' }}</small>
+                    </td>
+                    <td style="text-align: right;">{{ $detail->jumlah }} unit</td>
                 </tr>
-                <tr>
-                    <td>Jumlah</td>
-                    <td>{{ $peminjaman->jumlah }} eksemplar</td>
+                @endforeach
+                <tr style="border-top: 2px solid #ef4444;">
+                    <td>Total Keseluruhan</td>
+                    <td style="text-align: right;"><strong>{{ $peminjaman->jumlah }} Item</strong></td>
                 </tr>
             </table>
 

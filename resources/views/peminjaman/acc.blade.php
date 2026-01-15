@@ -79,15 +79,11 @@
                 <td class="text-center">
                   <div class="btn-group" role="group">
 
-                    {{-- Tombol ACC --}}
-                    <form action="{{ route('petugas.peminjaman.approve', $data->id) }}" 
-                          method="POST" class="d-inline">
-                      @csrf
-                      <button type="submit" class="btn btn-success btn-sm rounded-start px-3"
-                              onclick="return confirm('Setujui peminjaman ini?')">
-                        <i class="bx bx-check"></i> ACC
-                      </button>
-                    </form>
+                    {{-- Tombol ACC dengan modal --}}
+                    <button type="button" class="btn btn-success btn-sm rounded-start px-3"
+                            data-bs-toggle="modal" data-bs-target="#approveModal{{ $data->id }}">
+                      <i class="bx bx-check"></i> ACC
+                    </button>
 
                     {{-- Tombol Tolak --}}
                     <button type="button"
@@ -100,6 +96,54 @@
                   </div>
                 </td>
               </tr>
+
+              {{-- Modal Konfirmasi ACC --}}
+              <div class="modal fade" id="approveModal{{ $data->id }}" tabindex="-1">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                      <h5 class="modal-title text-white"><i class="bx bx-check-circle me-2"></i>Setujui Peminjaman</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form action="{{ route('petugas.peminjaman.approve', $data->id) }}" method="POST">
+                      @csrf
+                      <div class="modal-body">
+                        <div class="alert alert-info py-2 mb-3">
+                          <small><i class="bx bx-info-circle me-1"></i>Silakan verifikasi tanggal pinjam dan batas pengembalian sebelum menyetujui.</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                          <label class="form-label fw-bold">Tanggal Pinjam</label>
+                          <input type="date" name="tgl_pinjam" class="form-control" 
+                                 value="{{ date('Y-m-d') }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                          <label class="form-label fw-bold">Tenggat Pengembalian</label>
+                          <input type="date" name="tenggat" class="form-control" 
+                                 value="{{ date('Y-m-d', strtotime('+7 days')) }}" required>
+                          <small class="text-muted italic">* Default 7 hari ke depan</small>
+                        </div>
+
+                        <div class="border-top pt-3">
+                            <p class="mb-1 fw-bold">Ringkasan Item:</p>
+                            <ul class="small text-muted mb-0">
+                                @foreach($data->details as $detail)
+                                    <li>{{ optional($detail->buku)->judul }} ({{ $detail->jumlah }} item)</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success px-4">
+                          <i class="bx bx-check me-1"></i>Setujui & Pinjamkan
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
 
               {{-- Modal Konfirmasi Tolak --}}
               <div class="modal fade" id="rejectModal{{ $data->id }}" tabindex="-1">

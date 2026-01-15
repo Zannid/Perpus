@@ -20,18 +20,12 @@ class PeminjamanReminder extends Mailable
     }
     public function build()
     {
-        return $this->subject('Pengingat Peminjaman Buku')
-                    ->view('emails.peminjaman-reminder')
+        return $this->subject('🔔 Pengingat Peminjaman Buku - ' . config('app.name'))
+                    ->view('emails.reminder')
                     ->with([
                         'user' => $this->user,
                         'peminjaman' => $this->peminjaman,
                     ]);
-    }
-    public function content()
-    {
-        return new Content(
-            view: 'wemails.reminder',
-        );
     }
 
 }
