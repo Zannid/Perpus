@@ -18,6 +18,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PerpanjanganController;
+use App\Http\Controllers\KeranjangController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -214,3 +216,46 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])
         ->name('peminjaman.show');
 });
+
+Route::middleware(['auth'])->group(function () {
+
+    // USER - ajukan perpanjangan
+    Route::post(
+        '/perpanjangan/{peminjaman}',
+        [PerpanjanganController::class, 'store']
+    )->name('perpanjangan.store');
+
+    // USER - riwayat perpanjangan
+    Route::get(
+        '/perpanjangan/history/{peminjaman}',
+        [PerpanjanganController::class, 'history']
+    )->name('perpanjangan.history');
+
+    // PETUGAS / ADMIN
+    Route::prefix('petugas')->name('petugas.')->group(function () {
+
+        Route::get(
+            '/perpanjangan/pending',
+            [PerpanjanganController::class, 'pending']
+        )->name('perpanjangan.pending');
+
+        Route::post(
+            '/perpanjangan/{id}/approve',
+            [PerpanjanganController::class, 'approve']
+        )->name('perpanjangan.approve');
+
+        Route::post(
+            '/perpanjangan/{id}/reject',
+            [PerpanjanganController::class, 'reject']
+        )->name('perpanjangan.reject');
+
+    });
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
+    Route::post('/keranjang/tambah/{id}', [KeranjangController::class, 'tambah'])->name('keranjang.tambah');
+    Route::post('/keranjang/hapus/{id}', [KeranjangController::class, 'hapus'])->name('keranjang.hapus');
+    Route::post('/keranjang/submit', [KeranjangController::class, 'submit'])->name('keranjang.submit');
+});
+

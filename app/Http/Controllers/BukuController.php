@@ -57,7 +57,7 @@ class BukuController extends Controller
             'id_lokasi'    => 'required|exists:lokasis,id',
             'stok'         => 'required|integer|min:0',
             'deskripsi'    => 'nullable|string',
-            'foto'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048|width:300,height:400',
+            'foto'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $buku       = new Buku();

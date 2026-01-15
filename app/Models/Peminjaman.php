@@ -1,55 +1,124 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User;;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
+
 class Peminjaman extends Model
 {
+    use HasFactory;
 
     protected $fillable = [
         'kode_peminjaman',
-        'jumlah',
+        'jumlah_keseluruhan',
         'tgl_pinjam',
         'tenggat',
         'id_user',
         'alasan_tolak',
         'status',
-        'id_buku',
+        'kondisi',
+        'denda',
+        'status_baca',
     ];
 
-    public function rating()
-    {
-        return $this->hasOne(Rating::class, 'peminjaman_id');
-    }
+    protected $casts = [
+        'tgl_pinjam'  => 'date',
+        'tenggat'     => 'date',
+        'status_baca' => 'boolean',
+    ];
 
+    // ========== RELASI UTAMA ==========
+
+    /**
+     * Relasi ke User
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user')->withDefault(['name' => '-']);
     }
 
-    public function buku()
+    /**
+     * Relasi ke Detail Peminjaman (Many-to-Many dengan Buku)
+     */
+    public function details()
     {
-        return $this->belongsTo(Buku::class, 'id_buku')->withDefault(['judul' => '-']);
+        return $this->hasMany(DetailPeminjaman::class, 'peminjaman_id');
     }
-    public function kembali() {
+
+    /**
+     * Relasi ke Buku melalui Details (untuk akses langsung)
+     * GUNAKAN INI sebagai pengganti relasi buku() langsung
+     */
+    public function bukus()
+    {
+        return $this->hasManyThrough(
+            Buku::class,
+            DetailPeminjaman::class,
+            'peminjaman_id', // FK di detail_peminjaman
+            'id',            // PK di buku
+            'id',            // PK di peminjaman
+            'buku_id'        // FK di detail_peminjaman ke buku
+        );
+    }
+
+    /**
+     * Accessor untuk mendapatkan buku pertama (backward compatibility)
+     * Gunakan ini jika kode lama masih pakai $peminjaman->buku
+     */
+    public function getBukuAttribute()
+    {
+        return $this->details()->with('buku')->first()?->buku;
+    }
+
+    /**
+     * Relasi ke Rating
+     */
+    public function rating()
+    {
+        return $this->hasOne(Rating::class, 'peminjaman_id');
+    }
+
+    /**
+     * Relasi ke Pengembalian
+     */
+    public function kembali()
+    {
         return $this->hasOne(Pengembalian::class);
     }
 
+    // ========== RELASI PERPANJANGAN ==========
+
+    public function perpanjangan()
+    {
+        return $this->hasMany(Perpanjangan::class, 'id_peminjaman');
+    }
+
+    public function perpanjanganPending()
+    {
+        return $this->hasOne(Perpanjangan::class, 'id_peminjaman')
+            ->where('status', 'Pending')
+            ->latest();
+    }
+
+    public function perpanjanganDisetujui()
+    {
+        return $this->hasMany(Perpanjangan::class, 'id_peminjaman')
+            ->where('status', 'Disetujui')
+            ->orderBy('created_at', 'desc');
+    }
+
+    // ========== ACCESSOR ==========
+
     public function getDendaTerhitungAttribute()
     {
-        $today = Carbon::now();
-
-        // Hitung keterlambatan
+        $today    = Carbon::now();
         $daysLate = $today->greaterThan($this->tenggat)
             ? $today->diffInDays($this->tenggat)
             : 0;
 
-        $denda = 0;
-
-        // Gunakan kondisi jika sudah ada, kalau belum -> asumsikan Bagus
+        $denda   = 0;
         $kondisi = $this->kondisi ?? 'Bagus';
 
         if ($kondisi == "Bagus") {
@@ -65,24 +134,131 @@ class Peminjaman extends Model
             $denda = 50000;
         }
 
-        return $denda * $this->jumlah;
+        // Kalikan dengan total jumlah buku
+        $totalJumlah  = $this->details->sum('jumlah') ?: $this->jumlah_keseluruhan ?: 1;
+        return $denda * $totalJumlah;
     }
-    
+
     public function getDendaBerjalanAttribute()
     {
         if ($this->status !== 'Dipinjam') {
             return $this->denda ?? 0;
         }
 
-        $today = Carbon::today();
+        $today   = Carbon::today();
         $tenggat = Carbon::parse($this->tenggat);
 
         if ($today->lessThanOrEqualTo($tenggat)) {
             return 0;
         }
 
-        $daysLate = $tenggat->diffInDays($today);
-        return $daysLate * 2000 * $this->jumlah; 
+        $daysLate    = $tenggat->diffInDays($today);
+        $totalJumlah = $this->details->sum('jumlah') ?: $this->jumlah_keseluruhan ?: 1;
+        return $daysLate * 2000 * $totalJumlah;
     }
 
+    public function getFormattedTanggalPinjamAttribute()
+    {
+        return $this->tgl_pinjam ? Carbon::parse($this->tgl_pinjam)->format('d M Y') : '-';
+    }
+
+    public function getFormattedTanggalKembaliAttribute()
+    {
+        return $this->tenggat ? Carbon::parse($this->tenggat)->format('d M Y') : '-';
+    }
+
+    public function getJumlahPerpanjanganAttribute()
+    {
+        return $this->perpanjanganDisetujui()->count();
+    }
+
+    public function getSisaHariAttribute()
+    {
+        if (! $this->tenggat || $this->status !== 'Dipinjam') {
+            return null;
+        }
+
+        $tenggat = Carbon::parse($this->tenggat);
+        $today   = Carbon::today();
+
+        if ($today->gt($tenggat)) {
+            return 0;
+        }
+
+        return $today->diffInDays($tenggat);
+    }
+
+    // ========== METHOD PERPANJANGAN ==========
+
+    public function canExtend()
+    {
+        if ($this->status !== 'Dipinjam') {
+            return false;
+        }
+
+        if ($this->perpanjanganPending) {
+            return false;
+        }
+
+        $jumlahPerpanjangan = $this->perpanjanganDisetujui()->count();
+        if ($jumlahPerpanjangan >= 2) {
+            return false;
+        }
+
+        if ($this->denda > 0) {
+            return false;
+        }
+
+        if (Carbon::today()->gt(Carbon::parse($this->tenggat))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function hasPendingExtension()
+    {
+        return $this->perpanjanganPending !== null;
+    }
+
+    public function getExtensionStatusAttribute()
+    {
+        if ($this->perpanjanganPending) {
+            return 'Menunggu Persetujuan';
+        }
+
+        $jumlah = $this->jumlah_perpanjangan;
+        if ($jumlah > 0) {
+            return "Sudah diperpanjang {$jumlah}x";
+        }
+
+        return 'Belum pernah diperpanjang';
+    }
+
+    public function isLate()
+    {
+        if (! $this->tenggat || $this->status !== 'Dipinjam') {
+            return false;
+        }
+
+        return Carbon::today()->gt(Carbon::parse($this->tenggat));
+    }
+
+    // ========== SCOPE ==========
+
+    public function scopeDipinjam($query)
+    {
+        return $query->where('status', 'Dipinjam');
+    }
+
+    public function scopeTerlambat($query)
+    {
+        return $query->where('status', 'Dipinjam')
+            ->where('tenggat', '<', Carbon::today());
+    }
+
+    public function scopeByUser($query, $userId)
+    {
+        return $query->where('id_user', $userId);
+    }
 }

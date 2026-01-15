@@ -1,5 +1,5 @@
 @extends('layouts.backend')
-@section('title', 'E-Perpus - wDaftar Buku')
+@section('title', 'E-Perpus - Daftar Buku')
 @section('content')
 <div class="col-md-12">
   <nav aria-label="breadcrumb">

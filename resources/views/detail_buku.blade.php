@@ -778,6 +778,15 @@
                                     <i class="bi bi-heart"></i>
                                 </button>
                             </div>
+                            <div class="action-session">
+                                <form action="{{ route('keranjang.tambah', $buku->id) }}" method="POST">
+    @csrf
+    <button class="btn btn-primary btn-sm">
+        Tambah ke Keranjang
+    </button>
+</form>
+
+                            </div>
 
                             {{-- Share Section --}}
                             <div class="share-section">

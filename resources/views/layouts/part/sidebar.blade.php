@@ -107,6 +107,12 @@ document.addEventListener("DOMContentLoaded", function () {
         <div data-i18n="Basic">Pengembalian</div>
       </a>
     </li>
+    <li class="menu-item {{ Request::is('perpanjangan*') ? 'active' : '' }}">
+      <a href="{{ route('petugas.perpanjangan.pending') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-time"></i>
+        <div data-i18n="Basic">Perpanjangan</div>
+      </a>
+    </li>
 
     @if(Auth::user()->role == 'petugas' || Auth::user()->role == 'admin')
 <li class="menu-item {{ request()->routeIs('acc') ? 'active' : '' }}">
