@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('penerbit');
             $table->year('tahun_terbit');
             $table->unsignedBigInteger('id_kategori');
-            $table->string('foto');
+            $table->string('foto')->nullable();
             $table->text('deskripsi')->nullable();
             $table->unsignedBigInteger('id_lokasi');
             $table->unsignedBigInteger('stok')->default(0);

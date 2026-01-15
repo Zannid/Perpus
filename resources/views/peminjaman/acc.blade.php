@@ -65,7 +65,13 @@
                 <td>{{ $no++ }}</td>
                 <td class="kode">{{ $data->kode_peminjaman }}</td>
                 <td class="nama">{{ $data->user->name ?? '-' }}</td>
-                <td class="buku">{{ $data->buku->judul ?? '-' }}</td>
+                <td class="buku">
+                  @if($data->details->count() > 1)
+                    <span class="badge bg-primary">{{ $data->details->count() }} Buku</span>
+                  @else
+                    {{ optional($data->buku)->judul ?? '-' }}
+                  @endif
+                </td>
                 <td>{{ $data->jumlah }}</td>
                 <td>{{ $data->formatted_tanggal_pinjam ?? $data->tgl_pinjam }}</td>
                 <td>{{ $data->formatted_tanggal_kembali ?? $data->tenggat }}</td>
@@ -112,8 +118,13 @@
 
                         <div class="alert alert-warning">
                           <strong>Peminjam:</strong> {{ $data->user->name }} <br>
-                          <strong>Buku:</strong> {{ $data->buku->judul }} <br>
-                          <strong>Jumlah:</strong> {{ $data->jumlah }} eksemplar
+                          <strong>Buku:</strong>
+                          <ul class="mb-0">
+                            @foreach($data->details as $detail)
+                              <li>{{ optional($detail->buku)->judul ?? '-' }} ({{ $detail->jumlah }})</li>
+                            @endforeach
+                          </ul>
+                          <strong>Total:</strong> {{ $data->jumlah }} eksemplar
                         </div>
 
                         <div class="mb-3">

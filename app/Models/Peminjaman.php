@@ -64,6 +64,21 @@ class Peminjaman extends Model
     }
 
     /**
+     * Relasi ke satu buku pertama (untuk compatibility with('buku'))
+     */
+    public function buku()
+    {
+        return $this->hasOneThrough(
+            Buku::class,
+            DetailPeminjaman::class,
+            'peminjaman_id',
+            'id',
+            'id',
+            'buku_id'
+        );
+    }
+
+    /**
      * Accessor untuk mendapatkan buku pertama (backward compatibility)
      * Gunakan ini jika kode lama masih pakai $peminjaman->buku
      */
@@ -107,6 +122,11 @@ class Peminjaman extends Model
         return $this->hasMany(Perpanjangan::class, 'id_peminjaman')
             ->where('status', 'Disetujui')
             ->orderBy('created_at', 'desc');
+    }
+
+    public function getJumlahAttribute()
+    {
+        return $this->details->sum('jumlah') ?: $this->jumlah_keseluruhan;
     }
 
     // ========== ACCESSOR ==========

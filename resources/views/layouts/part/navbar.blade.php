@@ -101,7 +101,7 @@
                                 @endif
                             </span>
                             <small class="text-muted">
-                                Mengajukan peminjaman: {{ Str::limit($notif->buku->judul, 30) }}
+                                Mengajukan peminjaman: {{ Str::limit(optional($notif->buku)->judul ?? '-', 30) }}
                             </small>
                             <br>
                             <small class="text-muted">{{ $notif->created_at->diffForHumans() }}</small>

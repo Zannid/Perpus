@@ -5,7 +5,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class perpanjangan extends Model
+class Perpanjangan extends Model
 {
     use HasFactory;
 

@@ -16,9 +16,9 @@ class PengembalianController extends Controller
         $query = Pengembalian::with(['peminjaman', 'user', 'buku']);
 
         if (auth()->check() && auth()->user()->role === 'user') {
-            $query = Peminjaman::with(['buku', 'user'])->where('id_user', auth()->id());
+            $query = Pengembalian::with(['peminjaman', 'user', 'buku'])->where('id_user', auth()->id());
         } else {
-            $query = Peminjaman::with(['buku', 'user']);
+            $query = Pengembalian::with(['peminjaman', 'user', 'buku']);
         }
 
         if (! empty($search)) {
@@ -44,10 +44,10 @@ class PengembalianController extends Controller
         $tanggalAkhir = $request->input('tanggal_akhir');
 
         if (auth()->check() && auth()->user()->role === 'user') {
-            $query = Peminjaman::with(['buku', 'user'])
+            $query = Peminjaman::with(['details.buku', 'user'])
                 ->where('id_user', auth()->id());
         } else {
-            $query = Peminjaman::with(['buku', 'user']);
+            $query = Peminjaman::with(['details.buku', 'user']);
         }
 
         // ✅ FILTER STATUS HANYA "kembali", "lunas", "denda"
@@ -76,7 +76,7 @@ class PengembalianController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->whereHas('user', function ($q) use ($search) {
                     $q->where('name', 'LIKE', "%$search%");
-                })->orWhereHas('buku', function ($q) use ($search) {
+                })->orWhereHas('details.buku', function ($q) use ($search) {
                     $q->where('judul', 'LIKE', "%$search%");
                 })->orWhere('status', 'LIKE', "%$search%");
             });

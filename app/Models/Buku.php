@@ -41,9 +41,9 @@ class Buku extends Model
         return $this->ratings()->avg('rating');
     }
 
-    public function peminjamanItem()
+    public function details()
     {
-        return $this->hasMany(PeminjamanItem::class, 'id_buku');
+        return $this->hasMany(DetailPeminjaman::class, 'buku_id');
     }
 
 

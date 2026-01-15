@@ -71,12 +71,14 @@
                                     <div class="collapse mt-2" id="bukuList{{ $data->id }}">
                                         <ul class="list-unstyled mb-0 small">
                                             @foreach($data->details as $detail)
-                                                <li>• {{ $detail->buku->judul ?? '-' }} ({{ $detail->jumlah }}x)</li>
+                                                <li>• {{ optional($detail->buku)->judul ?? '-' }} ({{ $detail->jumlah }}x)</li>
                                             @endforeach
                                         </ul>
                                     </div>
+                                @elseif($data->details->count() == 1)
+                                    {{ Str::limit(optional($data->details->first()->buku)->judul ?? '-', 30) }}
                                 @else
-                                    {{ Str::limit($data->details->first()->buku->judul ?? '-', 30) }}
+                                    <span class="text-muted">-</span>
                                 @endif
                             </td>
                             <td class="text-center">{{ $data->details->sum('jumlah') }}</td>

@@ -74,29 +74,41 @@
           </table>
         </div>
 
-        {{-- Info Buku --}}
-        <div class="col-md-6 mb-3">
+        {{-- Daftar Buku --}}
+        <div class="col-md-12 mb-3">
           <h6 class="text-primary fw-bold mb-3">
-            <i class="bx bx-book me-1"></i>Informasi Buku
+            <i class="bx bx-book me-1"></i>Informasi Buku ({{ $peminjaman->details->count() }})
           </h6>
-          <table class="table table-borderless">
-            <tr>
-              <td width="40%"><strong>Judul Buku</strong></td>
-              <td>: {{ $peminjaman->buku->judul ?? '-' }}</td>
-            </tr>
-            <tr>
-              <td><strong>Penulis</strong></td>
-              <td>: {{ $peminjaman->buku->penulis ?? '-' }}</td>
-            </tr>
-            <tr>
-              <td><strong>Penerbit</strong></td>
-              <td>: {{ $peminjaman->buku->penerbit ?? '-' }}</td>
-            </tr>
-            <tr>
-              <td><strong>Jumlah Dipinjam</strong></td>
-              <td>: {{ $peminjaman->jumlah }} eksemplar</td>
-            </tr>
-          </table>
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+              <thead class="table-light">
+                <tr>
+                  <th>No</th>
+                  <th>Judul Buku</th>
+                  <th>Penulis</th>
+                  <th>Penerbit</th>
+                  <th class="text-center">Jumlah</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach($peminjaman->details as $index => $detail)
+                <tr>
+                  <td>{{ $index + 1 }}</td>
+                  <td>{{ optional($detail->buku)->judul ?? '-' }}</td>
+                  <td>{{ optional($detail->buku)->penulis ?? '-' }}</td>
+                  <td>{{ optional($detail->buku)->penerbit ?? '-' }}</td>
+                  <td class="text-center">{{ $detail->jumlah }}</td>
+                </tr>
+                @endforeach
+              </tbody>
+              <tfoot class="table-light fw-bold">
+                <tr>
+                  <td colspan="4" class="text-end">Total Jumlah :</td>
+                  <td class="text-center">{{ $peminjaman->jumlah }}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         </div>
 
         {{-- Tanggal --}}

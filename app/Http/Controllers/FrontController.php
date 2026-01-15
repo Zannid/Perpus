@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Buku;
-use App\Models\Peminjaman;
-
 use App\Models\Kategori;
 use App\Models\About;
 
@@ -19,7 +17,7 @@ class FrontController extends Controller
     $buku = Buku::with('kategori')->get();
     $kategori = Kategori::all();
 
-    $bukuTerpopuler = Buku::withCount('PeminjamanItem')
+    $bukuTerpopuler = Buku::withCount('details')
         // ->orderBy('peminjaman_count', 'DESC')
         ->take(3)
         ->get();

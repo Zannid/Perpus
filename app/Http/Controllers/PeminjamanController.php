@@ -37,9 +37,9 @@ class PeminjamanController extends Controller
         $tanggalAkhir = $request->input('tanggal_akhir');
 
         if (auth()->check() && auth()->user()->role === 'user') {
-            $query = Peminjaman::with(['buku', 'user'])->where('id_user', auth()->id());
+            $query = Peminjaman::with(['details.buku', 'user', 'rating'])->where('id_user', auth()->id());
         } else {
-            $query = Peminjaman::with(['buku', 'user']);
+            $query = Peminjaman::with(['details.buku', 'user', 'rating']);
         }
 
         if ($tanggalAwal || $tanggalAkhir) {
@@ -62,11 +62,14 @@ class PeminjamanController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->get('search');
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%$search%");
-            })->orWhereHas('buku', function ($q) use ($search) {
-                $q->where('judul', 'LIKE', "%$search%");
-            })->orWhere('status', 'LIKE', "%$search%");
+            $query->where(function($q) use ($search) {
+                $q->whereHas('user', function ($q2) use ($search) {
+                    $q2->where('name', 'LIKE', "%$search%");
+                })->orWhereHas('details.buku', function ($q2) use ($search) {
+                    $q2->where('judul', 'LIKE', "%$search%");
+                })->orWhere('status', 'LIKE', "%$search%")
+                  ->orWhere('kode_peminjaman', 'LIKE', "%$search%");
+            });
         }
 
         $peminjaman = $query->orderByDesc('id')->paginate(5);
@@ -82,7 +85,8 @@ class PeminjamanController extends Controller
 
                 if ($today->gt($due)) {
                     $daysLate    = $due->diffInDays($today);
-                    $data->denda = $daysLate * 2000 * $data->jumlah; // contoh Rp 2000 per hari per buku
+                    $totalJumlah = $data->details->sum('jumlah') ?: $data->jumlah_keseluruhan ?: 1;
+                    $data->denda = $daysLate * 2000 * $totalJumlah; // contoh Rp 2000 per hari per buku
                 } else {
                     $data->denda = 0;
                 }
@@ -124,13 +128,19 @@ class PeminjamanController extends Controller
         ]);
 
         $peminjaman = Peminjaman::create([
-            'kode_peminjaman' => $kodePinjam,
-            'tgl_pinjam'      => $request->tgl_pinjam,
-            'tenggat'         => $request->tenggat,
-            'jumlah'          => $request->jumlah,
-            'id_user'         => auth()->id(),
-            'id_buku'         => $request->id_buku,
-            'status'          => "Pending",
+            'kode_peminjaman'   => $kodePinjam,
+            'tgl_pinjam'        => $request->tgl_pinjam,
+            'tenggat'           => $request->tenggat,
+            'jumlah_keseluruhan' => $request->jumlah,
+            'id_user'           => auth()->id(),
+            'status'            => "Pending",
+        ]);
+
+        // Simpan ke detail
+        \App\Models\DetailPeminjaman::create([
+            'peminjaman_id' => $peminjaman->id,
+            'buku_id'       => $request->id_buku,
+            'jumlah'        => $request->jumlah,
         ]);
         // event(new PeminjamanCreated($peminjaman));
         event(new PeminjamanDiajukan($peminjaman));
@@ -146,9 +156,9 @@ class PeminjamanController extends Controller
 
         // Query sama seperti index(), tanpa pagination
         if (auth()->check() && auth()->user()->role === 'user') {
-            $query = Peminjaman::with(['buku', 'user'])->where('id_user', auth()->id());
+            $query = Peminjaman::with(['details.buku', 'user'])->where('id_user', auth()->id());
         } else {
-            $query = Peminjaman::with(['buku', 'user']);
+            $query = Peminjaman::with(['details.buku', 'user']);
         }
 
         if ($tanggalAwal || $tanggalAkhir) {
@@ -174,7 +184,7 @@ class PeminjamanController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->whereHas('user', function ($q) use ($search) {
                     $q->where('name', 'LIKE', "%$search%");
-                })->orWhereHas('buku', function ($q) use ($search) {
+                })->orWhereHas('details.buku', function ($q) use ($search) {
                     $q->where('judul', 'LIKE', "%$search%");
                 })->orWhere('status', 'LIKE', "%$search%");
             });
@@ -320,7 +330,7 @@ class PeminjamanController extends Controller
     public function reject(Request $request, $id)
     {
         try {
-            $peminjaman = Peminjaman::with(['user', 'buku'])->findOrFail($id);
+            $peminjaman = Peminjaman::with(['user', 'details.buku'])->findOrFail($id);
 
             // Validasi alasan penolakan
             $request->validate([
@@ -340,10 +350,11 @@ class PeminjamanController extends Controller
 
             // Kirim notifikasi ke tabel notifications (untuk bell icon)
             try {
-                Notification::create([
-                    'user_id' => $peminjaman->user_id,
+                $judulBuku = $peminjaman->details->first()->buku->judul ?? 'Buku';
+                \App\Models\Notification::create([
+                    'user_id' => $peminjaman->id_user ?? $peminjaman->user_id,
                     'title'   => 'Peminjaman Ditolak ✗',
-                    'message' => "Pengajuan peminjaman buku '{$peminjaman->buku->judul}' ditolak. Alasan: {$alasanTolak}",
+                    'message' => "Pengajuan peminjaman buku '{$judulBuku}' ditolak. Alasan: {$alasanTolak}",
                     'type' => 'danger',
                     'link' => route('peminjaman.show', $peminjaman->id),
                 ]);
@@ -371,7 +382,7 @@ class PeminjamanController extends Controller
 
     public function Pending(Request $request)
     {
-        $query = Peminjaman::with(['user', 'buku'])
+        $query = Peminjaman::with(['user', 'details.buku'])
             ->where('status', 'Pending');
 
         if ($request->has('search') && $request->search != '') {
@@ -381,7 +392,7 @@ class PeminjamanController extends Controller
                     ->orWhereHas('user', function ($q2) use ($search) {
                         $q2->where('name', 'like', "%{$search}%");
                     })
-                    ->orWhereHas('buku', function ($q3) use ($search) {
+                    ->orWhereHas('details.buku', function ($q3) use ($search) {
                         $q3->where('judul', 'like', "%{$search}%");
                     });
             });
@@ -399,8 +410,13 @@ class PeminjamanController extends Controller
 
     public function return (Request $request, $id)
     {
-        $peminjaman = Peminjaman::findOrFail($id);
-        $buku       = Buku::findOrFail($peminjaman->id_buku);
+        $peminjaman = Peminjaman::with('details.buku')->findOrFail($id);
+        $firstDetail = $peminjaman->details->first();
+        $buku       = $firstDetail ? $firstDetail->buku : null;
+
+        if (!$buku && $request->kondisi != "Hilang") {
+             return back()->with('error', 'Data buku tidak ditemukan.');
+        }
 
         $today    = Carbon::now();
         $denda    = 0;
@@ -426,23 +442,27 @@ class PeminjamanController extends Controller
         }
 
         // total denda = denda per buku * jumlah buku yang dipinjam
-        $denda  = $denda * $peminjaman->jumlah;
+        $totalJumlah = $peminjaman->details->sum('jumlah') ?: $peminjaman->jumlah_keseluruhan ?: 1;
+        $denda  = $denda * $totalJumlah;
 
-        // jika tidak hilang, kembalikan stok
+        // jika tidak hilang, kembalikan stok untuk semua buku
         if ($request->kondisi != "Hilang") {
-            $buku->stok += $peminjaman->jumlah;
-            $buku->save();
+            foreach ($peminjaman->details as $detail) {
+                if ($detail->buku) {
+                    $detail->buku->increment('stok', $detail->jumlah);
+                }
+            }
         }
 
         // simpan ke tabel pengembalian
         pengembalian::create([
             'id_peminjaman' => $peminjaman->id,
-            'id_user'       => $peminjaman->id_user,
-            'id_buku'       => $peminjaman->id_buku,
+            'id_user'       => $peminjaman->id_user ?? $peminjaman->user_id,
+            'id_buku'       => $firstDetail ? $firstDetail->buku_id : null,
             'tgl_pinjam'    => $peminjaman->tgl_pinjam,
             'tenggat'       => $peminjaman->tenggat,
             'tgl_kembali'   => $today,
-            'jumlah'        => $peminjaman->jumlah,
+            'jumlah'        => $totalJumlah,
             'kondisi'       => $request->kondisi,
             'denda'         => $denda,
         ]);
@@ -469,12 +489,15 @@ class PeminjamanController extends Controller
             $peminjaman = Peminjaman::findOrFail($id);
 
             if ($peminjaman->status === "Dipinjam") {
-                $buku = Buku::findOrFail($peminjaman->id_buku);
-                $buku->increment('stok', $peminjaman->jumlah);
+                foreach ($peminjaman->details as $detail) {
+                    if ($detail->buku) {
+                        $detail->buku->increment('stok', $detail->jumlah);
+                    }
+                }
 
                 $peminjaman->delete();
                 return redirect()->route('peminjaman.index')
-                    ->with('success', 'Peminjaman berhasil dihapus dan stok dikembalikan (' . $peminjaman->jumlah . ' buku)');
+                    ->with('success', 'Peminjaman berhasil dihapus dan stok dikembalikan');
             }
 
             $peminjaman->delete();
@@ -578,17 +601,31 @@ class PeminjamanController extends Controller
         $peminjaman = Peminjaman::findOrFail($id);
         $request->validate([
             'id_buku'    => 'required|exists:bukus,id',
-            'tgl_pinjam' => 'required|date|after_or_equal:today',
+            'tgl_pinjam' => 'required|date',
             'jumlah'     => 'required|integer|min:1',
         ]);
         $tglPinjam = Carbon::parse($request->tgl_pinjam);
         $tenggat   = $tglPinjam->copy()->addDays(7);
         $peminjaman->update([
-            'id_buku'    => $request->id_buku,
-            'tgl_pinjam' => $tglPinjam,
-            'tenggat'    => $tenggat,
-            'jumlah'     => $request->jumlah,
+            'tgl_pinjam'        => $tglPinjam,
+            'tenggat'           => $tenggat,
+            'jumlah_keseluruhan' => $request->jumlah,
         ]);
+
+        // Update detail (assuming single book for now in edit)
+        $detail = $peminjaman->details()->first();
+        if ($detail) {
+            $detail->update([
+                'buku_id' => $request->id_buku,
+                'jumlah'  => $request->jumlah,
+            ]);
+        } else {
+            \App\Models\DetailPeminjaman::create([
+                'peminjaman_id' => $peminjaman->id,
+                'buku_id'       => $request->id_buku,
+                'jumlah'        => $request->jumlah,
+            ]);
+        }
         return redirect()->route('peminjaman.index')
             ->with('success', 'Peminjaman berhasil diperbarui');
     }
@@ -611,13 +648,23 @@ class PeminjamanController extends Controller
 
         // Simpan peminjaman baru (status Pending)
         $peminjaman             = new Peminjaman();
-        $peminjaman->id_buku    = $buku->id;
         $peminjaman->id_user    = auth()->id();
-        $peminjaman->jumlah     = $request->jumlah;
+        $peminjaman->jumlah_keseluruhan = $request->jumlah;
         $peminjaman->tgl_pinjam = null;
         $peminjaman->tenggat    = null;
         $peminjaman->status     = 'Pending';
+        
+        $lastId = Peminjaman::max('id') ?? 0;
+        $peminjaman->kode_peminjaman = 'PJM-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
+        
         $peminjaman->save();
+
+        // Simpan detail
+        \App\Models\DetailPeminjaman::create([
+            'peminjaman_id' => $peminjaman->id,
+            'buku_id'       => $buku->id,
+            'jumlah'        => $request->jumlah,
+        ]);
 
         return response()->json([
             'success' => true,
@@ -640,14 +687,19 @@ class PeminjamanController extends Controller
             $lastId = Peminjaman::max('id') ?? 0;
             $kode   = 'PJM-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
 
-            Peminjaman::create([
-                'kode_peminjaman' => $kode,
-                'id_user'         => auth()->id(),
-                'id_buku'         => $buku->id,
-                'jumlah'          => 1,
-                'tgl_pinjam'      => null,
-                'tenggat'         => null,
-                'status'          => 'Pending',
+            $peminjaman = Peminjaman::create([
+                'kode_peminjaman'   => $kode,
+                'id_user'           => auth()->id(),
+                'jumlah_keseluruhan' => 1,
+                'tgl_pinjam'        => null,
+                'tenggat'           => null,
+                'status'            => 'Pending',
+            ]);
+
+            \App\Models\DetailPeminjaman::create([
+                'peminjaman_id' => $peminjaman->id,
+                'buku_id'       => $buku->id,
+                'jumlah'        => 1,
             ]);
 
             $buku->decrement('stok');
@@ -660,7 +712,7 @@ class PeminjamanController extends Controller
 
     public function showRating($id)
     {
-        $peminjaman = Peminjaman::with(['buku', 'user'])->findOrFail($id);
+        $peminjaman = Peminjaman::with(['details.buku', 'user'])->findOrFail($id);
 
         // Cek apakah sudah diberi rating
         if ($peminjaman->rating) {
@@ -673,7 +725,7 @@ class PeminjamanController extends Controller
 
     public function show($id)
     {
-        $peminjaman = Peminjaman::with(['user', 'buku'])->findOrFail($id);
+        $peminjaman = Peminjaman::with(['user', 'details.buku'])->findOrFail($id);
         return view('peminjaman.show', compact('peminjaman'));
     }
 

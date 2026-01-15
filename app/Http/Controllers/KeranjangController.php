@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Buku;
 use App\Models\Peminjaman;
-use App\Models\PeminjamanItem;
+use App\Models\DetailPeminjaman;
 
 class KeranjangController extends Controller
 {
@@ -61,11 +61,11 @@ class KeranjangController extends Controller
             'status'          => 'Pending',
         ]);
 
-        // 2️⃣ Masukkan semua buku ke peminjaman_item
+        // 2️⃣ Masukkan semua buku ke detail_peminjaman
         foreach ($cart as $item) {
-            PeminjamanItem::create([
+            DetailPeminjaman::create([
                 'peminjaman_id' => $peminjaman->id,
-                'id_buku'       => $item['id_buku'],
+                'buku_id'       => $item['id_buku'],
                 'jumlah'        => $item['jumlah'],
             ]);
         }

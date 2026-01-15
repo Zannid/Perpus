@@ -16,7 +16,7 @@ class PerpanjanganController extends Controller
     public function store(Request $request, $peminjamanId)
     {
         try {
-            $peminjaman = Peminjaman::with(['buku', 'user'])->findOrFail($peminjamanId);
+            $peminjaman = Peminjaman::with(['details.buku', 'user'])->findOrFail($peminjamanId);
 
             Log::info('Store Perpanjangan - Start', [
                 'peminjaman_id'      => $peminjamanId,
@@ -87,7 +87,7 @@ class PerpanjanganController extends Controller
      */
     public function pending()
     {
-        $perpanjangan = Perpanjangan::with(['peminjaman.user', 'peminjaman.buku'])
+        $perpanjangan = Perpanjangan::with(['peminjaman.user', 'peminjaman.details.buku'])
             ->where('status', 'Pending')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -101,7 +101,7 @@ class PerpanjanganController extends Controller
     public function approve($id)
     {
         try {
-            $perpanjangan = Perpanjangan::with(['peminjaman.user', 'peminjaman.buku'])
+            $perpanjangan = Perpanjangan::with(['peminjaman.user', 'peminjaman.details.buku'])
                 ->findOrFail($id);
 
             Log::info('Approve Perpanjangan - Start', ['id' => $id]);
@@ -159,7 +159,7 @@ class PerpanjanganController extends Controller
     public function reject(Request $request, $id)
     {
         try {
-            $perpanjangan = Perpanjangan::with(['peminjaman.user', 'peminjaman.buku'])
+            $perpanjangan = Perpanjangan::with(['peminjaman.user', 'peminjaman.details.buku'])
                 ->findOrFail($id);
 
             Log::info('Reject Perpanjangan - Start', ['id' => $id]);
@@ -213,7 +213,7 @@ class PerpanjanganController extends Controller
     public function history($peminjamanId)
     {
         try {
-            $peminjaman = Peminjaman::with(['perpanjangan', 'buku'])->findOrFail($peminjamanId);
+            $peminjaman = Peminjaman::with(['perpanjangan', 'details.buku'])->findOrFail($peminjamanId);
 
             // Validasi: hanya pemilik yang bisa lihat
             if ($peminjaman->id_user !== auth()->id()) {

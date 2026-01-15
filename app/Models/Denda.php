@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class denda extends Model
+class Denda extends Model
 {
     //
 }
