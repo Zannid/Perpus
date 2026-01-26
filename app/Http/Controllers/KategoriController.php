@@ -84,10 +84,17 @@ class KategoriController extends Controller
      */
     public function destroy(string $id)
     {
-        $kategori                = Kategori::findOrFail($id);
-        $kategori->delete();
-        session()->flash('success', 'Data Berhasil Dihapus');
-        return redirect()->route('kategori.index');
+        $kategori = Kategori::withCount('buku')->findOrFail($id);
 
+        if ($kategori->buku_count > 0) {
+            return redirect()->route('kategori.index')
+                ->with('error', 'Kategori tidak dapat dihapus karena masih digunakan oleh buku');
+        }
+
+        $kategori->delete();
+
+        return redirect()->route('kategori.index')
+            ->with('success', 'Data Berhasil Dihapus');
     }
+
 }

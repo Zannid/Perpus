@@ -47,7 +47,6 @@ class BukuController extends Controller
 
     public function store(Request $request)
     {
-        // ✅ Validasi input
         $validated = $request->validate([
             'judul'        => 'required|string|max:255',
             'penulis'      => 'required|string|max:255',
@@ -115,7 +114,7 @@ class BukuController extends Controller
             'id_lokasi'    => 'required|exists:lokasis,id',
             'stok'         => 'required|integer|min:0',
             'deskripsi'    => 'nullable|string',
-            'foto'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048|width:300,height:400',
+            'foto'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $buku = Buku::findOrFail($id);

@@ -5,6 +5,12 @@
   <div class="col-md-10">
 
     {{-- Breadcrumb --}}
+    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb bg-light p-3 rounded shadow-sm mb-3">
         <li class="breadcrumb-item">

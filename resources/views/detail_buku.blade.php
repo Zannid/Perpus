@@ -766,14 +766,18 @@
 
                             {{-- Action Buttons --}}
                             <div class="action-section">
-                                <form action="{{ route('peminjaman.storeAuto') }}" method="POST" style="flex: 1;">
+                               <form action="{{ route('keranjang.tambah', $buku->id) }}" method="POST" style="flex: 1;">
                                     @csrf
-                                    <input type="hidden" name="id" value="{{ $buku->id }}">
-                                    <button type="submit" class="btn-borrow" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
+
+                                    <button type="submit"
+                                        class="btn-borrow"
+                                        {{ $buku->stok <= 0 ? 'disabled' : '' }}>
+
                                         <i class="bi bi-bookmark-plus-fill"></i>
-                                        {{ $buku->stok > 0 ? 'Pinjam Buku Sekarang' : 'Stok Habis' }}
+                                        {{ $buku->stok > 0 ? 'Tambah ke Keranjang' : 'Stok Habis' }}
                                     </button>
                                 </form>
+
                                 <button type="button" class="btn-wishlist" title="Tambah ke Wishlist">
                                     <i class="bi bi-heart"></i>
                                 </button>

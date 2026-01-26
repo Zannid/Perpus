@@ -20,6 +20,7 @@ use App\Http\Controllers\RatingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PerpanjanganController;
 use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\KatalogController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +31,7 @@ Route::get('/login', function () {
 });
 
 
-
+Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog');
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetCode'])->name('password.email');
 Route::get('/verify-code', [ForgotPasswordController::class, 'showVerifyForm'])->name('password.verify');
@@ -256,12 +257,38 @@ Route::middleware(['auth'])->group(function () {
 
     });
 });
-
-Route::middleware('auth')->group(function () {
-    Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
-    Route::post('/keranjang/tambah/{id}', [KeranjangController::class, 'tambah'])->name('keranjang.tambah');
-    Route::post('/keranjang/kurang/{id}', [KeranjangController::class, 'kurang'])->name('keranjang.kurang');
-    Route::post('/keranjang/hapus/{id}', [KeranjangController::class, 'hapus'])->name('keranjang.hapus');
-    Route::post('/keranjang/submit', [KeranjangController::class, 'submit'])->name('keranjang.submit');
+Route::middleware(['auth'])->prefix('keranjang')->name('keranjang.')->group(function () {
+    // Halaman keranjang
+    Route::get('/', [KeranjangController::class, 'index'])->name('index');
+    
+    // Tambah buku (non-ajax - fallback)
+    Route::get('/tambah/{id}', [KeranjangController::class, 'tambah'])->name('tambah');
+    
+    // Kurang jumlah (non-ajax - fallback)
+    Route::get('/kurang/{id}', [KeranjangController::class, 'kurang'])->name('kurang');
+    
+    // Hapus buku (non-ajax - fallback)
+    Route::get('/hapus/{id}', [KeranjangController::class, 'hapus'])->name('hapus');
+    
+    // Submit peminjaman
+    Route::post('/submit', [KeranjangController::class, 'submit'])->name('submit');
 });
+
+// ========================================
+// ROUTES CART AJAX (NEW)
+// ========================================
+Route::middleware(['auth'])->prefix('cart')->name('cart.')->group(function () {
+    // Tambah ke keranjang (AJAX)
+    Route::post('/add', [KeranjangController::class, 'tambahAjax'])->name('add');
+    
+    // Update quantity (AJAX)
+    Route::post('/update-quantity', [KeranjangController::class, 'updateQuantity'])->name('update.quantity');
+    
+    // Remove item (AJAX)
+    Route::post('/remove', [KeranjangController::class, 'removeItem'])->name('remove');
+    
+    // Get cart info (AJAX - untuk refresh manual)
+    Route::get('/info', [KeranjangController::class, 'getCartInfo'])->name('info');
+});
+Route::post('/keranjang/tambah-ajax', [KeranjangController::class, 'tambahAjax'])->name('keranjang.tambah-ajax')->middleware('auth');
 

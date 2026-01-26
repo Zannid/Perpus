@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\Models\Keranjang;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
@@ -49,5 +50,27 @@ class LoginController extends Controller
 
     return redirect('/login')->with('status', 'Anda berhasil logout.');
 }
+
+    protected function authenticated(Request $request, $user)
+    {
+        $cart = Keranjang::with('buku')
+            ->where('user_id', $user->id)
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [
+                    $item->buku_id => [
+                        'id_buku'   => $item->buku_id,
+                        'judul'     => $item->buku->judul,
+                        'kode_buku' => $item->buku->kode_buku,
+                        'foto'      => $item->buku->foto,
+                        'jumlah'    => $item->jumlah,
+                        'stok'      => $item->buku->stok,
+                    ]
+                ];
+            })->toArray();
+
+        session(['cart' => $cart]);
+    }
+
 
 }

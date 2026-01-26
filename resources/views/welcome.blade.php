@@ -229,12 +229,11 @@
                           </span>
                         </div>
                         <div class="book-actions">
-                          <form action="{{ route('keranjang.tambah', $b->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn-action btn-add-cart" title="Tambah ke Keranjang">
+                           <button type="button" class="btn-action btn-add-cart" 
+                                  data-buku-id="{{ $b->id }}" title="Tambah ke Keranjang">
                               <i class="bi bi-cart-plus"></i> Pinjam
-                            </button>
-                          </form>
+                          </button>
+
                           <a href="{{ route('detail_buku', $b->id) }}" class="btn-action btn-detail" title="Detail Buku">
                             <i class="bi bi-info-circle"></i> Detail
                           </a>
@@ -321,156 +320,8 @@
         </div>
       </div>
     </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features section">
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Fitur Unggulan</h2>
-        <p>E-Perpustakaan dilengkapi fitur canggih untuk memberikan pengalaman membaca dan peminjaman buku yang mudah, nyaman, dan efisien.</p>
-      </div>
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <div class="row align-items-center">
-
-          <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right" data-aos-delay="200">
-            <div class="features-content">
-              <h2>Akses Mudah ke Ribuan Koleksi Buku Digital</h2>
-              <p class="lead">Nikmati kemudahan mengakses ribuan buku dari berbagai kategori kapan saja dan dimana saja dengan koneksi internet.</p>
-            </div>
-          </div>
-
-          <div class="col-lg-6" data-aos="fade-left" data-aos-delay="300">
-            <div class="features-image">
-              <img src="{{ asset('assetsf/img/features/features-4.webp') }}" alt="Fitur E-Perpustakaan" class="img-fluid" loading="lazy">
-            </div>
-          </div>
-
-        </div>
-
-        <div class="features-grid" data-aos="fade-up" data-aos-delay="400">
-          <div class="feature-item" data-aos="zoom-in" data-aos-delay="100">
-            <div class="feature-icon">
-              <i class="bi bi-lightning-charge"></i>
-            </div>
-            <div class="feature-content">
-              <h4>Akses Cepat</h4>
-              <p>Sistem pencarian canggih untuk menemukan buku dalam hitungan detik dengan filter kategori, penulis, dan tahun terbit.</p>
-            </div>
-          </div>
-
-          <div class="feature-item" data-aos="zoom-in" data-aos-delay="200">
-            <div class="feature-icon">
-              <i class="bi bi-shield-check"></i>
-            </div>
-            <div class="feature-content">
-              <h4>Aman & Terpercaya</h4>
-              <p>Data dan privasi Anda terlindungi dengan sistem keamanan berlapis. Setiap transaksi tercatat dengan aman dan akurat.</p>
-            </div>
-          </div>
-
-          <div class="feature-item" data-aos="zoom-in" data-aos-delay="300">
-            <div class="feature-icon">
-              <i class="bi bi-gem"></i>
-            </div>
-            <div class="feature-content">
-              <h4>Koleksi Premium</h4>
-              <p>Akses koleksi buku berkualitas dari penerbit ternama, termasuk buku-buku langka dan edisi terbatas.</p>
-            </div>
-          </div>
-
-          <div class="feature-item" data-aos="zoom-in" data-aos-delay="400">
-            <div class="feature-icon">
-              <i class="bi bi-rocket-takeoff"></i>
-            </div>
-            <div class="feature-content">
-              <h4>Peminjaman Instan</h4>
-              <p>Proses peminjaman yang sangat mudah dan cepat. Hanya dengan beberapa klik, buku favorit siap dibaca.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-    </section><!-- /Features Section -->
-
     <!-- Features 2 Section -->
-    <section id="features-2" class="features-2 section">
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="features-list row gy-4">
-          <div class="col-md-6">
-            <div class="feature-item" data-aos="fade-up" data-aos-delay="100">
-              <div class="feature-icon">
-                <i class="bi bi-phone"></i>
-              </div>
-              <div class="feature-content">
-                <h4>Aplikasi Mobile Friendly</h4>
-                <p>Akses E-Perpustakaan melalui smartphone atau tablet Anda dengan tampilan yang responsif dan user-friendly untuk pengalaman membaca yang optimal di mana saja.</p>
-                <div class="feature-tags">
-                  <span>Responsif</span>
-                  <span>Mudah Digunakan</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="feature-item" data-aos="fade-up" data-aos-delay="200">
-              <div class="feature-icon">
-                <i class="bi bi-bell"></i>
-              </div>
-              <div class="feature-content">
-                <h4>Notifikasi Otomatis</h4>
-                <p>Dapatkan pengingat otomatis tentang batas waktu pengembalian buku, ketersediaan buku yang Anda inginkan, dan update koleksi terbaru di perpustakaan.</p>
-                <div class="feature-tags">
-                  <span>Tepat Waktu</span>
-                  <span>Informatif</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="feature-item" data-aos="fade-up" data-aos-delay="300">
-              <div class="feature-icon">
-                <i class="bi bi-bookmark"></i>
-              </div>
-              <div class="feature-content">
-                <h4>Bookmark & Histori</h4>
-                <p>Simpan halaman favorit Anda dan lihat riwayat bacaan untuk melanjutkan membaca dari terakhir kali Anda berhenti. Semua tersinkronisasi di semua perangkat.</p>
-                <div class="feature-tags">
-                  <span>Praktis</span>
-                  <span>Tersinkronisasi</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="feature-item" data-aos="fade-up" data-aos-delay="400">
-              <div class="feature-icon">
-                <i class="bi bi-star"></i>
-              </div>
-              <div class="feature-content">
-                <h4>Rating & Review</h4>
-                <p>Baca review dari pembaca lain dan berikan penilaian Anda sendiri untuk membantu anggota lain menemukan buku-buku berkualitas yang sesuai minat mereka.</p>
-                <div class="feature-tags">
-                  <span>Komunitas</span>
-                  <span>Interaktif</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="cta-section" data-aos="fade-up" data-aos-delay="500">
-          <a href="#" class="btn-primary">Mulai Sekarang</a>
-          <a href="#" class="btn-secondary">Lihat Demo</a>
-        </div>
-      </div>
-
-    </section>
+  
 
     <!-- Contact Section -->
     <section id="contact" class="contact section light-background">
@@ -1567,6 +1418,59 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowLeft') moveSlide(-1);
   if (e.key === 'ArrowRight') moveSlide(1);
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+
+  $('.btn-add-cart').click(function(e){
+    e.preventDefault();
+    let bukuId = $(this).data('buku-id');
+
+    $.ajax({
+      url: '{{ route("keranjang.tambah-ajax") }}',
+      type: 'POST',
+      data: {
+        _token: '{{ csrf_token() }}',
+        buku_id: bukuId
+      },
+      success: function(res){
+        if(res.success){
+          // Update badge cart
+          $('.cart-badge').text(res.totalItems).show();
+
+          // Modal sukses
+          Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: res.message,
+            timer: 1500,
+            showConfirmButton: false
+          });
+        } else {
+          // Modal warning
+          Swal.fire({
+            icon: 'warning',
+            title: 'Gagal',
+            text: res.message,
+            timer: 1500,
+            showConfirmButton: false
+          });
+        }
+      },
+      error: function(xhr){
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Terjadi kesalahan, coba lagi!',
+        });
+      }
+    });
+
+  });
+
 });
 </script>
 @endsection

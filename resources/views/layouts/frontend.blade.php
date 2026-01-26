@@ -7,6 +7,7 @@
   <title>Home - E-Perpustakaan</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <!-- Favicons -->
     <link rel="icon" href="{{ asset('assets/img/logo1.png') }}" />  

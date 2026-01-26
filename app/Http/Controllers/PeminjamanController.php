@@ -1,13 +1,11 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Events\PeminjamanDiajukan;
 use App\Mail\PeminjamanRejected;
 use App\Mail\PeminjamanReminder;
 use App\Models\Buku;
 use App\Models\Notification as NotificationModel;
 use App\Models\Peminjaman;
-use App\Models\Pengembalian;
 use App\Models\Rating;
 use App\Models\User;
 use App\Notifications\PeminjamanApprovedNotification;
@@ -17,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 use Midtrans\Config;
 use Midtrans\Snap;
 
@@ -31,6 +28,7 @@ class PeminjamanController extends Controller
 
         return back()->with('success', 'Email pengingat berhasil dikirim ke user.');
     }
+
     public function index(Request $request)
     {
         $tanggalAwal  = $request->input('tanggal_awal');
@@ -62,13 +60,13 @@ class PeminjamanController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->get('search');
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->whereHas('user', function ($q2) use ($search) {
                     $q2->where('name', 'LIKE', "%$search%");
                 })->orWhereHas('details.buku', function ($q2) use ($search) {
                     $q2->where('judul', 'LIKE', "%$search%");
                 })->orWhere('status', 'LIKE', "%$search%")
-                  ->orWhere('kode_peminjaman', 'LIKE', "%$search%");
+                    ->orWhere('kode_peminjaman', 'LIKE', "%$search%");
             });
         }
 
@@ -78,7 +76,7 @@ class PeminjamanController extends Controller
             $data->formatted_tanggal_pinjam  = Carbon::parse($data->tgl_pinjam)->translatedFormat('l, d F Y');
             $data->formatted_tanggal_kembali = Carbon::parse($data->tenggat)->translatedFormat('l, d F Y');
 
-            // === HITUNG DENDA JIKA SUDAH LEWAT TENGGAT DAN MASIH DIPINJAM ===
+            // Hitung denda jika sudah lewat tenggat dan masih dipinjam
             if ($data->status === "Dipinjam") {
                 $today = Carbon::today();
                 $due   = Carbon::parse($data->tenggat);
@@ -86,7 +84,7 @@ class PeminjamanController extends Controller
                 if ($today->gt($due)) {
                     $daysLate    = $due->diffInDays($today);
                     $totalJumlah = $data->details->sum('jumlah') ?: $data->jumlah_keseluruhan ?: 1;
-                    $data->denda = $daysLate * 2000 * $totalJumlah; // contoh Rp 2000 per hari per buku
+                    $data->denda = $daysLate * 2000 * $totalJumlah;
                 } else {
                     $data->denda = 0;
                 }
@@ -130,7 +128,7 @@ class PeminjamanController extends Controller
         ]);
 
         $peminjaman = Peminjaman::create([
-            'kode_peminjaman'    => 'PMJ-' . Peminjaman::max('id') + 1,
+            'kode_peminjaman'    => 'PMJ-' . (Peminjaman::max('id') + 1),
             'id_user'            => $request->id_user,
             'tgl_pinjam'         => $request->tgl_pinjam,
             'tenggat'            => $request->tenggat,
@@ -145,6 +143,7 @@ class PeminjamanController extends Controller
                 'jumlah'        => $request->jumlah[$index],
             ]);
 
+            // PERBAIKAN: Stok hanya dikurangi jika status langsung Dipinjam
             if ($request->status == 'Dipinjam') {
                 Buku::find($bukuId)->decrement('stok', $request->jumlah[$index]);
             }
@@ -159,7 +158,6 @@ class PeminjamanController extends Controller
         $tanggalAwal  = $request->input('tanggal_awal');
         $tanggalAkhir = $request->input('tanggal_akhir');
 
-        // Query sama seperti index(), tanpa pagination
         if (auth()->check() && auth()->user()->role === 'user') {
             $query = Peminjaman::with(['details.buku', 'user'])->where('id_user', auth()->id());
         } else {
@@ -195,10 +193,8 @@ class PeminjamanController extends Controller
             });
         }
 
-        // Ambil semua data sesuai filter (tanpa pagination)
         $data = $query->orderByDesc('id')->get();
 
-        // Format tanggal agar rapi di PDF
         foreach ($data as $item) {
             $item->formatted_tanggal_pinjam  = Carbon::parse($item->tgl_pinjam)->translatedFormat('l, d F Y');
             $item->formatted_tanggal_kembali = Carbon::parse($item->tenggat)->translatedFormat('l, d F Y');
@@ -207,7 +203,6 @@ class PeminjamanController extends Controller
         $pdf = Pdf::loadView('pdf.peminjaman', ['data' => $data]);
 
         return $pdf->stream('laporan-data-peminjaman.pdf');
-
     }
 
     public function pay($id)
@@ -232,6 +227,7 @@ class PeminjamanController extends Controller
 
         return redirect()->route('peminjaman.index')->with('info', 'Tidak ada denda untuk peminjaman ini.');
     }
+
     public function approve(Request $request, $id)
     {
         Log::info('========== APPROVE START ==========');
@@ -248,9 +244,14 @@ class PeminjamanController extends Controller
                 'total_buku' => $peminjaman->details->count(),
             ]);
 
-            // ================= VALIDASI STOK =================
+            // PERBAIKAN: Validasi hanya untuk status Pending
+            if ($peminjaman->status !== 'Pending') {
+                return back()->with('error', 'Hanya peminjaman dengan status Pending yang dapat disetujui.');
+            }
+
+            // Validasi stok
             foreach ($peminjaman->details as $detail) {
-                if (! $detail->buku) {
+                if (!$detail->buku) {
                     return back()->with('error', 'Data buku tidak ditemukan.');
                 }
 
@@ -265,7 +266,7 @@ class PeminjamanController extends Controller
                 }
             }
 
-            // ================= KURANGI STOK =================
+            // Kurangi stok (karena sebelumnya tidak dikurangi saat Pending)
             foreach ($peminjaman->details as $detail) {
                 $detail->buku->decrement('stok', $detail->jumlah);
                 Log::info('Stok dikurangi', [
@@ -274,7 +275,7 @@ class PeminjamanController extends Controller
                 ]);
             }
 
-            // ================= UPDATE PEMINJAMAN =================
+            // Update peminjaman
             $tglPinjam = $request->tgl_pinjam ?: now()->toDateString();
             $tenggat   = $request->tenggat ?: now()->addDays(7)->toDateString();
 
@@ -287,7 +288,7 @@ class PeminjamanController extends Controller
 
             Log::info('Status peminjaman updated');
 
-            // ================= NOTIFIKASI BROADCAST =================
+            // Notifikasi broadcast
             try {
                 if ($peminjaman->user) {
                     $peminjaman->user->notify(
@@ -299,7 +300,7 @@ class PeminjamanController extends Controller
                 Log::error('Notif broadcast gagal: ' . $e->getMessage());
             }
 
-            // ================= NOTIFIKASI DATABASE =================
+            // Notifikasi database
             $judulBuku = $peminjaman->details
                 ->pluck('buku.judul')
                 ->implode(', ');
@@ -320,7 +321,7 @@ class PeminjamanController extends Controller
 
             Log::info('✓ Notifikasi database dibuat', ['id' => $notif->id]);
 
-            // ================= KIRIM EMAIL APPROVAL =================
+            // Kirim email approval
             if ($peminjaman->user && $peminjaman->user->email && filter_var($peminjaman->user->email, FILTER_VALIDATE_EMAIL)) {
                 try {
                     Mail::to($peminjaman->user->email)->send(new \App\Mail\PeminjamanApproved($peminjaman));
@@ -341,10 +342,6 @@ class PeminjamanController extends Controller
         }
     }
 
-    /**
-     * Tolak peminjaman + Kirim Notifikasi & Email
-     * Stok TIDAK DIKURANGI saat Ditolak
-     */
     public function reject(Request $request, $id)
     {
         try {
@@ -355,43 +352,48 @@ class PeminjamanController extends Controller
                 'alasan_tolak' => 'nullable|string|max:500',
             ]);
 
-            // ❌ TIDAK kurangi stok saat ditolak
-            // Karena peminjaman belum pernah di-ACC, stok tidak pernah berkurang
+            // PERBAIKAN: Cek status sebelum reject
+            if ($peminjaman->status !== 'Pending') {
+                return back()->with('error', 'Hanya peminjaman dengan status Pending yang dapat ditolak.');
+            }
+
+            // PERBAIKAN: Stok TIDAK perlu dikembalikan karena belum pernah dikurangi
+            // Saat status Pending, stok belum dikurangi, jadi tidak perlu increment
 
             $alasanTolak = $request->alasan_tolak ?? 'Peminjaman ditolak oleh petugas';
 
-            // Update status menjadi Ditolak dan tandai sebagai sudah dibaca
+            // Update status menjadi Ditolak
             $peminjaman->status       = "Ditolak";
             $peminjaman->status_baca  = true;
             $peminjaman->alasan_tolak = $alasanTolak;
             $peminjaman->save();
 
-            // Kirim notifikasi ke tabel notifications (untuk bell icon)
+            // Kirim notifikasi ke tabel notifications
             try {
                 $judulBuku = $peminjaman->details->pluck('buku.judul')->implode(', ');
                 \App\Models\Notification::create([
                     'user_id' => $peminjaman->id_user,
                     'title'   => 'Peminjaman Ditolak ✗',
                     'message' => "Pengajuan peminjaman buku '{$judulBuku}' ditolak. Alasan: {$alasanTolak}",
-                    'type' => 'danger',
-                    'link' => route('peminjaman.show', $peminjaman->id),
+                    'type'    => 'danger',
+                    'link'    => route('peminjaman.show', $peminjaman->id),
                 ]);
             } catch (\Exception $e) {
                 Log::error('Notif database gagal: ' . $e->getMessage());
             }
 
-            // Kirim email notifikasi (cek email valid dulu)
+            // Kirim email notifikasi
             if ($peminjaman->user && $peminjaman->user->email && filter_var($peminjaman->user->email, FILTER_VALIDATE_EMAIL)) {
                 try {
                     Mail::to($peminjaman->user->email)->send(new PeminjamanRejected($peminjaman));
-                    return back()->with('success', 'Peminjaman berhasil ditolak (stok tidak berkurang), notifikasi dan email telah dikirim');
+                    return back()->with('success', 'Peminjaman berhasil ditolak, notifikasi dan email telah dikirim');
                 } catch (\Exception $e) {
                     Log::error('Email gagal dikirim ke ' . $peminjaman->user->email . ': ' . $e->getMessage());
-                    return back()->with('warning', 'Peminjaman berhasil ditolak (stok tidak berkurang) dan notifikasi terkirim, tapi email gagal dikirim: ' . $e->getMessage());
+                    return back()->with('warning', 'Peminjaman berhasil ditolak dan notifikasi terkirim, tapi email gagal dikirim: ' . $e->getMessage());
                 }
             } else {
                 Log::warning('Email user tidak valid untuk peminjaman ID: ' . $peminjaman->id);
-                return back()->with('warning', 'Peminjaman berhasil ditolak (stok tidak berkurang) dan notifikasi terkirim, tapi user tidak memiliki email yang valid');
+                return back()->with('warning', 'Peminjaman berhasil ditolak dan notifikasi terkirim, tapi user tidak memiliki email yang valid');
             }
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -426,26 +428,26 @@ class PeminjamanController extends Controller
         return view('peminjaman.acc', compact('peminjaman'));
     }
 
-    public function return (Request $request, $id)
+    public function return(Request $request, $id)
     {
-        $peminjaman = Peminjaman::with('details.buku')->findOrFail($id);
+        $peminjaman  = Peminjaman::with('details.buku')->findOrFail($id);
         $firstDetail = $peminjaman->details->first();
-        $buku       = $firstDetail ? $firstDetail->buku : null;
+        $buku        = $firstDetail ? $firstDetail->buku : null;
 
         if (!$buku && $request->kondisi != "Hilang") {
-             return back()->with('error', 'Data buku tidak ditemukan.');
+            return back()->with('error', 'Data buku tidak ditemukan.');
         }
 
         $today    = Carbon::now();
         $denda    = 0;
         $daysLate = 0;
 
-        // hitung keterlambatan
+        // Hitung keterlambatan
         if ($today->greaterThan($peminjaman->tenggat)) {
             $daysLate = $today->diffInDays($peminjaman->tenggat);
         }
 
-        // tentukan denda per buku
+        // Tentukan denda per buku
         if ($request->kondisi == "Bagus") {
             if ($daysLate > 0) {
                 $denda = 10000 + ($daysLate * 2000);
@@ -459,26 +461,24 @@ class PeminjamanController extends Controller
             $denda = 50000;
         }
 
-        // total denda = denda per buku * jumlah buku
-        $dendaPerBuku = $denda;
+        $dendaPerBuku          = $denda;
         $totalDendaKeseluruhan = 0;
 
-        // Loop through all book details to create separate return records
+        // Loop semua detail buku untuk membuat record pengembalian terpisah
         foreach ($peminjaman->details as $detail) {
-            // Ensure book exists for the detail
             if (!$detail->buku && $request->kondisi != "Hilang") {
                 return back()->with('error', 'Data buku tidak ditemukan untuk salah satu detail peminjaman.');
             }
 
-            // jika tidak hilang, kembalikan stok
+            // Jika tidak hilang, kembalikan stok
             if ($request->kondisi != "Hilang" && $detail->buku) {
                 $detail->buku->increment('stok', $detail->jumlah);
             }
 
-            $dendaUntukDetail = $dendaPerBuku * $detail->jumlah;
+            $dendaUntukDetail       = $dendaPerBuku * $detail->jumlah;
             $totalDendaKeseluruhan += $dendaUntukDetail;
 
-            // simpan ke tabel pengembalian (satu record per buku detail)
+            // Simpan ke tabel pengembalian
             \App\Models\Pengembalian::create([
                 'id_peminjaman' => $peminjaman->id,
                 'id_user'       => $peminjaman->id_user,
@@ -492,7 +492,7 @@ class PeminjamanController extends Controller
             ]);
         }
 
-        // update status peminjaman
+        // Update status peminjaman
         $peminjaman->update([
             'status' => 'Kembali',
             'denda'  => $totalDendaKeseluruhan,
@@ -507,11 +507,13 @@ class PeminjamanController extends Controller
         return redirect()->route('rating.show', $peminjaman->id)
             ->with($type, $message);
     }
+
     public function destroy($id)
     {
         try {
             $peminjaman = Peminjaman::findOrFail($id);
 
+            // PERBAIKAN: Kembalikan stok hanya jika status Dipinjam
             if ($peminjaman->status === "Dipinjam") {
                 foreach ($peminjaman->details as $detail) {
                     if ($detail->buku) {
@@ -524,9 +526,10 @@ class PeminjamanController extends Controller
                     ->with('success', 'Peminjaman berhasil dihapus dan stok dikembalikan');
             }
 
+            // Untuk status Pending, Ditolak, Kembali - tidak perlu kembalikan stok
             $peminjaman->delete();
             return redirect()->route('peminjaman.index')
-                ->with('success', 'Peminjaman berhasil dihapus (stok tidak berubah karena status: ' . $peminjaman->status . ')');
+                ->with('success', 'Peminjaman berhasil dihapus');
 
         } catch (\Exception $e) {
             return redirect()->route('peminjaman.index')
@@ -534,20 +537,19 @@ class PeminjamanController extends Controller
         }
     }
 
-
     public function readNotif($id)
     {
         try {
             $peminjaman = Peminjaman::find($id);
 
-            if (! $peminjaman) {
+            if (!$peminjaman) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Notifikasi tidak ditemukan',
                 ], 404);
             }
 
-            if (! $peminjaman->status_baca) {
+            if (!$peminjaman->status_baca) {
                 $peminjaman->status_baca = true;
                 $peminjaman->save();
             }
@@ -607,7 +609,7 @@ class PeminjamanController extends Controller
                 'first_name' => $peminjaman->user->name,
                 'email'      => $peminjaman->user->email,
             ],
-            'enabled_payments'    => ['qris'], // khusus QRIS
+            'enabled_payments'    => ['qris'],
         ];
 
         $snapToken = Snap::getSnapToken($params);
@@ -622,6 +624,7 @@ class PeminjamanController extends Controller
         $user       = User::all();
         return view('peminjaman._form', compact('peminjaman', 'buku', 'user'));
     }
+
     public function update(Request $request, $id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
@@ -636,12 +639,11 @@ class PeminjamanController extends Controller
             'status'     => 'required|in:Pending,Dipinjam,Kembali,Ditolak',
         ]);
 
-        // Jika status berubah dari selain Dipinjam ke Dipinjam, kurangi stok
-        $isNowBorrowing = ($peminjaman->status != 'Dipinjam' && $request->status == 'Dipinjam');
-        // Jika status berubah dari Dipinjam ke status lain yang tidak memegang buku (Pending, Kembali, Ditolak)
-        $isNoLongerBorrowing = ($peminjaman->status == 'Dipinjam' && $request->status != 'Dipinjam');
+        $statusLama = $peminjaman->status;
+        $statusBaru = $request->status;
 
-        if ($isNoLongerBorrowing) {
+        // PERBAIKAN: Kembalikan stok hanya jika dari Dipinjam ke status lain
+        if ($statusLama === 'Dipinjam' && $statusBaru !== 'Dipinjam') {
             foreach ($peminjaman->details as $detail) {
                 if ($detail->buku) {
                     $detail->buku->increment('stok', $detail->jumlah);
@@ -653,11 +655,11 @@ class PeminjamanController extends Controller
             'id_user'            => $request->id_user,
             'tgl_pinjam'         => $request->tgl_pinjam,
             'tenggat'            => $request->tenggat,
-            'status'             => $request->status,
+            'status'             => $statusBaru,
             'jumlah_keseluruhan' => array_sum($request->jumlah),
         ]);
 
-        // Sync details: hapus lama, buat baru
+        // Sync details
         $peminjaman->details()->delete();
         foreach ($request->id_buku as $index => $bukuId) {
             \App\Models\DetailPeminjaman::create([
@@ -665,8 +667,11 @@ class PeminjamanController extends Controller
                 'buku_id'       => $bukuId,
                 'jumlah'        => $request->jumlah[$index],
             ]);
+        }
 
-            if ($isNowBorrowing) {
+        // PERBAIKAN: Kurangi stok hanya jika dari status lain ke Dipinjam
+        if ($statusLama !== 'Dipinjam' && $statusBaru === 'Dipinjam') {
+            foreach ($request->id_buku as $index => $bukuId) {
                 Buku::find($bukuId)->decrement('stok', $request->jumlah[$index]);
             }
         }
@@ -691,17 +696,17 @@ class PeminjamanController extends Controller
             ]);
         }
 
-        // Simpan peminjaman baru (status Pending)
-        $peminjaman             = new Peminjaman();
-        $peminjaman->id_user    = auth()->id();
+        // PERBAIKAN: Stok tidak dikurangi saat Pending
+        $peminjaman                     = new Peminjaman();
+        $peminjaman->id_user            = auth()->id();
         $peminjaman->jumlah_keseluruhan = $request->jumlah;
-        $peminjaman->tgl_pinjam = null;
-        $peminjaman->tenggat    = null;
-        $peminjaman->status     = 'Pending';
-        
-        $lastId = Peminjaman::max('id') ?? 0;
+        $peminjaman->tgl_pinjam         = null;
+        $peminjaman->tenggat            = null;
+        $peminjaman->status             = 'Pending';
+
+        $lastId                      = Peminjaman::max('id') ?? 0;
         $peminjaman->kode_peminjaman = 'PJM-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
-        
+
         $peminjaman->save();
 
         // Simpan detail
@@ -716,10 +721,11 @@ class PeminjamanController extends Controller
             'message' => 'Pengajuan peminjaman berhasil dikirim.',
         ]);
     }
+
     public function storeAuto(Request $request)
     {
         try {
-            if (! auth()->check()) {
+            if (!auth()->check()) {
                 return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
             }
 
@@ -732,13 +738,14 @@ class PeminjamanController extends Controller
             $lastId = Peminjaman::max('id') ?? 0;
             $kode   = 'PJM-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
 
+            // PERBAIKAN: Stok tidak dikurangi saat Pending
             $peminjaman = Peminjaman::create([
-                'kode_peminjaman'   => $kode,
-                'id_user'           => auth()->id(),
+                'kode_peminjaman'    => $kode,
+                'id_user'            => auth()->id(),
                 'jumlah_keseluruhan' => 1,
-                'tgl_pinjam'        => null,
-                'tenggat'           => null,
-                'status'            => 'Pending',
+                'tgl_pinjam'         => null,
+                'tenggat'            => null,
+                'status'             => 'Pending',
             ]);
 
             \App\Models\DetailPeminjaman::create([
@@ -746,8 +753,6 @@ class PeminjamanController extends Controller
                 'buku_id'       => $buku->id,
                 'jumlah'        => 1,
             ]);
-
-            $buku->decrement('stok');
 
             return back()->with('success', 'Peminjaman berhasil diajukan dengan kode ' . $kode);
         } catch (\Exception $e) {
@@ -773,5 +778,4 @@ class PeminjamanController extends Controller
         $peminjaman = Peminjaman::with(['user', 'details.buku'])->findOrFail($id);
         return view('peminjaman.show', compact('peminjaman'));
     }
-
 }

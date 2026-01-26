@@ -75,27 +75,38 @@ class BarangMasukController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'jumlah'    => 'required|integer|min:1',
+       $request->validate([
+            'id_buku'   => 'required|array',
+            'id_buku.*' => 'exists:bukus,id',
+            'jumlah'    => 'required|array',
+            'jumlah.*'  => 'integer|min:1',
             'tgl_masuk' => 'required|date',
-            'id_buku'   => 'required|exists:bukus,id',
         ]);
+
 
         $lastRecord = BarangMasuk::latest('id')->first();
         $lastId     = $lastRecord ? $lastRecord->id : 0;
-        $kodeBm     = 'BK-' . str_pad($lastId + 1, 3, '0', STR_PAD_LEFT);
 
-        $bm             = new BarangMasuk();
-        $bm->kode_masuk = $kodeBm;
-        $bm->jumlah     = $request->jumlah;
-        $bm->tgl_masuk  = $request->tgl_masuk;
-        $bm->ket        = $request->ket;
-        $bm->id_buku    = $request->id_buku;
-        $bm->save();
+        foreach ($request->id_buku as $index => $bukuId) {
+            $jumlah = $request->jumlah[$index];
+            $kodeBm = 'BK-' . str_pad($lastId + 1, 3, '0', STR_PAD_LEFT);
 
-        $buku = Buku::findOrFail($request->id_buku);
-        $buku->stok += $request->jumlah;
-        $buku->save();
+            $bm             = new BarangMasuk();
+            $bm->kode_masuk = $kodeBm;
+            $bm->id_buku    = $bukuId;
+            $bm->jumlah     = $jumlah;
+            $bm->tgl_masuk  = $request->tgl_masuk;
+            $bm->ket        = $request->ket;
+            $bm->save();
+
+            // Update stok buku
+            $buku        = Buku::findOrFail($bukuId);
+            $buku->stok += $jumlah;
+            $buku->save();
+
+            $lastId++;
+        }
+
 
         return redirect()->route('barangmasuk.index')->with('success', 'Buku berhasil ditambahkan.');
     }

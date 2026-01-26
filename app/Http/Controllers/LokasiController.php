@@ -84,8 +84,12 @@ class LokasiController extends Controller
      */
     public function destroy(string $id)
     {
-        $lokasi = Lokasi::findOrFail($id);
+        $lokasi = Lokasi::withCount('bukus')->findOrFail($id);
+        if ($lokasi->bukus_count > 0) {
+            return redirect()->route('lokasi.index')->with('error', 'Lokasi tidak dapat dihapus karena masih memiliki buku terkait.');
+        }
+
         $lokasi->delete();
-        return redirect()->route('lokasi.index')->with('success', 'Data berhasil dihapus.');
+        return redirect()->route('lokasi.index')->with('success', 'Lokasi berhasil dihapus.');
     }
 }

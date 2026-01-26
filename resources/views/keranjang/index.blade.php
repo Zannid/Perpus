@@ -5,7 +5,7 @@
 @section('css')
 <style>
     .cart-container {
-        padding-top: 120px; /* Offset for fixed navbar */
+        padding-top: 120px;
         padding-bottom: 60px;
         min-height: 80vh;
     }
@@ -97,7 +97,7 @@
                     <h4 class="mb-0 fw-bold">
                         <i class="bi bi-cart3 me-2 text-primary"></i>Keranjang
                     </h4>
-                    <span class="badge bg-primary rounded-pill px-3">{{ count($cart) }} Buku</span>
+                    <span class="badge bg-primary rounded-pill px-3">{{ $cart->count() }} Buku</span>
                 </div>
                 
                 <div class="card-body p-0">
@@ -115,7 +115,7 @@
                         </div>
                     @endif
 
-                    @if(count($cart) > 0)
+                    @if($cart->count() > 0)
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
@@ -126,48 +126,46 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $totalItems = 0; @endphp
-                                    @foreach($cart as $id => $item)
-                                        @php $totalItems += $item['jumlah']; @endphp
+                                    @foreach($cart as $item)
                                         <tr>
                                             <td class="ps-4 py-4">
                                                 <div class="d-flex align-items-center">
-                                                    <img src="{{ $item['foto'] ? asset('storage/buku/' . $item['foto']) : asset('assetsf/img/default-book.jpg') }}" 
-                                                         alt="{{ $item['judul'] }}" class="cart-item-img me-3">
+                                                    <img src="{{ $item->buku->foto ? asset('storage/buku/' . $item->buku->foto) : asset('assetsf/img/default-book.jpg') }}" 
+                                                         alt="{{ $item->buku->judul }}" class="cart-item-img me-3">
                                                     <div>
-                                                        <h6 class="mb-1 fw-bold text-dark">{{ $item['judul'] }}</h6>
-                                                        <p class="mb-1 small text-muted">Kode: <span class="text-primary fw-semibold">{{ $item['kode_buku'] }}</span></p>
-                                                        <span class="badge bg-light text-primary border border-primary-subtle rounded-pill">Stok: {{ $item['stok'] }}</span>
+                                                        <h6 class="mb-1 fw-bold text-dark">{{ $item->buku->judul }}</h6>
+                                                        <p class="mb-1 small text-muted">Kode: <span class="text-primary fw-semibold">{{ $item->buku->kode_buku }}</span></p>
+                                                        <span class="badge bg-light text-primary border border-primary-subtle rounded-pill">Stok: {{ $item->buku->stok }}</span>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="text-center py-4">
                                                 <div class="qty-control shadow-sm">
-                                                    <form action="{{ route('keranjang.kurang', $id) }}" method="POST" class="m-0">
+                                                    <form action="{{ route('keranjang.kurang', $item->buku_id) }}" method="POST" class="m-0">
                                                         @csrf
                                                         <button type="submit" class="btn-qty" title="Kurangi">
                                                             <i class="bi bi-dash"></i>
                                                         </button>
                                                     </form>
                                                     
-                                                    <input type="text" class="qty-input" value="{{ $item['jumlah'] }}" readonly>
+                                                    <input type="text" class="qty-input" value="{{ $item->jumlah }}" readonly>
                                                     
-                                                    <form action="{{ route('keranjang.tambah', $id) }}" method="POST" class="m-0">
+                                                    <form action="{{ route('keranjang.tambah', $item->buku_id) }}" method="POST" class="m-0">
                                                         @csrf
                                                         <button type="submit" class="btn-qty" 
-                                                            {{ $item['jumlah'] >= $item['stok'] ? 'disabled' : '' }} title="Tambah">
+                                                            {{ $item->jumlah >= $item->buku->stok ? 'disabled' : '' }} title="Tambah">
                                                             <i class="bi bi-plus"></i>
                                                         </button>
                                                     </form>
                                                 </div>
-                                                @if($item['jumlah'] >= $item['stok'])
+                                                @if($item->jumlah >= $item->buku->stok)
                                                     <div class="mt-2">
                                                         <small class="text-danger fw-600" style="font-size: 0.7rem;">Maksimal Stok</small>
                                                     </div>
                                                 @endif
                                             </td>
                                             <td class="text-end pe-4 py-4">
-                                                <form action="{{ route('keranjang.hapus', $id) }}" method="POST" class="d-inline">
+                                                <form action="{{ route('keranjang.hapus', $item->buku_id) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill confirm-delete">
                                                         <i class="bi bi-trash"></i>
@@ -192,7 +190,7 @@
                 </div>
             </div>
             
-            @if(count($cart) > 0)
+            @if($cart->count() > 0)
             <div class="mt-4 p-4 bg-white rounded-4 shadow-sm border">
                 <h6 class="fw-bold mb-3 d-flex align-items-center">
                     <i class="bi bi-info-circle text-primary me-2"></i>Syarat & Ketentuan Peminjaman
@@ -215,7 +213,7 @@
             @endif
         </div>
 
-        @if(count($cart) > 0)
+        @if($cart->count() > 0)
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden card-summary">
                 <div class="card-body p-4">
@@ -223,12 +221,12 @@
                     
                     <div class="d-flex justify-content-between mb-3 text-muted">
                         <span>Jumlah Judul Buku</span>
-                        <span class="fw-bold text-dark">{{ count($cart) }}</span>
+                        <span class="fw-bold text-dark">{{ $cart->count() }}</span>
                     </div>
                     
                     <div class="d-flex justify-content-between mb-4 fs-5 fw-bold text-dark border-bottom pb-3">
                         <span>Total Qty</span>
-                        <span class="text-primary">{{ $totalItems }} Buku</span>
+                        <span class="text-primary">{{ $cart->sum('jumlah') }} Buku</span>
                     </div>
 
                     <form action="{{ route('keranjang.submit') }}" method="POST">

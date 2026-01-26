@@ -2,128 +2,150 @@
 namespace App\Http\Controllers;
 
 use App\Models\Buku;
-use App\Models\Peminjaman;
 use App\Models\DetailPeminjaman;
+use App\Models\Keranjang;
+use App\Models\Peminjaman;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class KeranjangController extends Controller
 {
+    // Tampilkan keranjang
     public function index()
     {
-        $cart = session('cart', []);
-        
-        // Refresh data buku dari database untuk memastikan stok terbaru
-        foreach ($cart as $id => &$item) {
-            $buku = Buku::find($id);
-            if ($buku) {
-                $item['stok'] = $buku->stok;
-                $item['foto'] = $buku->foto;
-                $item['kode_buku'] = $buku->kode_buku;
-            }
-        }
-        session(['cart' => $cart]);
-
+        $cart = Keranjang::with('buku')->where('user_id', auth()->id())->get();
         return view('keranjang.index', compact('cart'));
     }
 
+    // Tambah buku ke keranjang
     public function tambah($id)
     {
-        $buku = Buku::findOrFail($id);
-        $cart = session('cart', []);
+        $buku      = Buku::findOrFail($id);
+        $keranjang = Keranjang::firstOrCreate(
+            ['user_id' => auth()->id(), 'buku_id' => $id],
+            ['jumlah' => 0]
+        );
 
-        if (isset($cart[$id])) {
-            if ($cart[$id]['jumlah'] < $buku->stok) {
-                $cart[$id]['jumlah']++;
-            } else {
-                return back()->with('error', 'Stok buku "' . $buku->judul . '" tidak mencukupi untuk ditambah lagi.');
-            }
-        } else {
-            if ($buku->stok > 0) {
-                $cart[$id] = [
-                    'id_buku'   => $buku->id,
-                    'judul'     => $buku->judul,
-                    'kode_buku' => $buku->kode_buku,
-                    'foto'      => $buku->foto,
-                    'jumlah'    => 1,
-                    'stok'      => $buku->stok
-                ];
-            } else {
-                return back()->with('error', 'Stok buku "' . $buku->judul . '" kosong.');
-            }
+        if ($keranjang->jumlah + 1 > $buku->stok) {
+            return back()->with('error', 'Stok buku "' . $buku->judul . '" tidak mencukupi.');
         }
 
-        session(['cart' => $cart]);
+        $keranjang->increment('jumlah');
+
         return back()->with('success', 'Buku berhasil ditambahkan ke keranjang.');
     }
 
+    // Kurangi jumlah buku
     public function kurang($id)
     {
-        $cart = session('cart', []);
+        $keranjang = Keranjang::where('user_id', auth()->id())->where('buku_id', $id)->first();
 
-        if (isset($cart[$id])) {
-            if ($cart[$id]['jumlah'] > 1) {
-                $cart[$id]['jumlah']--;
+        if ($keranjang) {
+            if ($keranjang->jumlah > 1) {
+                $keranjang->decrement('jumlah');
             } else {
-                unset($cart[$id]);
+                $keranjang->delete();
             }
-            session(['cart' => $cart]);
+
         }
 
-        return back()->with('success', 'Jumlah buku berhasil diperbarui.');
+        return back()->with('success', 'Keranjang diperbarui.');
     }
 
+    // Hapus buku dari keranjang
     public function hapus($id)
     {
-        $cart = session('cart', []);
-        if (isset($cart[$id])) {
-            unset($cart[$id]);
-            session(['cart' => $cart]);
-        }
-
+        Keranjang::where('user_id', auth()->id())->where('buku_id', $id)->delete();
         return back()->with('success', 'Buku dihapus dari keranjang.');
     }
 
+    // Submit peminjaman (multiple)
     public function submit()
     {
-        $cart = session('cart', []);
-
-        if (!$cart) {
+        $cart = Keranjang::with('buku')->where('user_id', auth()->id())->get();
+        if ($cart->isEmpty()) {
             return back()->with('error', 'Keranjang kosong.');
         }
 
-        // Cek kembali ketersediaan stok sebelum submit final
-        foreach ($cart as $id => $item) {
-            $buku = Buku::find($id);
-            if (!$buku || $buku->stok < $item['jumlah']) {
-                return back()->with('error', 'Maaf, stok "' . ($buku->judul ?? 'Buku') . '" sudah berubah atau tidak mencukupi. Silakan cek keranjang Anda.');
+        DB::transaction(function () use ($cart) {
+            foreach ($cart as $item) {
+                if (! $item->buku) {
+                    throw new \Exception('Buku tidak ditemukan.');
+                }
+
+                if ($item->jumlah > $item->buku->stok) {
+                    throw new \Exception('Stok buku "' . $item->buku->judul . '" tidak mencukupi.');
+                }
             }
-        }
 
-        // 1️⃣ Buat peminjaman
-        $nextPeminjamanId = Peminjaman::max('id') + 1;
-        $kodePeminjaman = 'PMJ-' . $nextPeminjamanId;
+            // Generate kode peminjaman
+            $lastId = Peminjaman::max('id') ?? 0;
+            $kode   = 'PMJ-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
 
-        $peminjaman = Peminjaman::create([
-            'kode_peminjaman'    => $kodePeminjaman,
-            'id_user'            => auth()->id(),
-            'jumlah_keseluruhan' => array_sum(array_column($cart, 'jumlah')),
-            'tgl_pinjam'         => null, // Menunggu approve petugas
-            'tenggat'            => null, // Diisi saat approve
-            'status'             => 'Pending',
-        ]);
-
-        // 2️⃣ Masukkan semua buku ke detail_peminjaman
-        foreach ($cart as $item) {
-            DetailPeminjaman::create([
-                'peminjaman_id' => $peminjaman->id,
-                'buku_id'       => $item['id_buku'],
-                'jumlah'        => $item['jumlah'],
+            $peminjaman = Peminjaman::create([
+                'kode_peminjaman'    => $kode,
+                'id_user'            => auth()->id(),
+                'jumlah_keseluruhan' => $cart->sum('jumlah'),
+                'tgl_pinjam'         => null,
+                'tenggat'            => null,
+                'status'             => 'Pending',
             ]);
-        }
 
-        // 3️⃣ Hapus session keranjang
-        session()->forget('cart');
+            foreach ($cart as $item) {
+                DetailPeminjaman::create([
+                    'peminjaman_id' => $peminjaman->id,
+                    'buku_id'       => $item->buku_id,
+                    'jumlah'        => $item->jumlah,
+                ]);
+            }
 
-        return redirect()->route('peminjaman.index')
-            ->with('success', 'Peminjaman berhasil diajukan! Menunggu verifikasi petugas.');
+            // Kosongkan keranjang
+            Keranjang::where('user_id', auth()->id())->delete();
+        });
+
+        return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil diajukan.');
     }
+    public function tambahAjax(Request $request)
+{
+    $request->validate([
+        'buku_id' => 'required|exists:bukus,id',
+    ]);
+
+    $buku = Buku::findOrFail($request->buku_id);
+
+    $keranjang = Keranjang::firstOrCreate(
+        [
+            'user_id' => auth()->id(),
+            'buku_id' => $buku->id,
+        ],
+        ['jumlah' => 0]
+    );
+
+    if ($keranjang->jumlah + 1 > $buku->stok) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Stok buku "' . $buku->judul . '" tidak mencukupi.'
+        ]);
+    }
+
+    $keranjang->increment('jumlah');
+
+    $totalItems = Keranjang::where('user_id', auth()->id())->sum('jumlah');
+
+    $keranjangItems = Keranjang::with('buku')->where('user_id', auth()->id())->get();
+    $distinctBooks = $keranjangItems->count();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Buku berhasil ditambahkan.',
+        'totalItems' => $distinctBooks,
+        // Kirim HTML baru untuk isi dropdown
+        'htmlContent' => view('components.cart-items-partial', [
+            'cartItems' => $keranjangItems,
+            'distinctBooks' => $distinctBooks
+        ])->render()
+    ]);
+}
+
+
 }
