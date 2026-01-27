@@ -229,7 +229,7 @@
                           </span>
                         </div>
                         <div class="book-actions">
-                           <button type="button" class="btn-action btn-add-cart" 
+                           <button type="button" class="btn-action btn-add-cart"
                                   data-buku-id="{{ $b->id }}" title="Tambah ke Keranjang">
                               <i class="bi bi-cart-plus"></i> Pinjam
                           </button>
@@ -321,7 +321,7 @@
       </div>
     </section>
     <!-- Features 2 Section -->
-  
+
 
     <!-- Contact Section -->
     <section id="contact" class="contact section light-background">
@@ -1430,27 +1430,34 @@ $(document).ready(function(){
     let bukuId = $(this).data('buku-id');
 
     $.ajax({
-      url: '{{ route("keranjang.tambah-ajax") }}',
+      url: '{{ route("cart.add") }}',
       type: 'POST',
-      data: {
-        _token: '{{ csrf_token() }}',
-        buku_id: bukuId
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        buku_id: bukuId,
+        quantity: 1
+      }),
+      headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
       },
       success: function(res){
         if(res.success){
-          // Update badge cart
-          $('.cart-badge').text(res.totalItems).show();
-
-          // Modal sukses
-          Swal.fire({
-            icon: 'success',
-            title: 'Berhasil',
-            text: res.message,
-            timer: 1500,
-            showConfirmButton: false
-          });
+          // Gunakan function updateCartFromOutside dari navbar untuk auto-update cart dropdown
+          if(typeof updateCartFromOutside !== 'undefined'){
+            updateCartFromOutside(res);
+          } else {
+            // Fallback jika function tidak tersedia
+            $('.cart-badge').text(res.totalItems).show();
+            Swal.fire({
+              icon: 'success',
+              title: 'Berhasil',
+              text: res.message,
+              timer: 1500,
+              showConfirmButton: false
+            });
+          }
         } else {
-          // Modal warning
           Swal.fire({
             icon: 'warning',
             title: 'Gagal',
@@ -1461,10 +1468,14 @@ $(document).ready(function(){
         }
       },
       error: function(xhr){
+        let errorMessage = 'Terjadi kesalahan, coba lagi!';
+        if(xhr.responseJSON && xhr.responseJSON.message){
+          errorMessage = xhr.responseJSON.message;
+        }
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Terjadi kesalahan, coba lagi!',
+          text: errorMessage,
         });
       }
     });

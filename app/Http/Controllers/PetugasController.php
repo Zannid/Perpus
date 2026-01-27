@@ -1,12 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
 
 class PetugasController extends Controller
 {
@@ -19,18 +17,16 @@ class PetugasController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                ->orWhere('email', 'LIKE', "%{$search}%");
+                    ->orWhere('email', 'LIKE', "%{$search}%");
             });
         }
-
 
         $petugas = $query->orderBy('id', 'desc')->get();
 
         return view('petugas.index', compact('petugas'));
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -45,12 +41,17 @@ class PetugasController extends Controller
      */
     public function store(Request $request)
     {
-        $petugas = new User();
-        $petugas->name = $request->name;
-        $petugas->email = $request->email;
-        $petugas->foto = $request->foto;
-        $petugas->password = Hash::make($request->password);
-        $petugas->role = 'petugas';
+        $petugas            = new User();
+        $petugas->name      = $request->name;
+        $petugas->email     = $request->email;
+        $petugas->password  = Hash::make($request->password);
+        $petugas->role      = 'petugas';
+        $petugas->no_telpon = $request->no_telpon;
+        $petugas->alamat    = $request->alamat;
+
+        // Auto-generate kode user
+        $petugas->kode_user = $this->generateKodeUser();
+
         if ($request->hasFile('foto')) {
             $img  = $request->file('foto');
             $name = rand(1000, 9999) . $img->getClientOriginalName();
@@ -84,13 +85,17 @@ class PetugasController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $petugas = User::findOrFail($id);
-        $petugas->name = $request->name;
-        $petugas->email = $request->email;
+        $petugas            = User::findOrFail($id);
+        $petugas->name      = $request->name;
+        $petugas->email     = $request->email;
+        $petugas->no_telpon = $request->no_telpon;
+        $petugas->alamat    = $request->alamat;
+
         if ($request->password) {
             $petugas->password = Hash::make($request->password);
         }
-               if ($request->hasFile('foto')) {
+
+        if ($request->hasFile('foto')) {
             if ($petugas->foto && file_exists(public_path('storage/petugas/' . $petugas->foto))) {
                 unlink(public_path('storage/petugas/' . $petugas->foto));
             }
@@ -114,5 +119,25 @@ class PetugasController extends Controller
         $petugas->delete();
 
         return redirect()->route('petugas.index')->with('success', 'Data Berhasil Dihapus');
+    }
+
+    /**
+     * Generate unique user code
+     */
+    private function generateKodeUser()
+    {
+        $prefix    = 'USR';
+        $timestamp = time();
+        $randomNum = rand(100, 999);
+
+        $kodeUser = $prefix . '-' . $timestamp . '-' . $randomNum;
+
+        // Ensure uniqueness
+        while (User::where('kode_user', $kodeUser)->exists()) {
+            $randomNum = rand(100, 999);
+            $kodeUser  = $prefix . '-' . $timestamp . '-' . $randomNum;
+        }
+
+        return $kodeUser;
     }
 }

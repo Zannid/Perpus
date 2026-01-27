@@ -2,7 +2,7 @@
 @section('title', 'E-Perpus - Data Petugas')
 @section('content')
 <div class="row d-flex justify-content-center">
-  <div class="col-md-10">
+  <div class="col-md-12">
     <div class="card shadow-lg">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Data Petugas</h5>
@@ -29,9 +29,12 @@
             <thead class="table-light">
               <tr>
                 <th>No</th>
+                <th>Kode User</th>
                 <th>Foto</th>
                 <th>Nama</th>
                 <th>Email</th>
+                <th>No Telpon</th>
+                <th>Alamat</th>
                 <th>Aksi</th>
               </tr>
             </thead>
@@ -41,14 +44,19 @@
               <tr>
                 <th scope="row">{{ $no++ }}</th>
                 <td>
-                  <img src="{{ asset('storage/petugas/' . $data->foto) }}" 
-                       alt="cover" 
-                       class="img-thumbnail rounded-circle" 
+                  <span class="badge bg-primary">{{ $data->kode_user ?? '-' }}</span>
+                </td>
+                <td>
+                  <img src="{{ asset('storage/petugas/' . $data->foto) }}"
+                       alt="cover"
+                       class="img-thumbnail rounded-circle"
                        width="50" height="50"
                        style="object-fit: cover;">
                 </td>
                 <td>{{ $data->name }}</td>
                 <td>{{ $data->email }}</td>
+                <td>{{ $data->no_telpon ?? '-' }}</td>
+                <td>{{ Str::limit($data->alamat, 30) ?? '-' }}</td>
                 <td>
                   <div class="d-flex gap-2">
                     <a href="{{ route('petugas.edit', $data->id) }}" class="btn btn-sm btn-warning">

@@ -1,26 +1,27 @@
 <?php
 
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BukuController;
+use App\Http\Controllers\CartAjaxController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\FrontController;
+use App\Http\Controllers\KatalogController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PengembalianController;
+use App\Http\Controllers\PerpanjanganController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AboutController;
-use App\Http\Controllers\RatingController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PerpanjanganController;
-use App\Http\Controllers\KeranjangController;
-use App\Http\Controllers\KatalogController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -29,7 +30,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', function () {
     return view('auth.login');
 });
-
 
 Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog');
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
@@ -116,38 +116,40 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ===== PEMINJAMAN =====
-   // ===== PEMINJAMAN =====
-Route::prefix('peminjaman')->name('peminjaman.')->group(function () {
-    // CRUD Peminjaman
-    Route::get('/daftarpeminjaman', [PeminjamanController::class, 'index'])->name('index');
-    Route::get('/create', [PeminjamanController::class, 'create'])->name('create');
-    Route::post('/', [PeminjamanController::class, 'store'])->name('store');
-    Route::post('/ajax-store', [PeminjamanController::class, 'storeAjax'])->name('store.ajax');
-    Route::post('/store-auto', [PeminjamanController::class, 'storeAuto'])->name('storeAuto');
-    Route::get('/{peminjaman}/edit', [PeminjamanController::class, 'edit'])->name('edit');
-    Route::put('/{peminjaman}', [PeminjamanController::class, 'update'])->name('update');
-    Route::delete('/{peminjaman}', [PeminjamanController::class, 'destroy'])->name('destroy');
+    // ===== PEMINJAMAN =====
+    Route::prefix('peminjaman')->name('peminjaman.')->group(function () {
+        // CRUD Peminjaman
+        Route::get('/daftarpeminjaman', [PeminjamanController::class, 'index'])->name('index');
+        Route::get('/create', [PeminjamanController::class, 'create'])->name('create');
+        Route::post('/', [PeminjamanController::class, 'store'])->name('store');
+        Route::post('/ajax-store', [PeminjamanController::class, 'storeAjax'])->name('store.ajax');
+        Route::post('/store-auto', [PeminjamanController::class, 'storeAuto'])->name('storeAuto');
+        Route::get('/{peminjaman}/edit', [PeminjamanController::class, 'edit'])->name('edit');
+        Route::put('/{peminjaman}', [PeminjamanController::class, 'update'])->name('update');
+        Route::delete('/{peminjaman}', [PeminjamanController::class, 'destroy'])->name('destroy');
 
-    // Export & Payment
-    Route::get('/export', [PeminjamanController::class, 'export'])->name('export');
-    Route::get('/{id}/pay', [PeminjamanController::class, 'pay'])->name('pay');
-    Route::post('/{id}/pay', [PeminjamanController::class, 'confirmPay'])->name('confirmPay');
-    Route::get('/{id}/pay/qris', [PeminjamanController::class, 'payQris'])->name('pay.qris');
+        // Export & Payment
+        Route::get('/export', [PeminjamanController::class, 'export'])->name('export');
+        Route::get('/{id}/pay', [PeminjamanController::class, 'pay'])->name('pay');
+        Route::post('/{id}/pay', [PeminjamanController::class, 'confirmPay'])->name('confirmPay');
+        Route::get('/{id}/pay/qris', [PeminjamanController::class, 'payQris'])->name('pay.qris');
 
-    // Return
-    Route::get('/{id}/return', [PeminjamanController::class, 'showReturnForm'])->name('return.form');
-    Route::post('/{id}/return', [PeminjamanController::class, 'return'])->name('return');
+        // Return
+        Route::get('/{id}/return', [PeminjamanController::class, 'showReturnForm'])->name('return.form');
+        Route::post('/{id}/return', [PeminjamanController::class, 'return'])->name('return');
 
-    // Notifikasi
-    Route::post('/notif/read/{id}', [PeminjamanController::class, 'readNotif'])->name('readNotif');
-    Route::get('/notif/mark-all-read', [PeminjamanController::class, 'markAllRead'])->name('markAllRead');
-});
+        // Notifikasi
+        Route::post('/notif/read/{id}', [PeminjamanController::class, 'readNotif'])->name('readNotif');
+        Route::get('/notif/mark-all-read', [PeminjamanController::class, 'markAllRead'])->name('markAllRead');
+    });
 
 // ===== RATING ROUTES (HARUS DI LUAR GROUP PEMINJAMAN!) =====
-Route::prefix('rating')->name('rating.')->group(function () {
-    Route::get('/{id}', [RatingController::class, 'show'])->name('show');
-    Route::post('/store', [RatingController::class, 'store'])->name('store');
-});
+    Route::prefix('rating')->name('rating.')->group(function () {
+        Route::get('/show', [RatingController::class, 'show'])->name('show');
+        Route::post('/store', [RatingController::class, 'store'])->name('store');
+        Route::put('/{id}', [RatingController::class, 'update'])->name('update');
+        Route::delete('/{id}', [RatingController::class, 'destroy'])->name('destroy');
+    });
     // ===== PENGEMBALIAN =====
     Route::prefix('pengembalian')->name('pengembalian.')->group(function () {
         Route::get('/', [PengembalianController::class, 'index'])->name('index');
@@ -172,10 +174,6 @@ Route::prefix('rating')->name('rating.')->group(function () {
     Route::resource('/about', AboutController::class);
     Route::post('/about/{id}/activate', [AboutController::class, 'updateStatus'])->name('about.activate');
 
-    Route::post('/rating', [RatingController::class, 'store'])->name('rating.store');
-
-
-
     // ===== USER MANAGEMENT =====
     Route::resource('/admin', AdminController::class);
     Route::resource('/user', UserController::class);
@@ -199,25 +197,24 @@ Route::get('/test-email', function () {
     return 'No peminjaman found';
 });
 
-
 Route::middleware(['auth'])->group(function () {
-    
+
     // Halaman daftar semua notifikasi
     Route::get('/notifications', [NotificationController::class, 'index'])
         ->name('notifications.index');
-    
+
     // Tandai notifikasi sebagai dibaca dan redirect ke link
     Route::get('/notifications/{id}/read', [NotificationController::class, 'read'])
         ->name('notifications.read');
-    
+
     // Tandai semua notifikasi sebagai dibaca
     Route::get('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])
         ->name('notifications.markAllRead');
-    
+
     // Hapus notifikasi
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])
         ->name('notifications.destroy');
-    
+
     // Detail peminjaman (untuk link notifikasi)
     Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])
         ->name('peminjaman.show');
@@ -258,37 +255,37 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 Route::middleware(['auth'])->prefix('keranjang')->name('keranjang.')->group(function () {
-    // Halaman keranjang
-    Route::get('/', [KeranjangController::class, 'index'])->name('index');
-    
+    // Halaman keranjang (gunakan CartAjaxController)
+    Route::get('/', [CartAjaxController::class, 'index'])->name('index');
+
     // Tambah buku (non-ajax - fallback)
-    Route::get('/tambah/{id}', [KeranjangController::class, 'tambah'])->name('tambah');
-    
+    Route::post('/tambah/{id}', [KeranjangController::class, 'tambah'])->name('tambah');
+
     // Kurang jumlah (non-ajax - fallback)
-    Route::get('/kurang/{id}', [KeranjangController::class, 'kurang'])->name('kurang');
-    
+    Route::post('/kurang/{id}', [KeranjangController::class, 'kurang'])->name('kurang');
+
     // Hapus buku (non-ajax - fallback)
-    Route::get('/hapus/{id}', [KeranjangController::class, 'hapus'])->name('hapus');
-    
+    Route::post('/hapus/{id}', [KeranjangController::class, 'hapus'])->name('hapus');
+
     // Submit peminjaman
     Route::post('/submit', [KeranjangController::class, 'submit'])->name('submit');
 });
 
 // ========================================
-// ROUTES CART AJAX (NEW)
+// ROUTES CART AJAX (AJAX Cart Routes)
 // ========================================
 Route::middleware(['auth'])->prefix('cart')->name('cart.')->group(function () {
-    // Tambah ke keranjang (AJAX)
-    Route::post('/add', [KeranjangController::class, 'tambahAjax'])->name('add');
-    
-    // Update quantity (AJAX)
-    Route::post('/update-quantity', [KeranjangController::class, 'updateQuantity'])->name('update.quantity');
-    
-    // Remove item (AJAX)
-    Route::post('/remove', [KeranjangController::class, 'removeItem'])->name('remove');
-    
-    // Get cart info (AJAX - untuk refresh manual)
-    Route::get('/info', [KeranjangController::class, 'getCartInfo'])->name('info');
-});
-Route::post('/keranjang/tambah-ajax', [KeranjangController::class, 'tambahAjax'])->name('keranjang.tambah-ajax')->middleware('auth');
+    // Cart index (JSON atau view)
+    Route::get('/', [CartAjaxController::class, 'index'])->name('index');
 
+    // Tambah ke keranjang (AJAX)
+    Route::post('/add', [CartAjaxController::class, 'addToCart'])->name('add');
+
+    // Update quantity (AJAX)
+    Route::post('/update-quantity', [CartAjaxController::class, 'updateQuantity'])->name('update-quantity');
+
+    // Remove item (AJAX)
+    Route::post('/remove', [CartAjaxController::class, 'removeItem'])->name('remove');
+});
+
+Route::post('/keranjang/tambah-ajax', [KeranjangController::class, 'tambahAjax'])->name('keranjang.tambah-ajax')->middleware('auth');

@@ -22,8 +22,7 @@
         {{-- Form Search --}}
         <form action="{{ route('barangkeluar.index') }}" method="get" class="d-flex">
           <div class="input-group input-group-sm">
-            <input type="text" name="search" class="form-control" placeholder="Cari barang keluar..."
-              value="{{ request('search') }}">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari buku...">
             <button class="btn btn-primary" type="submit">
               <i class="bx bx-search-alt"></i>
             </button>
@@ -122,6 +121,26 @@ document.querySelectorAll('.btn-delete').forEach(btn => {
                 document.getElementById('form-delete-'+id).submit();
             }
         })
+    });
+});
+</script>
+<script>
+const searchInput = document.getElementById('searchInput');
+const table = document.getElementById('basic-datatables').getElementsByTagName('tbody')[0];
+searchInput.addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = table.getElementsByTagName('tr');
+
+    Array.from(rows).forEach(row => {
+        const kode = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() ?? '';
+        const judul = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() ?? '';
+        const kategori = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() ?? '';
+
+        if(kode.includes(filter) || judul.includes(filter) || kategori.includes(filter)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
     });
 });
 </script>

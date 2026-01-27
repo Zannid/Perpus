@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,22 +12,21 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-{
-    $query = User::where('role', 'user');
+    {
+        $query = User::where('role', 'user');
 
-    if ($request->has('search')) {
-        $search = $request->search;
-        $query->where(function($q) use ($search) {
-            $q->where('name', 'LIKE', "%{$search}%")
-              ->orWhere('email', 'LIKE', "%{$search}%");
-        });
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $user = $query->orderBy('id', 'desc')->get();
+
+        return view('user.index', compact('user'));
     }
-
-    $user = $query->orderBy('id', 'desc')->get();
-
-    return view('user.index', compact('user'));
-}
-    
 
     /**
      * Show the form for creating a new resource.
@@ -43,11 +41,17 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->role = 'user';
+        $user            = new User();
+        $user->name      = $request->name;
+        $user->email     = $request->email;
+        $user->password  = Hash::make($request->password);
+        $user->role      = 'user';
+        $user->no_telpon = $request->no_telpon;
+        $user->alamat    = $request->alamat;
+
+        // Auto-generate kode user
+        $user->kode_user = $this->generateKodeUser();
+
         if ($request->hasFile('foto')) {
             $img  = $request->file('foto');
             $name = rand(1000, 9999) . $img->getClientOriginalName();
@@ -57,7 +61,7 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('user.index')->with('success', 'Data Berhasil Ditambahkan');
-        }
+    }
 
     /**
      * Display the specified resource.
@@ -81,16 +85,17 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id);
-        $user->name = $request->name;
-        $user->email = $request->email;
+        $user            = User::findOrFail($id);
+        $user->name      = $request->name;
+        $user->email     = $request->email;
+        $user->no_telpon = $request->no_telpon;
+        $user->alamat    = $request->alamat;
+
         if ($request->password) {
             $user->password = Hash::make($request->password);
         }
-                if ($request->password) {
-            $user->password = Hash::make($request->password);
-        }
-               if ($request->hasFile('foto')) {
+
+        if ($request->hasFile('foto')) {
             if ($user->foto && file_exists(public_path('storage/user/' . $user->foto))) {
                 unlink(public_path('storage/user/' . $user->foto));
             }
@@ -114,5 +119,25 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('user.index')->with('success', 'Data Berhasil Dihapus');
+    }
+
+    /**
+     * Generate unique user code
+     */
+    private function generateKodeUser()
+    {
+        $prefix    = 'USR';
+        $timestamp = time();
+        $randomNum = rand(100, 999);
+
+        $kodeUser = $prefix . '-' . $timestamp . '-' . $randomNum;
+
+        // Ensure uniqueness
+        while (User::where('kode_user', $kodeUser)->exists()) {
+            $randomNum = rand(100, 999);
+            $kodeUser  = $prefix . '-' . $timestamp . '-' . $randomNum;
+        }
+
+        return $kodeUser;
     }
 }

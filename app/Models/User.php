@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -22,7 +21,10 @@ class User extends Authenticatable
         'email',
         'password',
         'foto',
-        'role'
+        'role',
+        'kode_user',
+        'no_telpon',
+        'alamat',
     ];
 
     /**
@@ -39,7 +41,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Notification::class);
     }
-    
 
     /**
      * Get jumlah notifikasi yang belum dibaca
@@ -48,7 +49,7 @@ class User extends Authenticatable
     {
         return $this->notifications()->unread()->count();
     }
-     public function isAdmin()
+    public function isAdmin()
     {
         return $this->role === 'admin';
     }
@@ -67,7 +68,6 @@ class User extends Authenticatable
         return $this->hasMany(Rating::class);
     }
 
-
     /**
      * Get the attributes that should be cast.
      *
@@ -77,7 +77,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 }

@@ -119,7 +119,7 @@
                                             data-foto="{{ asset('storage/buku/' . $b->foto) }}"
                                             data-stok="{{ $b->stok }}"
                                             {{ $b->stok <= 0 ? 'disabled' : '' }}>
-                                            {{ $b->stok > 0 ? 'Pilih' : 'Stok Habis' }}
+                                            <span class="btn-text">{{ $b->stok > 0 ? 'Pilih' : 'Stok Habis' }}</span>
                                         </button>
                                     </div>
                                 </div>
@@ -139,6 +139,66 @@
     const bukuListBody = document.getElementById('bukuListBody');
     const emptyBukuMsg = document.getElementById('emptyBukuMsg');
 
+    // ============================================================
+    // KONFIGURASI SWEETALERT2 TOAST GLOBAL
+    // ============================================================
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        customClass: {
+            popup: 'custom-toast-popup',
+            title: 'custom-toast-title'
+        },
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
+    // Fungsi untuk update status tombol di modal
+    function updateModalButtonStates() {
+        // Ambil semua ID buku yang sudah dipilih
+        const selectedBukuIds = Array.from(document.querySelectorAll('#bukuListBody tr'))
+            .map(row => row.getAttribute('data-id'));
+
+        // Update setiap tombol di modal
+        document.querySelectorAll('.select-buku-btn').forEach(btn => {
+            const bukuId = btn.getAttribute('data-id');
+            const stok = parseInt(btn.getAttribute('data-stok'));
+            
+            // Jika buku sudah dipilih atau stok habis, disable button
+            if (selectedBukuIds.includes(bukuId)) {
+                btn.disabled = true;
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+                btn.querySelector('.btn-text').textContent = 'Sudah Dipilih';
+            } else if (stok <= 0) {
+                btn.disabled = true;
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+                btn.querySelector('.btn-text').textContent = 'Stok Habis';
+            } else {
+                btn.disabled = false;
+                btn.classList.remove('btn-secondary');
+                btn.classList.add('btn-primary');
+                btn.querySelector('.btn-text').textContent = 'Pilih';
+            }
+        });
+    }
+
+    // Panggil fungsi saat halaman load (untuk mode edit)
+    document.addEventListener('DOMContentLoaded', function() {
+        updateModalButtonStates();
+    });
+
+    // Update button states saat modal dibuka
+    document.getElementById('addBukuModal').addEventListener('show.bs.modal', function() {
+        updateModalButtonStates();
+    });
+
     // Tambah buku dari modal
     document.querySelectorAll('.select-buku-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -147,6 +207,7 @@
             const foto = this.dataset.foto;
             const stok = this.dataset.stok;
 
+            // Cek apakah buku sudah ada
             if (document.querySelector(`tr[data-id="${id}"]`)) {
                 Swal.fire({
                     icon: 'warning',
@@ -158,6 +219,7 @@
                 return;
             }
 
+            // Tambahkan baris buku
             const row = `
                 <tr data-id="${id}">
                     <td>
@@ -180,15 +242,55 @@
             `;
             bukuListBody.insertAdjacentHTML('beforeend', row);
             emptyBukuMsg.classList.add('d-none');
+
+            // Update status tombol di modal
+            updateModalButtonStates();
+
+            // Tutup modal
             bootstrap.Modal.getInstance(document.getElementById('addBukuModal')).hide();
+
+            // Tampilkan notifikasi sukses dengan Toast
+            Toast.fire({
+                icon: 'success',
+                title: 'Buku berhasil ditambahkan!'
+            });
         });
     });
 
     // Hapus baris buku
     document.addEventListener('click', function(e) {
         if (e.target.closest('.remove-buku-row')) {
-            e.target.closest('tr').remove();
-            if (bukuListBody.children.length === 0) emptyBukuMsg.classList.remove('d-none');
+            const row = e.target.closest('tr');
+            
+            // Konfirmasi hapus
+            Swal.fire({
+                title: 'Hapus Buku?',
+                text: 'Apakah Anda yakin ingin menghapus buku ini dari daftar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    row.remove();
+                    
+                    // Cek apakah masih ada buku
+                    if (bukuListBody.children.length === 0) {
+                        emptyBukuMsg.classList.remove('d-none');
+                    }
+
+                    // Update status tombol di modal
+                    updateModalButtonStates();
+
+                    // Tampilkan notifikasi dengan Toast
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Buku berhasil dihapus!'
+                    });
+                }
+            });
         }
     });
 
@@ -215,13 +317,69 @@
     });
 </script>
 
-
 <style>
+    /* ============================================================
+       CUSTOM TOAST STYLING - TIDAK TERTIMPA NAVBAR
+       ============================================================ */
+    .custom-toast-popup {
+        margin-top: 80px !important; /* Jarak dari atas (navbar biasanya 60-70px) */
+        z-index: 9999 !important; /* Z-index lebih tinggi dari navbar */
+        box-shadow: 0 8px 24px rgba(13, 110, 253, 0.3) !important;
+        border-left: 4px solid #0d6efd !important;
+    }
+
+    .custom-toast-title {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+    }
+
+    /* Override SweetAlert2 toast default */
+    .swal2-toast {
+        margin-top: 80px !important;
+    }
+
+    /* ============================================================
+       OTHER STYLES
+       ============================================================ */
     .hover-shadow:hover {
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
         background-color: #f8f9fa !important;
     }
     .fs-7 { font-size: 0.9rem; }
-    .btn-xs { padding: 0.2rem 0.4rem; font-size: 0.75rem; }
+    .btn-xs { 
+        padding: 0.2rem 0.4rem; 
+        font-size: 0.75rem; 
+        transition: all 0.3s ease;
+    }
+    .btn-xs:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+    .select-buku-btn {
+        transition: all 0.3s ease;
+    }
+    .select-buku-btn:not(:disabled):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ============================================================
+       RESPONSIVE - ADJUST TOAST POSITION
+       ============================================================ */
+    @media (max-width: 768px) {
+        .custom-toast-popup {
+            margin-top: 70px !important;
+            margin-right: 10px !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .custom-toast-popup {
+            margin-top: 60px !important;
+            margin-right: 5px !important;
+            width: 90% !important;
+        }
+    }
 </style>
 @endsection
+</document_content>

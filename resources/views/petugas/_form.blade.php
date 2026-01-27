@@ -11,8 +11,8 @@
         </div>
 
         <div class="card-body">
-            <form action="{{ isset($petugas) ? route('petugas.update', $petugas->id) : route('petugas.store') }}" 
-                  method="POST" 
+            <form action="{{ isset($petugas) ? route('petugas.update', $petugas->id) : route('petugas.store') }}"
+                  method="POST"
                   enctype="multipart/form-data">
                 @csrf
                 @if(isset($petugas))
@@ -27,9 +27,9 @@
                     @if(isset($petugas) && $petugas->foto)
                         <div class="mt-2">
                             <p>Foto Saat Ini:</p>
-                            <img src="{{ asset('storage/petugas/'.$petugas->foto) }}" 
-                                 alt="Foto Petugas" 
-                                 width="120" 
+                            <img src="{{ asset('storage/petugas/'.$petugas->foto) }}"
+                                 alt="Foto Petugas"
+                                 width="120"
                                  class="img-thumbnail">
                         </div>
                     @endif
@@ -54,6 +54,19 @@
                     @if(isset($petugas))
                         <small class="text-muted">Kosongkan jika tidak ingin mengubah password.</small>
                     @endif
+                </div>
+
+                <div class="mb-3">
+                    <label for="no_telpon" class="form-label">No Telpon</label>
+                    <input type="text" name="no_telpon" id="no_telpon" class="form-control"
+                           value="{{ old('no_telpon', isset($petugas) ? $petugas->no_telpon : '') }}"
+                           placeholder="Contoh: 08123456789">
+                </div>
+
+                <div class="mb-3">
+                    <label for="alamat" class="form-label">Alamat</label>
+                    <textarea name="alamat" id="alamat" class="form-control" rows="3"
+                              placeholder="Masukkan alamat lengkap">{{ old('alamat', isset($petugas) ? $petugas->alamat : '') }}</textarea>
                 </div>
 
                 <div class="d-flex justify-content-between">

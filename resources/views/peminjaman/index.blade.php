@@ -28,7 +28,10 @@
                 <a href="{{ route('peminjaman.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
                     <i class="bx bx-plus me-1"></i> Tambah Peminjaman
                 </a>
-                <a href="{{ route('peminjaman.export', request()->query()) }}" target="_blank" 
+                <a href="{{ route('rating.show') }}" class="btn btn-warning btn-sm rounded-pill px-3">
+                    <i class="bx bx-star me-1"></i> Rating & Ulasan
+                </a>
+                <a href="{{ route('peminjaman.export', request()->query()) }}" target="_blank"
                    class="btn btn-danger btn-sm rounded-pill px-3">
                     <i class="bx bx-file"></i> Buat PDF
                 </a>
@@ -41,6 +44,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
+                            <th>Kode Pinjaman</th>
                             <th>Nama Peminjam</th>
                             <th>Buku</th>
                             <th>Jumlah</th>
@@ -48,7 +52,6 @@
                             <th>Tenggat</th>
                             <th class="text-center">Status</th>
                             <th>Denda</th>
-                            <th class="text-center">Rating</th>
                             <th class="text-center">Aksi</th>
                             <th class="text-center">Perpanjang</th>
                             <th class="text-center">Kembali</th>
@@ -59,12 +62,13 @@
                         @foreach($peminjaman as $data)
                         <tr>
                             <td>{{ $no++ }}</td>
+                            <td>{{ $data->kode_peminjaman }}</td>
                             <td class="nama">{{ $data->user->name ?? '-' }}</td>
                             <td class="buku">
                                 @if($data->details->count() > 1)
                                     <span class="badge bg-primary">{{ $data->details->count() }} Buku</span>
-                                    <button class="btn btn-sm btn-link p-0" type="button" 
-                                            data-bs-toggle="collapse" 
+                                    <button class="btn btn-sm btn-link p-0" type="button"
+                                            data-bs-toggle="collapse"
                                             data-bs-target="#bukuList{{ $data->id }}">
                                         Lihat Detail
                                     </button>
@@ -103,44 +107,34 @@
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
-                            <td class="text-center">
-                                @php
-                                    $nilai = $data->rating->rating ?? 0;
-                                @endphp
-                                <div class="d-flex align-items-center justify-content-center gap-1">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        <i class="bx bxs-star" style="color: {{ $i <= $nilai ? '#ffc107' : '#ddd' }};"></i>
-                                    @endfor
-                                </div>
-                            </td>
 
                             {{-- AKSI --}}
                             <td class="text-center">
                                 <div class="d-flex justify-content-center align-items-center gap-2 flex-nowrap">
-                                    <a href="{{ route('peminjaman.show', $data->id) }}" 
-                                       class="btn btn-sm btn-info d-flex align-items-center justify-content-center" 
+                                    <a href="{{ route('peminjaman.show', $data->id) }}"
+                                       class="btn btn-sm btn-info d-flex align-items-center justify-content-center"
                                        title="Detail">
                                         <i class="bx bx-show"></i>
                                     </a>
-                                    
+
                                     @if($data->status == 'Pending')
                                         @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
                                             {{-- Approve Button (Trigger Modal) --}}
-                                            <button type="button" class="btn btn-sm btn-success d-flex align-items-center justify-content-center" 
+                                            <button type="button" class="btn btn-sm btn-success d-flex align-items-center justify-content-center"
                                                     title="Approve" data-bs-toggle="modal" data-bs-target="#approveModal{{ $data->id }}">
                                                 <i class="bx bx-check"></i>
                                             </button>
 
                                             {{-- Reject Button (trigger modal) --}}
-                                            <button type="button" class="btn btn-sm btn-danger d-flex align-items-center justify-content-center" 
+                                            <button type="button" class="btn btn-sm btn-danger d-flex align-items-center justify-content-center"
                                                     title="Reject" data-bs-toggle="modal" data-bs-target="#rejectModal{{ $data->id }}">
                                                 <i class="bx bx-x"></i>
                                             </button>
                                         @endif
 
                                         {{-- Edit Button (User can edit if still pending) --}}
-                                        <a href="{{ route('peminjaman.edit', $data->id) }}" 
-                                           class="btn btn-sm btn-warning d-flex align-items-center justify-content-center" 
+                                        <a href="{{ route('peminjaman.edit', $data->id) }}"
+                                           class="btn btn-sm btn-warning d-flex align-items-center justify-content-center"
                                            title="Edit">
                                             <i class="bx bx-pencil"></i>
                                         </a>
@@ -170,8 +164,8 @@
                             {{-- PERPANJANGAN --}}
                             <td class="text-center">
                                 @if($data->status == 'Dipinjam' && $data->canExtend())
-                                <button type="button" class="btn btn-warning btn-sm" 
-                                        data-bs-toggle="modal" 
+                                <button type="button" class="btn btn-warning btn-sm"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#perpanjangModal{{ $data->id }}"
                                         title="Perpanjang">
                                     <i class="bx bx-time"></i>
@@ -222,13 +216,13 @@
                                <div class="modal-body text-start">
                                  <div class="mb-3">
                                    <label class="form-label fw-bold">Tanggal Pinjam</label>
-                                   <input type="date" name="tgl_pinjam" class="form-control" 
+                                   <input type="date" name="tgl_pinjam" class="form-control"
                                           value="{{ date('Y-m-d') }}" required>
                                  </div>
-                                 
+
                                  <div class="mb-3">
                                    <label class="form-label fw-bold">Tenggat Pengembalian</label>
-                                   <input type="date" name="tenggat" class="form-control" 
+                                   <input type="date" name="tenggat" class="form-control"
                                           value="{{ date('Y-m-d', strtotime('+7 days')) }}" required>
                                    <small class="text-muted italic">* Default 7 hari ke depan</small>
                                  </div>
@@ -306,9 +300,9 @@
                                                 <label class="form-label" for="durasi{{ $data->id }}">
                                                     <i class="bx bx-calendar-plus"></i> Durasi Perpanjangan <span class="text-danger">*</span>
                                                 </label>
-                                                <select class="form-select durasi-select" 
-                                                        id="durasi{{ $data->id }}" 
-                                                        name="durasi" 
+                                                <select class="form-select durasi-select"
+                                                        id="durasi{{ $data->id }}"
+                                                        name="durasi"
                                                         data-tenggat="{{ $data->tenggat }}"
                                                         data-id="{{ $data->id }}"
                                                         required>
@@ -329,8 +323,8 @@
                                                 <label class="form-label" for="alasan{{ $data->id }}">
                                                     <i class="bx bx-message-square-detail"></i> Alasan <span class="text-danger">*</span>
                                                 </label>
-                                                <textarea class="form-control" id="alasan{{ $data->id }}" name="alasan" rows="3" 
-                                                        placeholder="Jelaskan alasan perpanjangan..." 
+                                                <textarea class="form-control" id="alasan{{ $data->id }}" name="alasan" rows="3"
+                                                        placeholder="Jelaskan alasan perpanjangan..."
                                                         required></textarea>
                                             </div>
                                         </div>
@@ -404,14 +398,14 @@
                 const dataId = this.dataset.id;
                 const previewDiv = document.getElementById('previewTenggat' + dataId);
                 const tenggatBaruSpan = previewDiv.querySelector('.tenggat-baru');
-                
+
                 if (durasi) {
                     const tenggatBaru = new Date(tenggatLama);
                     tenggatBaru.setDate(tenggatBaru.getDate() + durasi);
-                    
+
                     const options = { day: '2-digit', month: 'long', year: 'numeric' };
                     const formatted = tenggatBaru.toLocaleDateString('id-ID', options);
-                    
+
                     tenggatBaruSpan.textContent = formatted;
                     previewDiv.style.display = 'block';
                 } else {

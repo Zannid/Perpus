@@ -1,76 +1,59 @@
-@if($cartItems && $cartItems->count() > 0)
+@if($cartItems->count() > 0)
     <div class="cart-dropdown-body">
         @foreach($cartItems as $item)
-            <div class="cart-item" data-cart-id="{{ $item->id }}">
+            <div class="cart-item">
                 <div class="cart-item-image">
-                    @if($item->buku && $item->buku->foto)
-                        <img src="{{ asset('storage/buku/' . $item->buku->foto) }}" alt="{{ $item->buku->judul ?? 'Buku' }}">
-                    @else
-                        <img src="{{ asset('assets/img/default-book.png') }}" alt="Default Book">
-                    @endif
+                    <img src="{{ $item->buku->foto ? asset('storage/buku/' . $item->buku->foto) : asset('assetsf/img/default-book.jpg') }}" 
+                         alt="{{ $item->buku->judul }}">
                 </div>
-
                 <div class="cart-item-details">
-                    <div class="cart-item-title">{{ Str::limit($item->buku->judul ?? 'Judul Buku', 50) }}</div>
-                    <div class="cart-item-code">
-                        @if($item->buku && $item->buku->kode_buku)
-                            Kode: {{ $item->buku->kode_buku }}
-                        @else
-                            Penulis: {{ $item->buku->penulis ?? '-' }}
-                        @endif
-                    </div>
-                    
+                    <div class="cart-item-title">{{ Str::limit($item->buku->judul, 40) }}</div>
+                    <div class="cart-item-code">{{ $item->buku->kode_buku }}</div>
                     <div class="cart-item-quantity">
-                        <span class="quantity-label">Jumlah:</span>
+                        <span class="quantity-label">Qty:</span>
                         <div class="quantity-controls">
-                            <button 
-                                type="button" 
-                                class="qty-btn qty-btn-minus"
-                                data-cart-id="{{ $item->id }}"
-                                data-current-qty="{{ $item->jumlah }}"
-                                {{ $item->jumlah <= 1 ? 'disabled' : '' }}>
+                            <button type="button" 
+                                    class="qty-btn qty-btn-minus" 
+                                    data-cart-id="{{ $item->id }}"
+                                    data-current-qty="{{ $item->jumlah }}"
+                                    {{ $item->jumlah <= 1 ? 'disabled' : '' }}>
                                 <i class="bi bi-dash"></i>
                             </button>
                             <span class="qty-value">{{ $item->jumlah }}</span>
-                            <button 
-                                type="button" 
-                                class="qty-btn qty-btn-plus"
-                                data-cart-id="{{ $item->id }}"
-                                data-current-qty="{{ $item->jumlah }}"
-                                data-max-stock="{{ $item->buku->stok ?? 0 }}"
-                                {{ $item->jumlah >= ($item->buku->stok ?? 0) ? 'disabled' : '' }}>
+                            <button type="button" 
+                                    class="qty-btn qty-btn-plus" 
+                                    data-cart-id="{{ $item->id }}"
+                                    data-current-qty="{{ $item->jumlah }}"
+                                    data-max-stock="{{ $item->buku->stok }}"
+                                    {{ $item->jumlah >= $item->buku->stok ? 'disabled' : '' }}>
                                 <i class="bi bi-plus"></i>
                             </button>
                         </div>
                     </div>
-                    
-                    <p class="cart-item-stock">Stok tersedia: {{ $item->buku->stok ?? 0 }}</p>
+                    <p class="cart-item-stock">Stok tersedia: {{ $item->buku->stok }}</p>
                 </div>
-
                 <div class="cart-item-remove">
-                    <button 
-                        type="button" 
-                        class="btn-remove"
-                        data-cart-id="{{ $item->id }}"
-                        title="Hapus item">
-                        <i class="bi bi-x"></i>
+                    <button type="button" 
+                            class="btn-remove" 
+                            data-cart-id="{{ $item->id }}"
+                            title="Hapus">
+                        <i class="bi bi-x-lg"></i>
                     </button>
                 </div>
             </div>
         @endforeach
     </div>
-
     <div class="cart-dropdown-footer">
         <div class="cart-total">
-            <span>Total Item:</span>
-            <strong>{{ $totalQuantity ?? $cartItems->sum('jumlah') }} Buku</strong>
+            <span>Total Buku:</span>
+            <strong>{{ $totalQuantity }} Buku</strong>
         </div>
         <div class="cart-actions">
             <a href="{{ route('keranjang.index') }}" class="btn-cart btn-view">
-                <i class="bi bi-eye"></i>
+                <i class="bi bi-cart3"></i>
                 Lihat Keranjang
             </a>
-            <form action="{{ route('keranjang.submit') }}" method="POST" style="margin: 0;">
+            <form action="{{ route('keranjang.submit') }}" method="POST">
                 @csrf
                 <button type="submit" class="btn-cart btn-submit">
                     <i class="bi bi-send"></i>
@@ -80,14 +63,12 @@
         </div>
     </div>
 @else
-    <div class="cart-dropdown-body">
-        <div class="cart-empty">
-            <i class="bi bi-cart-x"></i>
-            <p>Keranjang Anda masih kosong</p>
-            <a href="{{ route('katalog') }}" class="btn-browse">
-                <i class="bi bi-book"></i>
-                Jelajahi Katalog
-            </a>
-        </div>
+    <div class="cart-empty">
+        <i class="bi bi-cart-x"></i>
+        <p>Keranjang Anda masih kosong</p>
+        <a href="{{ route('katalog') }}" class="btn-browse" onclick="closeCartDropdown()">
+            <i class="bi bi-book"></i>
+            Jelajahi Katalog
+        </a>
     </div>
 @endif

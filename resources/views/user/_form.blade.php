@@ -11,8 +11,8 @@
         </div>
 
         <div class="card-body">
-            <form action="{{ isset($user) ? route('user.update', $user->id) : route('user.store') }}" 
-                  method="POST" 
+            <form action="{{ isset($user) ? route('user.update', $user->id) : route('user.store') }}"
+                  method="POST"
                   enctype="multipart/form-data">
                 @csrf
                 @if(isset($user))
@@ -21,15 +21,15 @@
 
                 <div class="mb-3">
                     <label for="foto" class="form-label">Foto</label>
-                    <input type="file" name="foto" id="foto" class="form-control" 
+                    <input type="file" name="foto" id="foto" class="form-control"
                            {{ isset($user) ? '' : 'required' }}>
-                    
+
                     @if(isset($user) && $user->foto)
                         <div class="mt-2">
                             <p>Foto Saat Ini:</p>
-                            <img src="{{ asset('storage/user/'.$user->foto) }}" 
-                                 alt="Foto User" 
-                                 width="120" 
+                            <img src="{{ asset('storage/user/'.$user->foto) }}"
+                                 alt="Foto User"
+                                 width="120"
                                  class="img-thumbnail">
                         </div>
                     @endif
@@ -54,6 +54,19 @@
                     @if(isset($user))
                         <small class="text-muted">Kosongkan jika tidak ingin mengubah password.</small>
                     @endif
+                </div>
+
+                <div class="mb-3">
+                    <label for="no_telpon" class="form-label">No Telpon</label>
+                    <input type="text" name="no_telpon" id="no_telpon" class="form-control"
+                           value="{{ old('no_telpon', isset($user) ? $user->no_telpon : '') }}"
+                           placeholder="Contoh: 08123456789">
+                </div>
+
+                <div class="mb-3">
+                    <label for="alamat" class="form-label">Alamat</label>
+                    <textarea name="alamat" id="alamat" class="form-control" rows="3"
+                              placeholder="Masukkan alamat lengkap">{{ old('alamat', isset($user) ? $user->alamat : '') }}</textarea>
                 </div>
 
                 <div class="d-flex justify-content-between">

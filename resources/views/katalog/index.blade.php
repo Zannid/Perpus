@@ -22,19 +22,19 @@
     <!-- Catalog Section -->
     <section class="catalog-section section">
         <div class="container">
-            
+
             <!-- Search & Filter Bar -->
             <div class="search-filter-wrapper" data-aos="fade-up" data-aos-delay="100">
                 <form method="GET" action="{{ route('katalog') }}" class="filter-form">
-                    
+
                     <!-- Search Box -->
                     <div class="search-box-container">
                         <div class="search-input-wrapper">
                             <i class="bi bi-search search-icon"></i>
-                            <input 
-                                type="text" 
-                                name="search" 
-                                class="search-input" 
+                            <input
+                                type="text"
+                                name="search"
+                                class="search-input"
                                 placeholder="Cari judul buku, penulis, atau ISBN..."
                                 value="{{ request('search') }}"
                             >
@@ -142,7 +142,7 @@
                     <div class="book-card">
                         <div class="book-cover-wrapper">
                             <img src="{{ asset('/storage/buku/'. $buku->foto) }}" alt="{{ $buku->judul }}" class="book-cover-img" loading="lazy">
-                            
+
                             <!-- Book Badge -->
                             <div class="book-badges">
                                 @if($buku->stok > 0)
@@ -167,7 +167,7 @@
                                     </div>
                                 </div>
                                 <div class="book-actions">
-                                    <button type="button" class="btn-action btn-add-cart" 
+                                    <button type="button" class="btn-action btn-add-cart"
                                         data-buku-id="{{ $buku->id }}" title="Tambah ke Keranjang">
                                     <i class="bi bi-cart-plus"></i> Pinjam
                                 </button>
@@ -177,7 +177,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Book Info -->
                         <div class="book-info">
                             <h4 class="book-info-title">{{ Str::limit($buku->judul, 40) }}</h4>
@@ -914,14 +914,14 @@ function removeFilter(filterName) {
 function toggleView(view) {
     const container = document.getElementById('booksContainer');
     const buttons = document.querySelectorAll('.view-btn');
-    
+
     buttons.forEach(btn => {
         btn.classList.remove('active');
         if (btn.dataset.view === view) {
             btn.classList.add('active');
         }
     });
-    
+
     if (view === 'list') {
         container.classList.remove('grid-view');
         container.classList.add('list-view');
@@ -929,7 +929,7 @@ function toggleView(view) {
         container.classList.remove('list-view');
         container.classList.add('grid-view');
     }
-    
+
     // Save preference to localStorage
     localStorage.setItem('catalogView', view);
 }
@@ -952,27 +952,34 @@ $(document).ready(function(){
     let bukuId = $(this).data('buku-id');
 
     $.ajax({
-      url: '{{ route("keranjang.tambah-ajax") }}',
+      url: '{{ route("cart.add") }}',
       type: 'POST',
-      data: {
-        _token: '{{ csrf_token() }}',
-        buku_id: bukuId
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        buku_id: bukuId,
+        quantity: 1
+      }),
+      headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
       },
       success: function(res){
         if(res.success){
-          // Update badge cart
-          $('.cart-badge').text(res.totalItems).show();
-
-          // Modal sukses
-          Swal.fire({
-            icon: 'success',
-            title: 'Berhasil',
-            text: res.message,
-            timer: 1500,
-            showConfirmButton: false
-          });
+          // Gunakan function updateCartFromOutside dari navbar untuk auto-update cart dropdown
+          if(typeof updateCartFromOutside !== 'undefined'){
+            updateCartFromOutside(res);
+          } else {
+            // Fallback jika function tidak tersedia
+            $('.cart-badge').text(res.totalItems).show();
+            Swal.fire({
+              icon: 'success',
+              title: 'Berhasil',
+              text: res.message,
+              timer: 1500,
+              showConfirmButton: false
+            });
+          }
         } else {
-          // Modal warning
           Swal.fire({
             icon: 'warning',
             title: 'Gagal',
@@ -983,10 +990,14 @@ $(document).ready(function(){
         }
       },
       error: function(xhr){
+        let errorMessage = 'Terjadi kesalahan, coba lagi!';
+        if(xhr.responseJSON && xhr.responseJSON.message){
+          errorMessage = xhr.responseJSON.message;
+        }
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Terjadi kesalahan, coba lagi!',
+          text: errorMessage,
         });
       }
     });

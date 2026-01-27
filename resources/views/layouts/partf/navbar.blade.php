@@ -598,52 +598,58 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Event delegation untuk tombol quantity di dalam dropdown
-    setupCartEventListeners();
+    // Global event delegation untuk semua tombol di dalam cart
+    // Menggunakan event delegation pada document untuk menghindari multiple listeners
+    setupGlobalCartEventListener();
 });
 
-// Setup event listeners untuk cart items (bisa dipanggil ulang setelah update)
-function setupCartEventListeners() {
-    const cartContentWrapper = document.getElementById('cartContentWrapper');
-    
-    if (!cartContentWrapper) return;
+// Setup global event listener untuk cart items (hanya setup sekali)
+function setupGlobalCartEventListener() {
+    // Gunakan document-level event delegation dengan selector specificity
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest('button');
 
-    // Event delegation untuk semua tombol di dalam cart
-    cartContentWrapper.addEventListener('click', function(e) {
-        const target = e.target.closest('button');
-        
-        if (!target) return;
+        if (!button) return;
+
+        // Pastikan button berada dalam cart content wrapper
+        const cartContentWrapper = document.getElementById('cartContentWrapper');
+        if (!cartContentWrapper || !cartContentWrapper.contains(button)) {
+            return;
+        }
 
         // Tombol Tambah Quantity
-        if (target.classList.contains('qty-btn-plus')) {
+        if (button.classList.contains('qty-btn-plus')) {
             e.preventDefault();
-            const cartId = target.dataset.cartId;
-            const currentQty = parseInt(target.dataset.currentQty);
-            const maxStock = parseInt(target.dataset.maxStock);
-            
+            e.stopPropagation();
+            const cartId = button.dataset.cartId;
+            const currentQty = parseInt(button.dataset.currentQty);
+            const maxStock = parseInt(button.dataset.maxStock);
+
             if (currentQty < maxStock) {
-                updateCartQuantity(cartId, currentQty + 1, target);
+                updateCartQuantity(cartId, currentQty + 1, button);
             }
         }
 
         // Tombol Kurang Quantity
-        if (target.classList.contains('qty-btn-minus')) {
+        else if (button.classList.contains('qty-btn-minus')) {
             e.preventDefault();
-            const cartId = target.dataset.cartId;
-            const currentQty = parseInt(target.dataset.currentQty);
-            
+            e.stopPropagation();
+            const cartId = button.dataset.cartId;
+            const currentQty = parseInt(button.dataset.currentQty);
+
             if (currentQty > 1) {
-                updateCartQuantity(cartId, currentQty - 1, target);
+                updateCartQuantity(cartId, currentQty - 1, button);
             }
         }
 
         // Tombol Remove
-        if (target.classList.contains('btn-remove')) {
+        else if (button.classList.contains('btn-remove')) {
             e.preventDefault();
-            const cartId = target.dataset.cartId;
-            removeCartItem(cartId, target);
+            e.stopPropagation();
+            const cartId = button.dataset.cartId;
+            removeCartItem(cartId, button);
         }
-    });
+    }, true); // Gunakan capture phase untuk prioritas lebih tinggi
 }
 
 // Fungsi untuk update quantity via AJAX
@@ -685,9 +691,15 @@ function updateCartQuantity(cartId, newQuantity, button) {
 
 // Fungsi untuk remove item via AJAX
 function removeCartItem(cartId, button) {
-    if (!confirm('Apakah Anda yakin ingin menghapus item ini?')) {
+    // Tampilkan konfirmasi dialog
+    const confirmed = confirm('Apakah Anda yakin ingin menghapus item ini?');
+
+    if (!confirmed) {
+        console.log('Penghapusan dibatalkan oleh user');
         return;
     }
+
+    console.log('Menghapus item:', cartId);
 
     button.classList.add('loading');
     button.disabled = true;
@@ -702,8 +714,12 @@ function removeCartItem(cartId, button) {
             cart_id: cartId
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         button.classList.remove('loading');
         button.disabled = false;
 
@@ -716,10 +732,10 @@ function removeCartItem(cartId, button) {
         }
     })
     .catch(error => {
+        console.error('Fetch error:', error);
         button.classList.remove('loading');
         button.disabled = false;
-        console.error('Error:', error);
-        showNotification('Terjadi kesalahan', 'error');
+        showNotification('Terjadi kesalahan: ' + error.message, 'error');
     });
 }
 
@@ -746,8 +762,7 @@ function refreshCartDisplay(data) {
     const cartContentWrapper = document.getElementById('cartContentWrapper');
     if (cartContentWrapper && data.html) {
         cartContentWrapper.innerHTML = data.html;
-        // Re-setup event listeners setelah content di-update
-        setupCartEventListeners();
+        // Tidak perlu re-setup event listeners karena menggunakan global delegation
     }
 }
 
@@ -779,21 +794,12 @@ window.updateCartFromOutside = function(data) {
             const cartContentWrapper = document.getElementById('cartContentWrapper');
             if (cartContentWrapper) {
                 cartContentWrapper.innerHTML = data.html;
-                setupCartEventListeners();
+                console.log('Cart content updated with HTML');
             }
         }
 
         // Show notification
         showNotification(data.message || 'Buku berhasil ditambahkan ke keranjang', 'success');
-
-        // Tampilkan dropdown sebentar
-        const dropdown = document.getElementById('cartDropdown');
-        if (dropdown) {
-            dropdown.classList.add('show');
-            setTimeout(() => {
-                dropdown.classList.remove('show');
-            }, 2500);
-        }
     } else {
         showNotification(data.message || 'Gagal menambahkan ke keranjang', 'error');
     }
@@ -820,4 +826,96 @@ function showNotification(message, type = 'success') {
 
 // Untuk kompatibilitas dengan kode lama
 window.updateCartAjax = window.updateCartFromOutside;
+
+/**
+ * Intercept form submission untuk menambah buku ke keranjang
+ * Ini akan menghandle semua form dengan action /cart/add atau menggunakan class 'add-to-cart-form'
+ */
+document.addEventListener('submit', function(e) {
+    const form = e.target;
+
+    // Cek apakah form adalah form tambah ke keranjang
+    const isAddToCartForm = form.action.includes('/cart/add') ||
+                            form.classList.contains('add-to-cart-form') ||
+                            form.dataset.cartAction === 'add';
+
+    if (!isAddToCartForm) {
+        return;
+    }
+
+    // Cegah submit form default
+    e.preventDefault();
+    console.log('Form intercepted, sending AJAX request');
+
+    // Ambil data dari form
+    const formData = new FormData(form);
+    const bukuId = formData.get('buku_id');
+    const quantity = formData.get('quantity') || 1;
+
+    console.log('Buku ID:', bukuId, 'Quantity:', quantity);
+
+    // Submit via AJAX
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    fetch('/cart/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({
+            buku_id: parseInt(bukuId),
+            quantity: parseInt(quantity)
+        })
+    })
+    .then(response => {
+        console.log('Response received:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success && window.updateCartFromOutside) {
+            // Update cart dropdown otomatis
+            window.updateCartFromOutside(data);
+        } else if (!data.success) {
+            showNotification(data.message || 'Gagal menambahkan ke keranjang', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Terjadi kesalahan saat menambahkan ke keranjang', 'error');
+    });
+}, false);
+
+/**
+ * Untuk menambah buku ke keranjang dengan cara lain (bukan form)
+ * Gunakan function ini di tempat lain (catalogs, detail book, dll)
+ */
+window.addToCartAjax = function(bukuId, quantity = 1) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    fetch('/cart/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({
+            buku_id: bukuId,
+            quantity: quantity
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && window.updateCartFromOutside) {
+            window.updateCartFromOutside(data);
+        } else if (!data.success) {
+            showNotification(data.message || 'Gagal menambahkan ke keranjang', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Terjadi kesalahan saat menambahkan ke keranjang', 'error');
+    });
+}
 </script>

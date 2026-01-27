@@ -20,7 +20,7 @@
     <link href="{{ asset('assetsf/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{ asset('assetsf/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
     <link href="{{ asset('assetsf/vendor/aos/aos.css')}}" rel="stylesheet">
-    
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -659,8 +659,8 @@
                     {{-- Book Image --}}
                     <div class="col-lg-5" data-aos="fade-right">
                         <div class="book-image-wrapper">
-                            <img src="{{ asset('storage/buku/' . ($buku->foto ?? 'default.jpg')) }}" 
-                                 alt="{{ $buku->judul ?? 'Book' }}" 
+                            <img src="{{ asset('storage/buku/' . ($buku->foto ?? 'default.jpg')) }}"
+                                 alt="{{ $buku->judul ?? 'Book' }}"
                                  class="main-book-image">
                         </div>
                     </div>
@@ -766,8 +766,10 @@
 
                             {{-- Action Buttons --}}
                             <div class="action-section">
-                               <form action="{{ route('keranjang.tambah', $buku->id) }}" method="POST" style="flex: 1;">
+                               <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex: 1;">
                                     @csrf
+                                    <input type="hidden" name="buku_id" value="{{ $buku->id }}">
+                                    <input type="hidden" name="quantity" value="1">
 
                                     <button type="submit"
                                         class="btn-borrow"
@@ -776,15 +778,15 @@
                                         <i class="bi bi-bookmark-plus-fill"></i>
                                         {{ $buku->stok > 0 ? 'Tambah ke Keranjang' : 'Stok Habis' }}
                                     </button>
-                                </form>
-
-                                <button type="button" class="btn-wishlist" title="Tambah ke Wishlist">
+                                </form>                                <button type="button" class="btn-wishlist" title="Tambah ke Wishlist">
                                     <i class="bi bi-heart"></i>
                                 </button>
                             </div>
                             <div class="action-section mt-2">
-                                <form action="{{ route('keranjang.tambah', $buku->id) }}" method="POST" style="flex: 1;">
+                                <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex: 1;">
                                     @csrf
+                                    <input type="hidden" name="buku_id" value="{{ $buku->id }}">
+                                    <input type="hidden" name="quantity" value="1">
                                     <button type="submit" class="btn btn-outline-primary w-100 py-3 fw-bold" style="border-radius: 10px; border-width: 2px;">
                                         <i class="bi bi-cart-plus me-2"></i> Tambah ke Keranjang
                                     </button>
