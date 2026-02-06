@@ -435,7 +435,7 @@
                     <div class="avatar-section">
                         <div class="avatar-wrapper">
                             @if(Auth::user()->role == 'admin')
-                                <img src="{{ asset('storage/admin/' . Auth::user()->foto) }}" 
+                                <img src="{{ asset('storage/admin/' . Auth::user()->foto) }}"
                                      alt="Avatar"
                                      class="avatar-image"
                                      id="avatarPreview">
@@ -443,7 +443,7 @@
                                     <i class="bx bx-shield"></i>
                                 </div>
                             @elseif(Auth::user()->role == 'petugas')
-                                <img src="{{ asset('storage/petugas/' . Auth::user()->foto) }}" 
+                                <img src="{{ asset('storage/petugas/' . Auth::user()->foto) }}"
                                      alt="Foto Petugas"
                                      class="avatar-image"
                                      id="avatarPreview">
@@ -451,7 +451,7 @@
                                     <i class="bx bx-briefcase"></i>
                                 </div>
                             @else
-                                <img src="{{ asset('storage/user/' . Auth::user()->foto) }}" 
+                                <img src="{{ asset('storage/user/' . Auth::user()->foto) }}"
                                      alt="Foto User"
                                      class="avatar-image"
                                      id="avatarPreview">
@@ -536,8 +536,8 @@
                                 <i class="bx bx-user"></i>
                                 Nama Lengkap
                             </label>
-                            <input type="text" 
-                                   name="name" 
+                            <input type="text"
+                                   name="name"
                                    class="form-control form-control-custom @error('name') is-invalid @enderror"
                                    value="{{ old('name', $user->name) }}"
                                    placeholder="Masukkan nama lengkap Anda">
@@ -551,12 +551,41 @@
                                 <i class="bx bx-envelope"></i>
                                 Alamat Email
                             </label>
-                            <input type="email" 
-                                   name="email" 
+                            <input type="email"
+                                   name="email"
                                    class="form-control form-control-custom @error('email') is-invalid @enderror"
                                    value="{{ old('email', $user->email) }}"
                                    placeholder="email@example.com">
                             @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label class="form-label-custom">
+                                <i class="bx bx-phone"></i>
+                                Nomor Telepon
+                            </label>
+                            <input type="text"
+                                   name="no_telpon"
+                                   class="form-control form-control-custom @error('no_telpon') is-invalid @enderror"
+                                   value="{{ old('no_telpon', $user->no_telpon) }}"
+                                   placeholder="08123456789">
+                            @error('no_telpon')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label class="form-label-custom">
+                                <i class="bx bx-map"></i>
+                                Alamat
+                            </label>
+                            <textarea name="alamat"
+                                      class="form-control form-control-custom @error('alamat') is-invalid @enderror"
+                                      rows="3"
+                                      placeholder="Masukkan alamat lengkap Anda">{{ old('alamat', $user->alamat) }}</textarea>
+                            @error('alamat')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -587,18 +616,18 @@
         const file = e.target.files[0];
         const fileNameDisplay = document.getElementById('fileName');
         const avatarPreview = document.getElementById('avatarPreview');
-        
+
         if (file) {
             // Update file name display
             fileNameDisplay.textContent = file.name;
             fileNameDisplay.style.color = '#667eea';
             fileNameDisplay.style.fontWeight = '600';
-            
+
             // Preview image
             const reader = new FileReader();
             reader.onload = function(e) {
                 avatarPreview.src = e.target.result;
-                
+
                 // Add animation
                 avatarPreview.style.transform = 'scale(0.9)';
                 setTimeout(() => {
@@ -617,10 +646,10 @@
     document.getElementById('profileForm').addEventListener('submit', function(e) {
         const nameInput = document.querySelector('input[name="name"]');
         const emailInput = document.querySelector('input[name="email"]');
-        
+
         if (nameInput.value.trim() === '' || emailInput.value.trim() === '') {
             e.preventDefault();
-            
+
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',

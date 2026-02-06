@@ -7,7 +7,7 @@
   <title>Dashboard - Analytics</title>
 
   <!-- Favicon -->
-  <link rel="icon" href="../assets/img/logo1.png" />b
+  <link rel="icon" href="../assets/img/logo1.png" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -29,7 +29,8 @@
   <!-- Helpers -->
   <script src="../assets/vendor/js/helpers.js"></script>
   <script src="../assets/js/config.js"></script>
-    <style>
+
+  <style>
     /* Bar Chart Styles */
     .bar-chart {
       display: flex;
@@ -133,6 +134,156 @@
     .stat-card-animated {
       animation: fadeInUp 0.5s ease;
     }
+
+    /* User Dashboard Styles */
+    .gradient-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gradient-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transform: translate(30%, -30%);
+    }
+
+    .stat-card {
+      border: none;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .book-card {
+      border: none;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .book-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .book-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .progress-custom {
+      height: 8px;
+      border-radius: 10px;
+      background-color: #e9ecef;
+    }
+
+    .progress-custom .progress-bar {
+      border-radius: 10px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .activity-item {
+      padding: 15px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+    }
+
+    .activity-item:hover {
+      background-color: #f8f9fa;
+      border-left-color: #667eea;
+    }
+
+    .quick-action-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .quick-action-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .quick-action-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title i {
+      color: #667eea;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 20px;
+      height: 20px;
+      background: #ff4757;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: white;
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .stat-card {
+        margin-bottom: 15px;
+      }
+      .book-card {
+        margin-bottom: 20px;
+      }
+    }
   </style>
 </head>
 
@@ -146,7 +297,9 @@
 
         <div class="content-wrapper">
           <div class="container-xxl flex-grow-1 container-p-y">
+
             @if(Auth::user()->role === 'admin' || Auth::user()->role === 'petugas')
+            <!-- ADMIN/PETUGAS DASHBOARD -->
             <div class="row">
               <!-- Welcome Card -->
               <div class="col-lg-12 mb-4 order-0">
@@ -204,7 +357,7 @@
                       </div>
                     </div>
                   </div>
-                  
+
                   <!-- Barang Masuk -->
                   <div class="col-lg-6 col-md-12 col-6 mb-4">
                     <div class="card stat-card-animated" style="animation-delay: 0.2s;">
@@ -337,11 +490,9 @@
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-  @else
-
+            @else
+            <!-- USER DASHBOARD -->
             <!-- Welcome Banner -->
             <div class="row">
               <div class="col-12 mb-4">
@@ -516,14 +667,14 @@
                               </small>
                               <small class="text-muted">
                                 <i class="bx bx-time me-1"></i>
-                                Batas: {{ \Carbon\Carbon::parse($peminjaman->tgl_kembali)->format('d M Y') }}
+                                Batas: {{ \Carbon\Carbon::parse($peminjaman->tenggat)->format('d M Y') }}
                               </small>
                             </div>
                             <div class="col-md-3 col-12 text-md-end mt-2 mt-md-0">
                               @php
                                 $now = \Carbon\Carbon::now();
-                                $tglKembali = \Carbon\Carbon::parse($peminjaman->tgl_kembali);
-                                $sisaHari = $now->diffInDays($tglKembali, false);
+                                $tenggat = \Carbon\Carbon::parse($peminjaman->tenggat);
+                                $sisaHari = (int) $now->diffInDays($tenggat, false);
                               @endphp
                               @if($sisaHari < 0)
                                 <span class="badge bg-danger">Terlambat {{ abs($sisaHari) }} hari</span>
@@ -620,7 +771,18 @@
                       <h2 class="mb-0">{{ $totalPeminjaman ?? 0 }}</h2>
                       <small class="text-muted">Total Buku Dibaca Tahun Ini</small>
                     </div>
-                    <div id="readingChart"></div>
+                    <div class="progress-circle" style="position: relative; width: 200px; height: 200px; margin: 0 auto;">
+                      <svg width="200" height="200" viewBox="0 0 200 200">
+                        <circle cx="100" cy="100" r="80" stroke="#e9ecef" stroke-width="20" fill="none"/>
+                        <circle cx="100" cy="100" r="80" stroke="#667eea" stroke-width="20" fill="none"
+                                stroke-dasharray="{{ min((($totalPeminjaman ?? 0) / 20) * 502.65, 502.65) }} 502.65"
+                                stroke-linecap="round" transform="rotate(-90 100 100)"/>
+                      </svg>
+                      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                        <div style="font-size: 24px; font-weight: 600; color: #667eea;">{{ min(round((($totalPeminjaman ?? 0) / 20) * 100), 100) }}%</div>
+                        <div style="font-size: 12px; color: #6c757d;">{{ $totalPeminjaman ?? 0 }} / 20</div>
+                      </div>
+                    </div>
 
                     <div class="mt-3">
                       <div class="d-flex justify-content-between mb-2">
@@ -698,6 +860,7 @@
 
               </div>
             </div>
+            @endif
 
           </div>
 
@@ -717,35 +880,6 @@
     </div>
     <div class="layout-overlay layout-menu-toggle"></div>
   </div>
-@endif
-
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const bulanLabels = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-
-      // Chart Peminjaman
-      new ApexCharts(document.querySelector("#chartPeminjaman"), {
-        chart: { type: "area", height: 200, toolbar: { show: false } },
-        series: [{ name: "Peminjaman", data: @json($dataPeminjaman) }],
-        xaxis: { categories: bulanLabels },
-        colors: ["#7367F0"],
-        dataLabels: { enabled: false },
-        stroke: { curve: "smooth", width: 2 }
-      }).render();
-
-      // Chart Pengembalian
-      new ApexCharts(document.querySelector("#chartPengembalian"), {
-        chart: { type: "area", height: 200, toolbar: { show: false } },
-        series: [{ name: "Pengembalian", data: @json($dataPengembalian) }],
-        xaxis: { categories: bulanLabels },
-        colors: ["#00CFE8"],
-        dataLabels: { enabled: false },
-        stroke: { curve: "smooth", width: 2 }
-      }).render();
-    });
-  </script>
 
   <!-- Vendor JS -->
   <script src="../assets/vendor/libs/jquery/jquery.js"></script>
@@ -755,272 +889,27 @@
   <script src="../assets/vendor/js/menu.js"></script>
   <script src="../assets/vendor/libs/apex-charts/apexcharts.js"></script>
   <script src="../assets/js/main.js"></script>
-  <script src="../assets/js/dashboards-analytics.js"></script>
-</body>
-</html>
-
-
-
-<!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
-  data-assets-path="../assets/" data-template="vertical-menu-template-free">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-  <title>Dashboard User - E-Perpustakaan</title>
-
-  <!-- Favicon -->
-  <link rel="icon" href="../assets/img/logo1.png" />
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
-  <!-- Icons -->
-  <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
-
-  <!-- Core CSS -->
-  <link rel="stylesheet" href="../assets/vendor/css/core.css" />
-  <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" />
-  <link rel="stylesheet" href="../assets/css/demo.css" />
-
-  <!-- Vendors CSS -->
-  <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-  <link rel="stylesheet" href="../assets/vendor/libs/apex-charts/apex-charts.css" />
-
-  <!-- Helpers -->
-  <script src="../assets/vendor/js/helpers.js"></script>
-  <script src="../assets/js/config.js"></script>
-
-  <style>
-    /* ============================================================
-       CUSTOM STYLES FOR USER DASHBOARD
-       ============================================================ */
-    .gradient-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .gradient-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 200px;
-      height: 200px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      transform: translate(30%, -30%);
-    }
-
-    .stat-card {
-      border: none;
-      border-radius: 15px;
-      transition: all 0.3s ease;
-      overflow: hidden;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .stat-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-    }
-
-    .book-card {
-      border: none;
-      border-radius: 12px;
-      transition: all 0.3s ease;
-      overflow: hidden;
-    }
-
-    .book-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    }
-
-    .book-img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-
-    .badge-status {
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .progress-custom {
-      height: 8px;
-      border-radius: 10px;
-      background-color: #e9ecef;
-    }
-
-    .progress-custom .progress-bar {
-      border-radius: 10px;
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .activity-item {
-      padding: 15px;
-      border-radius: 10px;
-      transition: all 0.3s ease;
-      border-left: 4px solid transparent;
-    }
-
-    .activity-item:hover {
-      background-color: #f8f9fa;
-      border-left-color: #667eea;
-    }
-
-    .quick-action-btn {
-      border: none;
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      transition: all 0.3s ease;
-      background: white;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    }
-
-    .quick-action-btn:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .quick-action-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 12px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .section-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #2c3e50;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .section-title i {
-      color: #667eea;
-    }
-
-    .notification-badge {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      width: 20px;
-      height: 20px;
-      background: #ff4757;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      color: white;
-      font-weight: 700;
-    }
-
-    @media (max-width: 768px) {
-      .stat-card {
-        margin-bottom: 15px;
-      }
-
-      .book-card {
-        margin-bottom: 20px;
-      }
-    }
-  </style>
-
-
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Reading Progress Chart (Radial)
-      const readingTotal = {{ $totalPeminjaman ?? 0 }};
-      const readingTarget = 20;
-      const readingPercent = Math.min((readingTotal / readingTarget) * 100, 100);
-
-      new ApexCharts(document.querySelector("#readingChart"), {
-        chart: {
-          type: "radialBar",
-          height: 250
-        },
-        series: [readingPercent.toFixed(0)],
-        plotOptions: {
-          radialBar: {
-            hollow: {
-              size: "60%"
-            },
-            track: {
-              background: "#e9ecef"
-            },
-            dataLabels: {
-              show: true,
-              name: {
-                show: false
-              },
-              value: {
-                fontSize: "22px",
-                fontWeight: 600,
-                color: "#667eea",
-                formatter: function(val) {
-                  return readingTotal + " / " + readingTarget;
-                }
-              }
-            }
-          }
-        },
-        colors: ["#667eea"],
-        labels: ["Progress"]
-      }).render();
-    });
-  </script>
-  <script>
-    // Switch Tab Function
+    // Switch Tab Function for Admin Chart
     function switchTab(tabName) {
       // Hide all content
       document.querySelectorAll('.chart-content').forEach(content => {
         content.classList.remove('active');
       });
-      
+
       // Remove active from all tabs
       document.querySelectorAll('.chart-tab').forEach(tab => {
         tab.classList.remove('active');
       });
-      
+
       // Show selected content
       document.getElementById('tab-' + tabName).classList.add('active');
-      
+
       // Add active to clicked tab
-      event.target.classList.add('active');
+      event.currentTarget.classList.add('active');
     }
 
     // Animate bars on load
@@ -1035,4 +924,5 @@
       });
     });
   </script>
-
+</body>
+</html>

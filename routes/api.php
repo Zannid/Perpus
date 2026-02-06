@@ -3,6 +3,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BukuApiController;
 use App\Http\Controller\Api\KategoriApiController;
+use App\Http\Controllers\Api\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes        
@@ -16,6 +17,17 @@ use App\Http\Controller\Api\KategoriApiController;
 // Route::resource('/bukus', App\Http\Controllers\Api\BukuApiController::class);
 Route::post('/notifikasi/read/{id}', [PeminjamanController::class, 'readNotif'])
     ->name('notifikasi.read');
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+route::middleware('auth:sanctum')->group(function () {
+    Route::resource('/bukus', BukuApiController::class);
+    Route::resource('/kategoris', KategoriApiController::class);
+});
 
 // // 
 // Route::resource('/kategoris', App\Http\Controllers\Api\KategoriApiController::class);

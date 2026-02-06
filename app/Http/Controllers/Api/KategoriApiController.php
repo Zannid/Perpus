@@ -43,7 +43,13 @@ class KategoriApiController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $kategori = Kategori::find($id);
+        if ($kategori) {
+            $kategori->update($request->all());
+            return response()->json($kategori);
+        } else {
+            return response()->json(['message' => 'kategori not found'], 404);
+        }
     }
 
     /**
@@ -51,6 +57,12 @@ class KategoriApiController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $kategori = Kategori::find($id);
+        if ($kategori) {
+            $kategori->delete();
+            return response()->json(['message' => 'kategori deleted']);
+        } else {
+            return response()->json(['message' => 'kategori not found'], 404);
+        }
     }
 }
