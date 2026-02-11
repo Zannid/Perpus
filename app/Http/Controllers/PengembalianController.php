@@ -33,7 +33,7 @@ class PengembalianController extends Controller
             });
         }
 
-        $pengembalian = $query->orderByDesc('id')->paginate(5);
+        $pengembalian = $query->orderByDesc('id')->paginate(10);
 
         return view('pengembalian.index', compact('pengembalian', 'search'));
     }

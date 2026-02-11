@@ -29,6 +29,10 @@ route::middleware('auth:sanctum')->group(function () {
     Route::resource('/kategoris', KategoriApiController::class);
 });
 
+Route::get('/users', [AuthController::class, 'index']);
+
+Route::get('/me', fn(Request $request) => $request->user())
+    ->middleware('auth:sanctum');
 // // 
 // Route::resource('/kategoris', App\Http\Controllers\Api\KategoriApiController::class);
 

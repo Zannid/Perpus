@@ -127,14 +127,19 @@ class PeminjamanController extends Controller
             'status'     => 'required|in:Pending,Dipinjam',
         ]);
 
+        // Create peminjaman first, then generate kode based on the created ID
         $peminjaman = Peminjaman::create([
-            'kode_peminjaman'    => 'PMJ-' . (Peminjaman::max('id') + 1),
+            'kode_peminjaman'    => null,
             'id_user'            => $request->id_user,
             'tgl_pinjam'         => $request->tgl_pinjam,
             'tenggat'            => $request->tenggat,
             'status'             => $request->status,
             'jumlah_keseluruhan' => array_sum($request->jumlah),
         ]);
+
+        // Generate a single kode for this peminjaman using its ID
+        $peminjaman->kode_peminjaman = 'PJM-' . str_pad($peminjaman->id, 4, '0', STR_PAD_LEFT);
+        $peminjaman->save();
 
         foreach ($request->id_buku as $index => $bukuId) {
             \App\Models\DetailPeminjaman::create([
@@ -704,9 +709,9 @@ class PeminjamanController extends Controller
         $peminjaman->tenggat            = null;
         $peminjaman->status             = 'Pending';
 
-        $lastId                      = Peminjaman::max('id') ?? 0;
-        $peminjaman->kode_peminjaman = 'PJM-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
-
+        // Save first to get ID, then generate kode once
+        $peminjaman->save();
+        $peminjaman->kode_peminjaman = 'PJM-' . str_pad($peminjaman->id, 4, '0', STR_PAD_LEFT);
         $peminjaman->save();
 
         // Simpan detail
@@ -735,18 +740,20 @@ class PeminjamanController extends Controller
                 return back()->with('error', 'Stok buku habis.');
             }
 
-            $lastId = Peminjaman::max('id') ?? 0;
-            $kode   = 'PJM-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
 
             // PERBAIKAN: Stok tidak dikurangi saat Pending
             $peminjaman = Peminjaman::create([
-                'kode_peminjaman'    => $kode,
+                'kode_peminjaman'    => null,
                 'id_user'            => auth()->id(),
                 'jumlah_keseluruhan' => 1,
                 'tgl_pinjam'         => null,
                 'tenggat'            => null,
                 'status'             => 'Pending',
             ]);
+
+            // Generate kode based on the created ID (only once)
+            $peminjaman->kode_peminjaman = 'PJM-' . str_pad($peminjaman->id, 4, '0', STR_PAD_LEFT);
+            $peminjaman->save();
 
             \App\Models\DetailPeminjaman::create([
                 'peminjaman_id' => $peminjaman->id,

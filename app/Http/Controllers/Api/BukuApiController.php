@@ -1,10 +1,9 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Buku;
+use Illuminate\Http\Request;
 
 class BukuApiController extends Controller
 {
@@ -15,9 +14,9 @@ class BukuApiController extends Controller
     {
         return response()->json(Buku::all());
         return response()->json($books)
-    ->header('Access-Control-Allow-Origin', '*')
-    ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-    ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     }
 
@@ -35,11 +34,17 @@ class BukuApiController extends Controller
      */
     public function show(string $id)
     {
-        $buku = Buku::find($id);
+        $buku = Buku::with(['kategori', 'lokasi'])->find($id);
         if ($buku) {
-            return response()->json($buku);
+            return response()->json([
+                'success' => true,
+                'data'    => $buku,
+            ]);
         } else {
-            return response()->json(['message' => 'Buku not found'], 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Buku not found',
+            ], 404);
         }
     }
 
@@ -69,5 +74,80 @@ class BukuApiController extends Controller
         } else {
             return response()->json(['message' => 'Buku not found'], 404);
         }
+    }
+
+    /**
+     * Get latest books
+     */
+    public function latest()
+    {
+        $books = Buku::with(['kategori', 'lokasi'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $books,
+        ]);
+    }
+
+    /**
+     * Search books
+     */
+    public function search(Request $request)
+    {
+        $query    = $request->get('q', '');
+        $category = $request->get('category', '');
+
+        $books = Buku::with(['kategori', 'lokasi'])
+            ->where('judul', 'like', '%' . $query . '%')
+            ->orWhere('pengarang', 'like', '%' . $query . '%')
+            ->orWhere('penerbit', 'like', '%' . $query . '%');
+
+        if ($category) {
+            $books->where('kategori_id', $category);
+        }
+
+        $books = $books->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $books,
+        ]);
+    }
+
+    /**
+     * Get book categories
+     */
+    public function categories()
+    {
+        $categories = \App\Models\Kategori::all();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $categories,
+        ]);
+    }
+
+    /**
+     * Get book bookshelves/locations
+     */
+    public function bookshelves()
+    {
+        $locations = \App\Models\Lokasi::all();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $locations,
+        ]);
+    }
+
+    /**
+     * Get book detail (alias for show)
+     */
+    public function detail(string $id)
+    {
+        return $this->show($id);
     }
 }

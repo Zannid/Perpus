@@ -15,7 +15,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-           
+
         }
         thead{
         background:rgba(34, 170, 89, 0.99);
@@ -40,27 +40,27 @@
                                 <th>Tanggal Pinjam</th>
                                 <th>Tanggal Kembali</th>
                                 <th>Status</th>
-                           
-                           
+
+
                         </tr>
         </thead>
         <tbody>
-        @foreach ($data as $i => $data)
-                <tr>
-                      <td>{{ $loop->iteration }}</td>
-                    <td>{{ $data->kode_peminjaman }}</td>
-                    <td>{{ $data->user->name ?? '-' }}</td>
-                    <td>{{ $data->buku->judul }}</td>
-                    <td>{{ $data->jumlah }}</td>
-              <td>{{ $data->formatted_tanggal_pinjam ?? $data->tgl_pinjam }}</td>
-              <td>{{ $data->formatted_tanggal_kembali ?? $data->tenggat }}</td>
-                                 <td>
-                              <span class="badge {{ $data->status == 'Sedang Dipinjam' ? 'bg-danger' : 'bg-success' }}">
-                                {{ $data->status }}
-                              </span>
-                            </td>
-                </tr>
-            @endforeach
+                @foreach ($data as $item)
+                                <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->kode_peminjaman }}</td>
+                                        <td>{{ $item->user->name ?? '-' }}</td>
+                                        <td>{{ $item->details->pluck('buku.judul')->implode(', ') }}</td>
+                                        <td>{{ $item->jumlah_keseluruhan ?? $item->details->sum('jumlah') }}</td>
+                            <td>{{ $item->formatted_tanggal_pinjam ?? $item->tgl_pinjam }}</td>
+                            <td>{{ $item->formatted_tanggal_kembali ?? $item->tenggat }}</td>
+                                                                 <td>
+                                                            <span class="badge {{ $item->status == 'Sedang Dipinjam' ? 'bg-danger' : 'bg-success' }}">
+                                                                {{ $item->status }}
+                                                            </span>
+                                                        </td>
+                                </tr>
+                        @endforeach
         </tbody>
  </table>
 </body>

@@ -48,7 +48,7 @@
         @foreach ($data as $i => $data)
                 <tr>
                       <td>{{ $loop->iteration }}</td>
-                    <td>{{ $data->kode_kembali }}</td>
+                    <td>{{ $data->kode_peminjaman }}</td>
                     <td>{{ $data->user->name ?? '-' }}</td>
                     <td>{{ $data->buku->judul }}</td>
                     <td>{{ $data->jumlah }}</td>

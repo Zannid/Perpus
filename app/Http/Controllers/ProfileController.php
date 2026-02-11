@@ -25,15 +25,23 @@ class ProfileController extends Controller
             'alamat'    => 'nullable|string|max:500',
         ]);
 
-        if ($request->hasFile('foto')) {
-            // hapus foto lama jika ada
-            if ($user->foto) {
-                Storage::delete('public/' . $user->role . '/' . $user->foto);
-            }
-            $filename = time() . '.' . $request->foto->getClientOriginalExtension();
-            $request->foto->storeAs('public/' . $user->role, $filename);
-            $user->foto = $filename;
-        }
+       if ($request->hasFile('foto')) {
+
+    $folder = in_array($user->role, ['admin', 'petugas', 'user'])
+    ? $user->role
+    : 'user';
+
+    if ($user->foto && Storage::disk('public')->exists($folder.'/'.$user->foto)) {
+        Storage::disk('public')->delete($folder.'/'.$user->foto);
+    }
+
+    $file = $request->file('foto');
+    $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+
+    $file->storeAs($folder, $filename, 'public');
+
+    $user->foto = $filename;
+}
 
         $user->name      = $request->name;
         $user->email     = $request->email;

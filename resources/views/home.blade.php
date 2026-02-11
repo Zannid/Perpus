@@ -500,7 +500,7 @@
                   <div class="card-body p-4">
                     <div class="row align-items-center">
                       <div class="col-md-8">
-                        <h3 class="mb-2">Selamat Datang Kembali, {{ Auth::user()->name }}! 👋</h3>
+                        <h3 class="mb-2 text-white">Selamat Datang Kembali, {{ Auth::user()->name }}! 👋</h3>
                         <p class="mb-3 opacity-75">Jelajahi koleksi buku terbaru kami dan nikmati pengalaman membaca yang menyenangkan</p>
                         <div class="d-flex gap-2">
                           <a href="{{ route('katalog') }}" class="btn btn-light btn-sm">

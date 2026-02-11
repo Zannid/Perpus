@@ -663,6 +663,9 @@
   width: 100%;
   margin: 0;
   padding: 0 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .slider-wrapper {
@@ -671,21 +674,27 @@
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(30px);
   border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.3s ease;
+  width: 100%;
+  flex: 1;
+  max-width: 100%;
 }
 
 .slider-wrapper:hover {
-  box-shadow: 0 45px 130px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
 }
 
 .book-slides {
   display: flex;
+  width: 100%;
   transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  will-change: transform;
 }
 
 .book-slide {
   min-width: 100%;
+  flex-basis: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -693,10 +702,13 @@
   padding: 70px 100px;
   opacity: 0;
   transition: opacity 0.8s ease;
+  visibility: hidden;
 }
 
 .book-slide.active {
   opacity: 1;
+  visibility: visible;
+  z-index: 10;
 }
 
 .book-image {
@@ -708,6 +720,10 @@
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
   transform: perspective(1200px) rotateY(-8deg);
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.book-slide.active .book-image {
+  transform: perspective(1200px) rotateY(0deg);
 }
 
 .book-slide:hover .book-image {
@@ -797,7 +813,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(15px);
   border: 2px solid rgba(255, 255, 255, 0.3);
   width: 60px;
@@ -807,18 +823,24 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   color: #667eea;
   z-index: 10;
+  outline: none;
+  padding: 0;
 }
 
 .slider-nav:hover {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
-  transform: translateY(-50%) scale(1.2);
-  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
   border-color: transparent;
+}
+
+.slider-nav:active {
+  transform: translateY(-50%) scale(1.05);
 }
 
 .slider-nav.prev {
@@ -832,6 +854,7 @@
 .slider-nav i {
   font-size: 28px;
   font-weight: 700;
+  pointer-events: none;
 }
 
 /* Dots Navigation */
@@ -840,6 +863,7 @@
   justify-content: center;
   gap: 12px;
   margin-top: 40px;
+  flex-wrap: wrap;
 }
 
 .dot {
@@ -850,6 +874,9 @@
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 2px solid transparent;
+  outline: none;
+  padding: 0;
+  border: none;
 }
 
 .dot:hover {
@@ -1112,7 +1139,7 @@
   }
 
   .slider-container {
-    padding: 0 50px;
+    padding: 0 45px;
   }
 
   .book-slide {
@@ -1125,7 +1152,7 @@
   .book-image {
     width: 280px;
     height: 420px;
-    transform: perspective(1000px) rotateY(0deg);
+    transform: perspective(1000px) rotateY(0deg) !important;
   }
 
   .book-details {
@@ -1169,12 +1196,17 @@
   }
 
   .slider-container {
-    padding: 0 40px;
+    padding: 0 35px;
+  }
+
+  .book-slide {
+    padding: 40px 20px;
+    gap: 20px;
   }
 
   .book-image {
-    width: 240px;
-    height: 360px;
+    width: 220px;
+    height: 340px;
   }
 
   .book-title {
@@ -1196,6 +1228,20 @@
 
   .slider-nav i {
     font-size: 20px;
+  }
+
+  .slider-dots {
+    margin-top: 30px;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .dot.active {
+    width: 32px;
   }
 
   .metric-item {
@@ -1226,21 +1272,21 @@
 
   .hero-description {
     font-size: 15px;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
   }
 
   .slider-container {
-    padding: 0 30px;
+    padding: 0 15px;
   }
 
   .book-slide {
-    padding: 25px 15px;
-    gap: 20px;
+    padding: 20px 10px;
+    gap: 15px;
   }
 
   .book-image {
-    width: 200px;
-    height: 300px;
+    width: 180px;
+    height: 280px;
   }
 
   .book-title {
@@ -1262,6 +1308,32 @@
 
   .slider-nav i {
     font-size: 18px;
+  }
+
+  .slider-nav.prev {
+    left: 5px;
+  }
+
+  .slider-nav.next {
+    right: 5px;
+  }
+
+  .book-slider-banner {
+    margin: 40px 0;
+  }
+
+  .slider-dots {
+    margin-top: 25px;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .dot.active {
+    width: 28px;
   }
 
   .hero-metrics {

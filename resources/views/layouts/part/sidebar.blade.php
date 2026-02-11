@@ -1,31 +1,4 @@
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const body = document.body;
-    const sidebar = document.getElementById("layout-menu");
-    const sidebarToggleBtns = document.querySelectorAll(".layout-menu-toggle");
 
-    if (sidebar && sidebarToggleBtns.length > 0) {
-        // Restore state dari localStorage
-        if (localStorage.getItem("sidebarState") === "collapsed") {
-            body.classList.add("layout-menu-collapsed");
-        }
-
-        // Toggle semua tombol yang ada
-        sidebarToggleBtns.forEach(btn => {
-            btn.addEventListener("click", function (e) {
-                e.preventDefault();
-                body.classList.toggle("layout-menu-collapsed");
-                localStorage.setItem(
-                    "sidebarState",
-                    body.classList.contains("layout-menu-collapsed")
-                        ? "collapsed"
-                        : "expanded"
-                );
-            });
-        });
-    }
-});
-</script>
 
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">

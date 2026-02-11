@@ -164,74 +164,42 @@
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js')}}"></script>
     <script>
-document.addEventListener('DOMContentLoaded', function () {
-  const toggleBtn = document.querySelector('.layout-menu-toggle');
-  const layoutMenu = document.getElementById('layout-menu');
+    document.addEventListener('DOMContentLoaded', function () {
+        // Gunakan setTimeout untuk memastikan DOM benar-benar siap
+        setTimeout(function() {
+            const body = document.body;
+            const layoutMenu = document.getElementById('layout-menu');
+            const sidebarToggleBtns = document.querySelectorAll('.layout-menu-toggle');
 
-  if (toggleBtn && layoutMenu) {
-    toggleBtn.addEventListener('click', function () {
-      layoutMenu.classList.toggle('collapsed');
-      localStorage.setItem('sidebarCollapsed',
-        layoutMenu.classList.contains('collapsed') ? 'true' : 'false'
-      );
+            // Restore state dari localStorage saat halaman dimuat
+            if (localStorage.getItem('sidebarState') === 'collapsed') {
+                body.classList.add('layout-menu-collapsed');
+                if (layoutMenu) {
+                    layoutMenu.classList.add('collapsed');
+                }
+            }
+
+            // Gunakan event delegation - attach ke semua toggle button
+            if (sidebarToggleBtns.length > 0) {
+                sidebarToggleBtns.forEach(btn => {
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        body.classList.toggle('layout-menu-collapsed');
+                        if (layoutMenu) {
+                            layoutMenu.classList.toggle('collapsed');
+                        }
+
+                        // Simpan state ke localStorage
+                        localStorage.setItem(
+                            'sidebarState',
+                            body.classList.contains('layout-menu-collapsed') ? 'collapsed' : 'expanded'
+                        );
+                    });
+                });
+            }
+        }, 100); // Delay 100ms untuk memastikan semua element siap
     });
-
-    if (localStorage.getItem('sidebarCollapsed') === 'true') {
-      layoutMenu.classList.add('collapsed');
-    }
-  }
-});
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  const toggleBtn = document.querySelector('.layout-menu-toggle');
-  const layoutMenu = document.getElementById('layout-menu');
-
-  toggleBtn.addEventListener('click', function () {
-    layoutMenu.classList.toggle('collapsed');
-
-    // Simpan status di localStorage supaya tetap collapse setelah refresh
-    if (layoutMenu.classList.contains('collapsed')) {
-      localStorage.setItem('sidebarCollapsed', 'true');
-    } else {
-      localStorage.setItem('sidebarCollapsed', 'false');
-    }
-  });
-
-  // Saat reload, cek apakah user terakhir kali collapse
-  if (localStorage.getItem('sidebarCollapsed') === 'true') {
-    layoutMenu.classList.add('collapsed');
-  }
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const body = document.body;
-    const sidebar = document.getElementById("layout-menu");
-    const sidebarToggleBtns = document.querySelectorAll(".layout-menu-toggle");
-
-    if (sidebar && sidebarToggleBtns.length > 0) {
-        // Restore state dari localStorage
-        if (localStorage.getItem("sidebarState") === "collapsed") {
-            body.classList.add("layout-menu-collapsed");
-        }
-
-        // Toggle semua tombol yang ada
-        sidebarToggleBtns.forEach(btn => {
-            btn.addEventListener("click", function (e) {
-                e.preventDefault();
-                body.classList.toggle("layout-menu-collapsed");
-                localStorage.setItem(
-                    "sidebarState",
-                    body.classList.contains("layout-menu-collapsed")
-                        ? "collapsed"
-                        : "expanded"
-                );
-            });
-        });
-    }
-});
-</script>
+    </script>
 @yield('js')
   </body>
 </html>

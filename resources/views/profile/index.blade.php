@@ -408,7 +408,7 @@
 <div class="profile-header">
     <div class="container">
         <div class="profile-header-content">
-            <h2><i class="bx bx-user-circle me-2"></i>Profil Saya</h2>
+            <h2 class="text-white"><i class="bx bx-user-circle me-2 text-white "></i>Profil Saya</h2>
             <p>Kelola informasi profil dan preferensi akun Anda</p>
         </div>
     </div>
@@ -465,13 +465,13 @@
                         <span class="role-badge">{{ ucfirst(Auth::user()->role) }}</span>
 
                         <div class="custom-file-upload">
-                            <input type="file" name="photo" id="photoInput" accept="image/*" class="@error('photo') is-invalid @enderror">
+                            <input type="file" name="foto" id="photoInput" accept="image/*" class="@error('foto') is-invalid @enderror">
                             <label for="photoInput" class="file-upload-label">
                                 <i class="bx bx-cloud-upload"></i>
                                 <span>Pilih Foto Baru</span>
                             </label>
                             <div class="file-name-display" id="fileName">Belum ada file dipilih</div>
-                            @error('photo')
+                            @error('foto')
                                 <div class="text-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>

@@ -213,11 +213,12 @@
       @endforelse
 
       {{-- Pagination --}}
-      @if($pengembalian->hasPages())
-        <div class="d-flex justify-content-center mt-4">
-          {{ $pengembalian->links() }}
+
+        <div class="mt-4">
+          {{ $pengembalian->appends(request()->all())->links('vendor.pagination.bootstrap-5') }}
+            </div>
         </div>
-      @endif
+
     </div>
   </div>
 </div>
