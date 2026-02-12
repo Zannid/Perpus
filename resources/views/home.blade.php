@@ -422,71 +422,9 @@
 
               <!-- Chart Peminjaman & Pengembalian -->
               <div class="col-md-12 col-lg-8 order-1 mb-4">
-                <div class="card h-100">
-                  <div class="card-header">
-                    <div class="chart-tabs">
-                      <button type="button" class="chart-tab active" onclick="switchTab('peminjaman')">
-                        <i class="bx bx-book-open me-1"></i> Peminjaman
-                      </button>
-                      <button type="button" class="chart-tab" onclick="switchTab('pengembalian')">
-                        <i class="bx bx-book-bookmark me-1"></i> Pengembalian
-                      </button>
-                    </div>
-                  </div>
-
-                  <div class="card-body p-4">
-                    <!-- Tab Peminjaman -->
-                    <div class="chart-content active" id="tab-peminjaman">
-                      <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div>
-                          <small class="text-muted d-block">Total Peminjaman</small>
-                          <h4 class="mb-0">{{ array_sum($dataPeminjaman) }}</h4>
-                        </div>
-                        <span class="badge bg-label-primary">Tahun Ini</span>
-                      </div>
-                      <div class="bar-chart">
-                        @php
-                          $maxPeminjaman = max($dataPeminjaman) ?: 1;
-                        @endphp
-                        @foreach(['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'] as $index => $bulan)
-                          <div class="bar-item">
-                            <div class="bar" style="height: {{ ($dataPeminjaman[$index] / $maxPeminjaman) * 100 }}%">
-                              @if($dataPeminjaman[$index] > 0)
-                                <span class="bar-value">{{ $dataPeminjaman[$index] }}</span>
-                              @endif
-                            </div>
-                            <div class="bar-label">{{ $bulan }}</div>
-                          </div>
-                        @endforeach
-                      </div>
-                    </div>
-
-                    <!-- Tab Pengembalian -->
-                    <div class="chart-content" id="tab-pengembalian">
-                      <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div>
-                          <small class="text-muted d-block">Total Pengembalian</small>
-                          <h4 class="mb-0">{{ array_sum($dataPengembalian) }}</h4>
-                        </div>
-                        <span class="badge bg-label-info">Tahun Ini</span>
-                      </div>
-                      <div class="bar-chart">
-                        @php
-                          $maxPengembalian = max($dataPengembalian) ?: 1;
-                        @endphp
-                        @foreach(['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'] as $index => $bulan)
-                          <div class="bar-item">
-                            <div class="bar" style="height: {{ ($dataPengembalian[$index] / $maxPengembalian) * 100 }}%; background: linear-gradient(180deg, #00CFE8 0%, #5EDAFF 100%);">
-                              @if($dataPengembalian[$index] > 0)
-                                <span class="bar-value" style="color: #00CFE8;">{{ $dataPengembalian[$index] }}</span>
-                              @endif
-                            </div>
-                            <div class="bar-label">{{ $bulan }}</div>
-                          </div>
-                        @endforeach
-                      </div>
-                    </div>
-                  </div>
+               <div class="card shadow-sm border-0 rounded-4 p-4 h-100">
+                    <h5 class="fw-bold mb-3">Statistik Peminjaman & Pengembalian {{ date('Y') }}</h5>
+                    <canvas id="adminChart"></canvas>
                 </div>
               </div>
             </div>
@@ -892,37 +830,81 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script>
-    // Switch Tab Function for Admin Chart
-    function switchTab(tabName) {
-      // Hide all content
-      document.querySelectorAll('.chart-content').forEach(content => {
-        content.classList.remove('active');
-      });
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-      // Remove active from all tabs
-      document.querySelectorAll('.chart-tab').forEach(tab => {
-        tab.classList.remove('active');
-      });
 
-      // Show selected content
-      document.getElementById('tab-' + tabName).classList.add('active');
+<script>
+    const ctx = document.getElementById('adminChart').getContext('2d');
 
-      // Add active to clicked tab
-      event.currentTarget.classList.add('active');
-    }
+    const gradientPinjam = ctx . createLinearGradient(0, 0, 0, 400);
+    gradientPinjam . addColorStop(0, 'rgba(54, 162, 235, 0.6)');
+    gradientPinjam . addColorStop(1, 'rgba(54, 162, 235, 0.05)');
+    const gradientKembali = ctx . createLinearGradient(0, 0, 0, 400);
+    gradientKembali . addColorStop(0, 'rgba(141, 75, 192, 0.6)');
+    gradientKembali . addColorStop(1, 'rgba(147, 75, 192, 0.05)');
 
-    // Animate bars on load
-    document.addEventListener('DOMContentLoaded', function() {
-      const bars = document.querySelectorAll('.bar');
-      bars.forEach((bar, index) => {
-        const height = bar.style.height;
-        bar.style.height = '0';
-        setTimeout(() => {
-          bar.style.height = height;
-        }, index * 50);
-      });
+
+    const adminChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+                'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+            ],
+            datasets: [
+                {
+                    label: 'Peminjaman',
+                    data: {!! $dataPeminjaman !!},
+                    backgroundColor: gradientPinjam,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4
+                },
+                {
+                    label: 'Pengembalian',
+                    data: {!! $dataPengembalian !!},
+                    backgroundColor: gradientKembali,
+                    borderColor: 'rgb(212, 96, 251)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    backgroundColor: '#1e293b',
+                    padding: 12,
+                    cornerRadius: 8
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(200,200,200,0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
     });
-  </script>
+</script>
 </body>
 </html>

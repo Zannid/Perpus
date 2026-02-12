@@ -167,9 +167,11 @@
                                     </div>
                                 </div>
                                 <div class="book-actions">
-                                    <button type="button" class="btn-action btn-add-cart"
-                                        data-buku-id="{{ $buku->id }}" title="Tambah ke Keranjang">
-                                    <i class="bi bi-cart-plus"></i> Pinjam
+                                    <<button type="button" class="btn-action btn-add-cart"
+                                  data-buku-id="{{ $buku->id }}" title="Tambah ke Keranjang"
+                                  {{ $buku->stok <= 0 ? 'disabled' : '' }}
+                                  style="{{ $buku->stok <= 0 ? 'opacity: 0.5; cursor: not-allowed;' : '' }}">
+                              <i class="bi bi-cart-plus"></i> Pinjam
                                 </button>
                                     <a href="{{ route('detail_buku', $buku->id) }}" class="btn-action btn-detail" title="Detail Buku">
                                         <i class="bi bi-info-circle"></i> Detail

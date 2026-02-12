@@ -127,13 +127,19 @@ class PeminjamanController extends Controller
             'status'     => 'required|in:Pending,Dipinjam',
         ]);
 
+        // Cek apakah yang membuat adalah admin atau petugas
+        $isStaff = auth()->user() && in_array(auth()->user()->role, ['admin', 'petugas']);
+
+        // Jika admin/petugas yang membuat, langsung set status Dipinjam
+        $finalStatus = $isStaff ? 'Dipinjam' : $request->status;
+
         // Create peminjaman first, then generate kode based on the created ID
         $peminjaman = Peminjaman::create([
             'kode_peminjaman'    => null,
             'id_user'            => $request->id_user,
             'tgl_pinjam'         => $request->tgl_pinjam,
             'tenggat'            => $request->tenggat,
-            'status'             => $request->status,
+            'status'             => $finalStatus,
             'jumlah_keseluruhan' => array_sum($request->jumlah),
         ]);
 
@@ -148,14 +154,20 @@ class PeminjamanController extends Controller
                 'jumlah'        => $request->jumlah[$index],
             ]);
 
-            // PERBAIKAN: Stok hanya dikurangi jika status langsung Dipinjam
-            if ($request->status == 'Dipinjam') {
+            // PERBAIKAN: Stok dikurangi jika:
+            // - Status request adalah Dipinjam, ATAU
+            // - Admin/Petugas yang membuat (karena langsung jadi Dipinjam)
+            if ($finalStatus == 'Dipinjam') {
                 Buku::find($bukuId)->decrement('stok', $request->jumlah[$index]);
             }
         }
 
+        $successMessage = $isStaff
+            ? 'Peminjaman berhasil dibuat dan otomatis disetujui.'
+            : 'Peminjaman berhasil dibuat';
+
         return redirect()->route('peminjaman.index')
-            ->with('success', 'Peminjaman berhasil dibuat');
+            ->with('success', $successMessage);
     }
 
     public function export(Request $request)
@@ -256,7 +268,7 @@ class PeminjamanController extends Controller
 
             // Validasi stok
             foreach ($peminjaman->details as $detail) {
-                if (!$detail->buku) {
+                if (! $detail->buku) {
                     return back()->with('error', 'Data buku tidak ditemukan.');
                 }
 
@@ -380,8 +392,8 @@ class PeminjamanController extends Controller
                     'user_id' => $peminjaman->id_user,
                     'title'   => 'Peminjaman Ditolak ✗',
                     'message' => "Pengajuan peminjaman buku '{$judulBuku}' ditolak. Alasan: {$alasanTolak}",
-                    'type'    => 'danger',
-                    'link'    => route('peminjaman.show', $peminjaman->id),
+                    'type' => 'danger',
+                    'link' => route('peminjaman.show', $peminjaman->id),
                 ]);
             } catch (\Exception $e) {
                 Log::error('Notif database gagal: ' . $e->getMessage());
@@ -433,13 +445,13 @@ class PeminjamanController extends Controller
         return view('peminjaman.acc', compact('peminjaman'));
     }
 
-    public function return(Request $request, $id)
+    public function return (Request $request, $id)
     {
         $peminjaman  = Peminjaman::with('details.buku')->findOrFail($id);
         $firstDetail = $peminjaman->details->first();
         $buku        = $firstDetail ? $firstDetail->buku : null;
 
-        if (!$buku && $request->kondisi != "Hilang") {
+        if (! $buku && $request->kondisi != "Hilang") {
             return back()->with('error', 'Data buku tidak ditemukan.');
         }
 
@@ -466,12 +478,12 @@ class PeminjamanController extends Controller
             $denda = 50000;
         }
 
-        $dendaPerBuku          = $denda;
-        $totalDendaKeseluruhan = 0;
+        $dendaPerBuku           = $denda;
+        $totalDendaKeseluruhan  = 0;
 
         // Loop semua detail buku untuk membuat record pengembalian terpisah
         foreach ($peminjaman->details as $detail) {
-            if (!$detail->buku && $request->kondisi != "Hilang") {
+            if (! $detail->buku && $request->kondisi != "Hilang") {
                 return back()->with('error', 'Data buku tidak ditemukan untuk salah satu detail peminjaman.');
             }
 
@@ -547,14 +559,14 @@ class PeminjamanController extends Controller
         try {
             $peminjaman = Peminjaman::find($id);
 
-            if (!$peminjaman) {
+            if (! $peminjaman) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Notifikasi tidak ditemukan',
                 ], 404);
             }
 
-            if (!$peminjaman->status_baca) {
+            if (! $peminjaman->status_baca) {
                 $peminjaman->status_baca = true;
                 $peminjaman->save();
             }
@@ -730,7 +742,7 @@ class PeminjamanController extends Controller
     public function storeAuto(Request $request)
     {
         try {
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
             }
 
@@ -740,18 +752,23 @@ class PeminjamanController extends Controller
                 return back()->with('error', 'Stok buku habis.');
             }
 
+            // Cek apakah yang membuat adalah admin atau petugas
+            $isStaff = auth()->user() && in_array(auth()->user()->role, ['admin', 'petugas']);
 
-            // PERBAIKAN: Stok tidak dikurangi saat Pending
-            $peminjaman = Peminjaman::create([
-                'kode_peminjaman'    => null,
-                'id_user'            => auth()->id(),
-                'jumlah_keseluruhan' => 1,
-                'tgl_pinjam'         => null,
-                'tenggat'            => null,
-                'status'             => 'Pending',
-            ]);
+            // Jika admin/petugas yang membuat, langsung set status Dipinjam
+            $finalStatus = $isStaff ? 'Dipinjam' : 'Pending';
 
-            // Generate kode based on the created ID (only once)
+            // Buat instance dengan placeholder kode_peminjaman
+            $peminjaman                     = new Peminjaman();
+            $peminjaman->id_user            = auth()->id();
+            $peminjaman->jumlah_keseluruhan = 1;
+            $peminjaman->tgl_pinjam         = $isStaff ? now() : null;
+            $peminjaman->tenggat            = $isStaff ? now()->addDays(14) : null;
+            $peminjaman->status             = $finalStatus;
+            $peminjaman->kode_peminjaman    = 'TMP-' . uniqid(); // Placeholder untuk save pertama
+            $peminjaman->save();
+
+            // Generate kode final berdasarkan ID yang sudah auto-generated
             $peminjaman->kode_peminjaman = 'PJM-' . str_pad($peminjaman->id, 4, '0', STR_PAD_LEFT);
             $peminjaman->save();
 
@@ -761,7 +778,16 @@ class PeminjamanController extends Controller
                 'jumlah'        => 1,
             ]);
 
-            return back()->with('success', 'Peminjaman berhasil diajukan dengan kode ' . $kode);
+            // Kurangi stok jika admin/petugas (karena langsung Dipinjam)
+            if ($isStaff) {
+                $buku->decrement('stok', 1);
+            }
+
+            $successMessage = $isStaff
+                ? 'Peminjaman berhasil dibuat dan otomatis disetujui.'
+                : 'Peminjaman berhasil diajukan.';
+
+            return back()->with('success', $successMessage);
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan server: ' . $e->getMessage());
         }

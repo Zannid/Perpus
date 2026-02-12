@@ -61,7 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/search', [SearchController::class, 'index'])->name('search');
 
     // ===== KATEGORI =====
-    Route::prefix('kategori')->name('kategori.')->group(function () {
+    Route::prefix('kategori')->name('kategori.')->middleware('CheckStaffRole')->group(function () {
         Route::get('/daftarkategori', [KategoriController::class, 'index'])->name('index');
         Route::get('/create', [KategoriController::class, 'create'])->name('create');
         Route::post('/', [KategoriController::class, 'store'])->name('store');
@@ -71,7 +71,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ===== LOKASI =====
-    Route::prefix('lokasi')->name('lokasi.')->group(function () {
+    Route::prefix('lokasi')->name('lokasi.')->middleware('CheckStaffRole')->group(function () {
         Route::get('/', [LokasiController::class, 'index'])->name('index');
         Route::get('/create', [LokasiController::class, 'create'])->name('create');
         Route::post('/', [LokasiController::class, 'store'])->name('store');
@@ -81,7 +81,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ===== BUKU =====
-    Route::prefix('buku')->name('buku.')->group(function () {
+    Route::prefix('buku')->name('buku.')->middleware('CheckStaffRole')->group(function () {
         Route::get('/daftarbuku', [BukuController::class, 'index'])->name('index');
         Route::get('/tambah', [BukuController::class, 'create'])->name('create');
         Route::post('/tambah', [BukuController::class, 'store'])->name('store');
@@ -93,7 +93,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ===== BARANG MASUK =====
-    Route::prefix('barangmasuk')->name('barangmasuk.')->group(function () {
+    Route::prefix('barangmasuk')->name('barangmasuk.')->middleware('CheckStaffRole')->group(function () {
         Route::get('/daftarbarangmasuk', [BarangMasukController::class, 'index'])->name('index');
         Route::get('/create', [BarangMasukController::class, 'create'])->name('create');
         Route::post('/', [BarangMasukController::class, 'store'])->name('store');
@@ -105,7 +105,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ===== BARANG KELUAR =====
-    Route::prefix('barangkeluar')->name('barangkeluar.')->group(function () {
+    Route::prefix('barangkeluar')->name('barangkeluar.')->middleware('CheckStaffRole')->group(function () {
         Route::get('/daftarbarangkeluar', [BarangKeluarController::class, 'index'])->name('index');
         Route::get('/create', [BarangKeluarController::class, 'create'])->name('create');
         Route::post('/', [BarangKeluarController::class, 'store'])->name('store');
@@ -151,7 +151,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', [RatingController::class, 'destroy'])->name('destroy');
     });
     // ===== PENGEMBALIAN =====
-    Route::prefix('pengembalian')->name('pengembalian.')->group(function () {
+    Route::prefix('pengembalian')->name('pengembalian.')->middleware('CheckStaffRole')->group(function () {
         Route::get('/', [PengembalianController::class, 'index'])->name('index');
         Route::get('/{id}/edit', [PengembalianController::class, 'edit'])->name('edit');
         Route::put('/{id}', [PengembalianController::class, 'update'])->name('update');
@@ -160,7 +160,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ===== PETUGAS (ACC & REJECT) =====
-    Route::prefix('petugas')->name('petugas.')->group(function () {
+    Route::prefix('petugas')->name('petugas.')->middleware('CheckStaffRole')->group(function () {
         // Halaman ACC/Pending
         Route::get('/peminjaman/acc', [PeminjamanController::class, 'Pending'])->name('acc');
 
@@ -171,13 +171,13 @@ Route::middleware(['auth'])->group(function () {
             ->name('peminjaman.reject');
     });
 
-    Route::resource('/about', AboutController::class);
-    Route::post('/about/{id}/activate', [AboutController::class, 'updateStatus'])->name('about.activate');
+    Route::resource('/about', AboutController::class)->middleware('CheckStaffRole');
+    Route::post('/about/{id}/activate', [AboutController::class, 'updateStatus'])->name('about.activate')->middleware('CheckStaffRole');
 
     // ===== USER MANAGEMENT =====
-    Route::resource('/admin', AdminController::class);
-    Route::resource('/user', UserController::class);
-    Route::resource('/petugas', PetugasController::class);
+    Route::resource('/admin', AdminController::class)->middleware('CheckAdminRole');
+    Route::resource('/user', UserController::class)->middleware('CheckAdminRole');
+    Route::resource('/petugas', PetugasController::class)->middleware('CheckAdminRole');
     Route::resource('products', App\Http\Controllers\ProductController::class);
 });
 
@@ -235,7 +235,7 @@ Route::middleware(['auth'])->group(function () {
     )->name('perpanjangan.history');
 
     // PETUGAS / ADMIN
-    Route::prefix('petugas')->name('petugas.')->group(function () {
+    Route::prefix('petugas')->name('petugas.')->middleware('CheckStaffRole')->group(function () {
 
         Route::get(
             '/perpanjangan/pending',
@@ -289,3 +289,7 @@ Route::middleware(['auth'])->prefix('cart')->name('cart.')->group(function () {
 });
 
 Route::post('/keranjang/tambah-ajax', [KeranjangController::class, 'tambahAjax'])->name('keranjang.tambah-ajax')->middleware('auth');
+
+Route::get('/admin/chart-data', [HomeController::class, 'chartData'])
+    ->name('admin.chart.data')
+    ->middleware('auth');

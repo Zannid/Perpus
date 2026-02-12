@@ -783,12 +783,19 @@
                                 </button>
                             </div>
                             <div class="action-section mt-2">
-                                <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex: 1;">
+                                <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex: 1; margin-right: 10px;">
                                     @csrf
                                     <input type="hidden" name="buku_id" value="{{ $buku->id }}">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button type="submit" class="btn btn-outline-primary w-100 py-3 fw-bold" style="border-radius: 10px; border-width: 2px;">
+                                    <button type="submit" class="btn btn-outline-primary w-100 py-3 fw-bold" style="border-radius: 10px; border-width: 2px;" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
                                         <i class="bi bi-cart-plus me-2"></i> Tambah ke Keranjang
+                                    </button>
+                                </form>
+                                <form class="direct-borrow-form" data-buku-id="{{ $buku->id }}" style="flex: 1;">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{ $buku->id }}">
+                                    <button type="submit" class="btn btn-success w-100 py-3 fw-bold" style="border-radius: 10px; border-width: 2px;" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
+                                        <i class="bi bi-check-circle me-2"></i> Pinjam Langsung
                                     </button>
                                 </form>
                             </div>
@@ -868,6 +875,17 @@
     </script>
 
     {{-- SweetAlert --}}
+    <style>
+        .btn-outline-primary:disabled,
+        .btn-borrow:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border-color: #dee2e6;
+            pointer-events: none;
+        }
+    </style>
     @if(session('success'))
         <script>
             Swal.fire({
@@ -890,6 +908,34 @@
             });
         </script>
     @endif
+
+    <script>
+        // Handle Pinjam Langsung Form
+        document.querySelector('.direct-borrow-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const bukuId = this.dataset.bukuId;
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("peminjaman.storeAuto") }}';
+
+            const csrfToken = document.querySelector('input[name="_token"]').value;
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = '_token';
+            idInput.value = csrfToken;
+            form.appendChild(idInput);
+
+            const idBukuInput = document.createElement('input');
+            idBukuInput.type = 'hidden';
+            idBukuInput.name = 'id';
+            idBukuInput.value = bukuId;
+            form.appendChild(idBukuInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        });
+    </script>
 
     @endsection
 </body>

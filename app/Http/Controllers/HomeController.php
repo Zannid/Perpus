@@ -96,20 +96,20 @@ class HomeController extends Controller
             ->whereYear('created_at', now()->year)
             ->count();
 
-        return view('home', compact(
-            'dataPeminjaman',
-            'dataPengembalian',
-            'notifikasiPeminjaman',
-            'jumlahNotifikasi',
-            'peminjamanAktif',
-            'totalPeminjaman',
-            'bukuFavorit',
-            'dendaAktif',
-            'peminjamanTerbaru',
-            'rekomendasiBuku',
-            'riwayatAktivitas',
-            'bukuBaru'
-        ));
+    return view('home', [
+        'dataPeminjaman'   => json_encode($dataPeminjaman),
+        'dataPengembalian' => json_encode($dataPengembalian),
+        'notifikasiPeminjaman' => $notifikasiPeminjaman,
+        'jumlahNotifikasi' => $jumlahNotifikasi,
+        'peminjamanAktif'  => $peminjamanAktif,
+        'totalPeminjaman'  => $totalPeminjaman,
+        'bukuFavorit'      => $bukuFavorit,
+        'dendaAktif'       => $dendaAktif,
+        'peminjamanTerbaru'=> $peminjamanTerbaru,
+        'rekomendasiBuku'  => $rekomendasiBuku,
+        'riwayatAktivitas' => $riwayatAktivitas,
+        'bukuBaru'         => $bukuBaru
+    ]);
     }
 
     public function dashboard()

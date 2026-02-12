@@ -4,11 +4,11 @@
 <main class="main">
 
     <!-- Hero Section -->
-    <section id="hero" class="hero section mt-5">
+    <section id="hero" class="hero section">
   <div class="container-fluid px-0" data-aos="fade-up" data-aos-delay="100">
     <div class="row justify-content-center mx-0">
-      <div class="col-12" data-aos="zoom-in" data-aos-delay="200">
-        <div class="hero-content text-center">
+      <div class="col-12 mt-5" data-aos="zoom-in" data-aos-delay="200">
+        <div class="hero-content text-center mt-5">
           <div class="hero-badge" data-aos="fade-down" data-aos-delay="300">
             <i class="bi bi-star-fill"></i>
             <span>Platform Perpustakaan Digital Terpercaya</span>
@@ -230,7 +230,9 @@
                         </div>
                         <div class="book-actions">
                            <button type="button" class="btn-action btn-add-cart"
-                                  data-buku-id="{{ $b->id }}" title="Tambah ke Keranjang">
+                                  data-buku-id="{{ $b->id }}" title="Tambah ke Keranjang"
+                                  {{ $b->stok <= 0 ? 'disabled' : '' }}
+                                  style="{{ $b->stok <= 0 ? 'opacity: 0.5; cursor: not-allowed;' : '' }}">
                               <i class="bi bi-cart-plus"></i> Pinjam
                           </button>
 
@@ -568,15 +570,21 @@
    GLOBAL STYLES
    ============================================================ */
 
+body, main.main {
+  margin: 0;
+  padding: 0;
+}
+
 /* Hero Section */
 .hero.section {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 60px 0 40px;
+  padding: 0 0 40px;
   position: relative;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   overflow: hidden;
+  margin: 0;
 }
 
 .hero.section::before {
@@ -1492,6 +1500,18 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight') moveSlide(1);
 });
 </script>
+<style>
+  .btn-add-cart:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+  }
+
+  .btn-add-cart:disabled:hover {
+    background-color: inherit;
+    color: inherit;
+  }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
