@@ -89,7 +89,7 @@ class BarangMasukController extends Controller
 
         foreach ($request->id_buku as $index => $bukuId) {
             $jumlah = $request->jumlah[$index];
-            $kodeBm = 'BK-' . str_pad($lastId + 1, 3, '0', STR_PAD_LEFT);
+            $kodeBm = 'BKL-' . str_pad($lastId + 1, 3, '0', STR_PAD_LEFT);
 
             $bm             = new BarangMasuk();
             $bm->kode_masuk = $kodeBm;

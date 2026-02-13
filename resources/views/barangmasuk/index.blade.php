@@ -60,7 +60,7 @@
             @foreach($barangmasuk as $data)
             <tr>
               <td>{{ $no++ }}</td>
-              <td>{{ $data->buku->judul }}</td>
+              <td>{{ optional($data->buku)->judul ?? '-' }}</td>
               <td>{{ $data->kode_masuk }}</td>
               <td class="text-center">{{ $data->jumlah }}</td>
               <td>{{ $data->tgl_masuk }}</td>
@@ -69,13 +69,13 @@
                 <a href="{{ route('barangmasuk.edit', $data->id) }}" class="btn btn-sm btn-warning me-1">
                   <i class="bx bx-pencil"></i>
                 </a>
-                <form id="form-delete-{{ $data->id }}" 
-                      action="{{ route('barangmasuk.destroy', $data->id) }}" 
+                <form id="form-delete-{{ $data->id }}"
+                      action="{{ route('barangmasuk.destroy', $data->id) }}"
                       method="post" style="display:inline;">
                   @csrf
                   @method('DELETE')
-                  <button type="button" 
-                          class="btn btn-sm btn-danger btn-delete" 
+                  <button type="button"
+                          class="btn btn-sm btn-danger btn-delete"
                           data-id="{{ $data->id }}">
                     <i class="bx bx-trash"></i>
                   </button>
@@ -126,22 +126,24 @@ document.querySelectorAll('.btn-delete').forEach(btn => {
 </script>
 <script>
 const searchInput = document.getElementById('searchInput');
-const table = document.getElementById('basic-datatables').getElementsByTagName('tbody')[0];
-searchInput.addEventListener('keyup', function() {
+const table = document.getElementById('basic-datatables')?.getElementsByTagName('tbody')[0];
+if (searchInput && table) {
+  searchInput.addEventListener('keyup', function() {
     const filter = this.value.toLowerCase();
     const rows = table.getElementsByTagName('tr');
 
     Array.from(rows).forEach(row => {
-        const kode = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() ?? '';
-        const judul = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() ?? '';
-        const kategori = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() ?? '';
+      const namaBuku = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() ?? '';
+      const kode = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() ?? '';
+      const jumlah = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() ?? '';
 
-        if(kode.includes(filter) || judul.includes(filter) || kategori.includes(filter)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+      if(namaBuku.includes(filter) || kode.includes(filter) || jumlah.includes(filter)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
     });
-});
+  });
+}
 </script>
 @endsection

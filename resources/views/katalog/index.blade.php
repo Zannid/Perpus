@@ -141,8 +141,10 @@
                 <div class="book-item" data-aos="zoom-in" data-aos-delay="100">
                     <div class="book-card">
                         <div class="book-cover-wrapper">
-                            <img src="{{ asset('/storage/buku/'. $buku->foto) }}" alt="{{ $buku->judul }}" class="book-cover-img" loading="lazy">
-
+                            <img src="{{ $buku->foto ? asset('/storage/buku/' . $buku->foto) : asset('/storage/buku/default-book.png') }}"
+                                alt="{{ $buku->judul }}"
+                                class="book-cover-img"
+                                loading="lazy">
                             <!-- Book Badge -->
                             <div class="book-badges">
                                 @if($buku->stok > 0)
@@ -167,7 +169,7 @@
                                     </div>
                                 </div>
                                 <div class="book-actions">
-                                    <<button type="button" class="btn-action btn-add-cart"
+                                    <button type="button" class="btn-action btn-add-cart"
                                   data-buku-id="{{ $buku->id }}" title="Tambah ke Keranjang"
                                   {{ $buku->stok <= 0 ? 'disabled' : '' }}
                                   style="{{ $buku->stok <= 0 ? 'opacity: 0.5; cursor: not-allowed;' : '' }}">

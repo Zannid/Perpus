@@ -210,9 +210,10 @@
       </div>
 
       {{-- Pagination --}}
-      <div class="d-flex justify-content-center mt-3">
-        {{ $peminjaman->links() }}
-      </div>
+      <div class="mt-4">
+          {{ $peminjaman->appends(request()->all())->links('vendor.pagination.bootstrap-5') }}
+            </div>
+        </div>
 
     </div>
   </div>

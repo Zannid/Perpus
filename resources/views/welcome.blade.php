@@ -27,9 +27,15 @@
                 <div class="book-slides" id="bookSlides">
                   @foreach($buku as $b)
                   <div class="book-slide active">
+                    @if($b->foto === null)
+                      <div class="book-image">
+                        <img src="{{ asset('/storage/buku/default-book.png') }}" alt="Default Book Cover" loading="lazy">
+                      </div>
+                    @else
                     <div class="book-image">
                       <img src="{{ asset('/storage/buku/'. $b->foto) }}" alt="{{ $b->judul }}" loading="lazy">
                     </div>
+                    @endif
                     <div class="book-details">
                       <h4 class="book-title">{{ $b->judul }}</h4>
                       <p class="book-author">oleh {{ $b->penulis }}</p>
@@ -219,7 +225,7 @@
                 <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
                   <div class="book-card">
                     <div class="book-cover-wrapper">
-                      <img src="{{ asset('/storage/buku/'. $b->foto) }}" alt="{{ $b->judul }}" class="book-cover-img" loading="lazy">
+                      <img src="{{ $b->foto ? asset('/storage/buku/'. $b->foto) : asset('/storage/buku/default-book.png') }}" alt="{{ $b->judul }}" class="book-cover-img" loading="lazy">
                       <div class="book-overlay-hover">
                         <div class="book-quick-info">
                           <h5 class="book-title">{{ $b->judul }}</h5>

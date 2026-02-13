@@ -62,7 +62,7 @@
             @foreach($bk as $data)
             <tr>
               <th scope="row">{{ $no++ }}</th>
-              <td>{{ $data->buku->judul }}</td>
+              <td>{{ optional($data->buku)->judul ?? '-' }}</td>
               <td>{{ $data->kode_keluar }}</td>
               <td>{{ $data->jumlah }}</td>
               <td>{{ $data->tgl_keluar }}</td>
