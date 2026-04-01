@@ -3,7 +3,7 @@
 @section('content')
 <div class="col-md-8 offset-md-2">
   <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-    
+
     {{-- Header --}}
     <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center py-3 px-4">
       <h5 class="mb-0 fw-bold">
@@ -17,13 +17,13 @@
     {{-- Body --}}
     <div class="card-body p-4">
       <div class="row g-4">
-        
+
         {{-- Cover Buku --}}
         <div class="col-md-4 text-center">
           <div class="border rounded-3 shadow-sm p-2 bg-light">
-            <img src="{{ asset('storage/buku/' . $buku->foto) }}" 
-                 alt="Cover Buku" 
-                 class="img-fluid rounded-3" 
+            <img src="{{ $buku->foto ? asset('storage/buku/' . $buku->foto) : asset('storage/buku/default-book.png') }}"
+                 alt="Cover Buku"
+                 class="img-fluid rounded-3"
                  style="max-height: 280px; object-fit: cover;">
           </div>
         </div>
@@ -90,9 +90,9 @@
       <a href="{{ route('buku.edit', $buku->id) }}" class="btn btn-outline-warning btn-sm rounded-pill">
         <i class="bx bx-pencil"></i> Edit
       </a>
-      <form action="{{ route('buku.destroy', $buku->id) }}" 
-            method="post" 
-            style="display:inline;" 
+      <form action="{{ route('buku.destroy', $buku->id) }}"
+            method="post"
+            style="display:inline;"
             onsubmit="return confirm('Apakah anda yakin ingin menghapus buku ini?')">
         @csrf
         @method('DELETE')

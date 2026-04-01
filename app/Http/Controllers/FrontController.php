@@ -17,8 +17,12 @@ class FrontController extends Controller
     $buku = Buku::with('kategori')->get();
     $kategori = Kategori::all();
 
+    $bukuRate = Buku::orderBy('rating_avg', 'DESC')
+        ->take(4)
+        ->get();
+
     $bukuTerpopuler = Buku::withCount('details')
-        // ->orderBy('peminjaman_count', 'DESC')
+        ->orderBy('details_count', 'DESC')
         ->take(3)
         ->get();
 
@@ -26,7 +30,7 @@ class FrontController extends Controller
  // ambil data About
 
     return view('welcome',
-        compact('bukuTerpopuler', 'buku', 'kategori', 'request', 'about')
+        compact('bukuTerpopuler', 'buku', 'kategori', 'request', 'about', 'bukuRate')
     );
 }
 

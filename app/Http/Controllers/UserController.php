@@ -140,4 +140,33 @@ class UserController extends Controller
 
         return $kodeUser;
     }
+
+    /**
+     * Search users for API (used by Select2)
+     */
+    public function searchUsers(Request $request)
+    {
+        $search = $request->input('q', '');
+
+        $users = User::where('role', 'user')
+            ->where(function ($query) use ($search) {
+                $query->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('kode_user', 'LIKE', "%{$search}%");
+            })
+            ->select('id', 'name', 'kode_user', 'foto')
+            ->limit(10)
+            ->get();
+
+        $result = $users->map(function ($user) {
+            return [
+                'id'        => $user->id,
+                'text'      => $user->name . ' (' . $user->kode_user . ')',
+                'name'      => $user->name,
+                'kode_user' => $user->kode_user,
+                'foto'      => $user->foto ? asset('storage/user/' . $user->foto) : asset('assets/img/avatars/1.png'),
+            ];
+        });
+
+        return response()->json(['results' => $result]);
+    }
 }

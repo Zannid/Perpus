@@ -90,9 +90,9 @@
         </div>
 
         {{-- Pagination --}}
-        <div class="d-flex justify-content-center mt-3">
-          {{ $kategori->links() }}
-        </div>
+            <div class="mt-4">
+                {{ $kategori->appends(request()->all())->links('vendor.pagination.bootstrap-5') }}
+            </div>
       </div>
     </div>
 

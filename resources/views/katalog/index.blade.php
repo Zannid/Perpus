@@ -169,12 +169,14 @@
                                     </div>
                                 </div>
                                 <div class="book-actions">
-                                    <button type="button" class="btn-action btn-add-cart"
-                                  data-buku-id="{{ $buku->id }}" title="Tambah ke Keranjang"
-                                  {{ $buku->stok <= 0 ? 'disabled' : '' }}
-                                  style="{{ $buku->stok <= 0 ? 'opacity: 0.5; cursor: not-allowed;' : '' }}">
-                              <i class="bi bi-cart-plus"></i> Pinjam
-                                </button>
+                                    <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex: 1;" >
+                                        <button type="button" class="btn-action btn-add-cart"
+                                        data-buku-id="{{ $buku->id }}" title="Tambah ke Keranjang"
+                                        {{ $buku->stok <= 0 ? 'disabled' : '' }}
+                                        style="{{ $buku->stok <= 0 ? 'opacity: 0.5; cursor: not-allowed;' : '' }}">
+                                        <i class="bi bi-cart-plus"></i> Pinjam
+                                    </button>
+                                    </form>
                                     <a href="{{ route('detail_buku', $buku->id) }}" class="btn-action btn-detail" title="Detail Buku">
                                         <i class="bi bi-info-circle"></i> Detail
                                     </a>
@@ -212,11 +214,7 @@
             </div>
 
             <!-- Pagination -->
-            @if($bukus->hasPages())
-            <div class="pagination-wrapper" data-aos="fade-up" data-aos-delay="400">
-                {{ $bukus->links() }}
-            </div>
-            @endif
+            {{ $bukus->appends(request()->all())->links('vendor.pagination.bootstrap-5') }}
 
         </div>
     </section>
@@ -815,6 +813,63 @@
     display: flex;
     justify-content: center;
     margin-top: 40px;
+}
+
+.pagination-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.pagination-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    text-decoration: none;
+    color: #fff;
+}
+
+.pagination-btn-active {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    transform: translateY(-1px);
+}
+
+.pagination-btn-disabled {
+    background: #e2e8f0;
+    color: #a0aec0;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.pagination-btn-disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.pagination-dots {
+    padding: 12px 16px;
+    color: #718096;
+    font-weight: 600;
+    user-select: none;
 }
 
 /* ============================================================

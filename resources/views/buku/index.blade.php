@@ -63,7 +63,7 @@
               <td>{{ $data->judul }}</td>
               <td class="text-center">{{ $data->kategori->nama_kategori }}</td>
               <td>
-                <img src="{{ asset('storage/buku/' . $data->foto)}}" alt="cover" class="img-thumbnail" width="50">
+                <img src="{{ $data->foto ? asset('storage/buku/' . $data->foto) : asset('storage/buku/default-book.png') }}" alt="cover" class="img-thumbnail" width="50">
               </td>
               <td>{{ $data->lokasi->kode_rak }} - {{ $data->lokasi->keterangan }}</td>
               <td class="text-center">{{ $data->stok }}</td>

@@ -40,11 +40,8 @@ class RatingController extends Controller
             }
         }
 
-        if (empty($detailBelumDirating) && empty($detailSudahDirating)) {
-            return redirect()->route('peminjaman.index')
-                ->with('info', 'Tidak ada peminjaman yang sudah dikembalikan.');
-        }
-
+        // Tampilkan halaman rating_list meski tidak ada peminjaman yang dikembalikan
+        // (akan menampilkan empty state berupa pesan)
         return view('peminjaman.rating_list', compact('detailBelumDirating', 'detailSudahDirating'));
     }
 
@@ -201,5 +198,27 @@ class RatingController extends Controller
             'rating_avg'   => $avgRating ? round($avgRating, 1) : 0,
             'rating_count' => $totalRating,
         ]);
+    }
+
+    /**
+     * Tampilkan halaman rating untuk admin (view all books & ratings)
+     */
+    public function adminIndex()
+    {
+        // Ambil semua buku dengan rating stats mereka
+        $buku = Buku::with(['kategori', 'ratings.user'])
+            ->withCount('ratings')
+            ->get()
+            ->map(function ($b) {
+                $b->avg_rating   = $b->ratings->avg('rating') ?? 0;
+                $b->total_rating = $b->ratings->count();
+                return $b;
+            });
+
+        // Kelompokkan yang sudah dan belum di-rating
+        $bukuSudahDirating = $buku->filter(fn($b) => $b->total_rating > 0);
+        $bukuBelumDirating = $buku->filter(fn($b) => $b->total_rating == 0);
+
+        return view('admin.rating_management', compact('bukuSudahDirating', 'bukuBelumDirating'));
     }
 }

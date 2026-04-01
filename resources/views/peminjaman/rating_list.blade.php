@@ -70,17 +70,10 @@
                                         {{-- Book Cover --}}
                                         <div class="col-md-4">
                                             <div class="book-cover-wrapper">
-                                                @if($detail->buku->foto)
-                                                    <img src="{{ asset('storage/buku/' . $detail->buku->foto) }}"
-                                                         class="img-fluid rounded-2 shadow-sm w-100"
-                                                         alt="{{ $detail->buku->judul }}"
-                                                         style="max-height: 250px; object-fit: cover;">
-                                                @else
-                                                    <div class="bg-light rounded-2 d-flex align-items-center justify-content-center"
-                                                         style="height: 250px;">
-                                                        <i class="bx bx-book-open" style="font-size: 60px; color: #ddd;"></i>
-                                                    </div>
-                                                @endif
+                                                <img src="{{ $detail->buku->foto ? asset('storage/buku/' . $detail->buku->foto) : asset('storage/buku/default-book.png') }}"
+                                                     class="img-fluid rounded-2 shadow-sm w-100"
+                                                     alt="{{ $detail->buku->judul }}"
+                                                     style="max-height: 250px; object-fit: cover;">
                                             </div>
                                         </div>
 
@@ -161,29 +154,34 @@
                                                     </label>
                                                     <div class="text-center">
                                                         <div class="rating-stars" data-modal-id="{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}">
-                                                            <input type="radio" name="rating" value="5" id="star5-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}">
-                                                            <label for="star5-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="5">
+                                                            <input type="radio" name="rating" value="5" id="star5-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" aria-label="Rating 5 bintang">
+                                                            <label for="star5-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="5" aria-label="Rating 5 bintang">
                                                                 <i class="bx bxs-star"></i>
+                                                                <span class="visually-hidden">5 Bintang</span>
                                                             </label>
 
-                                                            <input type="radio" name="rating" value="4" id="star4-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}">
-                                                            <label for="star4-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="4">
+                                                            <input type="radio" name="rating" value="4" id="star4-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" aria-label="Rating 4 bintang">
+                                                            <label for="star4-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="4" aria-label="Rating 4 bintang">
                                                                 <i class="bx bxs-star"></i>
+                                                                <span class="visually-hidden">4 Bintang</span>
                                                             </label>
 
-                                                            <input type="radio" name="rating" value="3" id="star3-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}">
-                                                            <label for="star3-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="3">
+                                                            <input type="radio" name="rating" value="3" id="star3-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" aria-label="Rating 3 bintang">
+                                                            <label for="star3-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="3" aria-label="Rating 3 bintang">
                                                                 <i class="bx bxs-star"></i>
+                                                                <span class="visually-hidden">3 Bintang</span>
                                                             </label>
 
-                                                            <input type="radio" name="rating" value="2" id="star2-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}">
-                                                            <label for="star2-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="2">
+                                                            <input type="radio" name="rating" value="2" id="star2-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" aria-label="Rating 2 bintang">
+                                                            <label for="star2-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="2" aria-label="Rating 2 bintang">
                                                                 <i class="bx bxs-star"></i>
+                                                                <span class="visually-hidden">2 Bintang</span>
                                                             </label>
 
-                                                            <input type="radio" name="rating" value="1" id="star1-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}">
-                                                            <label for="star1-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="1">
+                                                            <input type="radio" name="rating" value="1" id="star1-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" aria-label="Rating 1 bintang">
+                                                            <label for="star1-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="1" aria-label="Rating 1 bintang">
                                                                 <i class="bx bxs-star"></i>
+                                                                <span class="visually-hidden">1 Bintang</span>
                                                             </label>
                                                         </div>
                                                         <div id="rating-text-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="badge bg-primary px-4 py-2 fs-6 mt-3"></div>
@@ -245,17 +243,10 @@
                                         {{-- Book Cover --}}
                                         <div class="col-md-4">
                                             <div class="book-cover-wrapper">
-                                                @if($detail->buku->foto)
-                                                    <img src="{{ asset('storage/buku/' . $detail->buku->foto) }}"
-                                                         class="img-fluid rounded-2 shadow-sm w-100"
-                                                         alt="{{ $detail->buku->judul }}"
-                                                         style="max-height: 250px; object-fit: cover;">
-                                                @else
-                                                    <div class="bg-light rounded-2 d-flex align-items-center justify-content-center"
-                                                         style="height: 250px;">
-                                                        <i class="bx bx-book-open" style="font-size: 60px; color: #ddd;"></i>
-                                                    </div>
-                                                @endif
+                                                <img src="{{ $detail->buku->foto ? asset('storage/buku/' . $detail->buku->foto) : asset('storage/buku/default-book.png') }}"
+                                                     class="img-fluid rounded-2 shadow-sm w-100"
+                                                     alt="{{ $detail->buku->judul }}"
+                                                     style="max-height: 250px; object-fit: cover;">
                                             </div>
                                         </div>
 
@@ -330,29 +321,34 @@
                                                     </label>
                                                     <div class="text-center">
                                                         <div class="rating-stars" data-modal-id="edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}">
-                                                            <input type="radio" name="rating" value="5" id="star5-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" {{ $rating->rating == 5 ? 'checked' : '' }}>
-                                                            <label for="star5-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="5">
+                                                            <input type="radio" name="rating" value="5" id="star5-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" {{ $rating->rating == 5 ? 'checked' : '' }} aria-label="Rating 5 bintang">
+                                                            <label for="star5-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="5" aria-label="Rating 5 bintang">
                                                                 <i class="bx bxs-star"></i>
+                                                                <span class="visually-hidden">5 Bintang</span>
                                                             </label>
 
-                                                            <input type="radio" name="rating" value="4" id="star4-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" {{ $rating->rating == 4 ? 'checked' : '' }}>
-                                                            <label for="star4-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="4">
+                                                            <input type="radio" name="rating" value="4" id="star4-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" {{ $rating->rating == 4 ? 'checked' : '' }} aria-label="Rating 4 bintang">
+                                                            <label for="star4-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="4" aria-label="Rating 4 bintang">
                                                                 <i class="bx bxs-star"></i>
+                                                                <span class="visually-hidden">4 Bintang</span>
                                                             </label>
 
-                                                            <input type="radio" name="rating" value="3" id="star3-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" {{ $rating->rating == 3 ? 'checked' : '' }}>
-                                                            <label for="star3-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="3">
+                                                            <input type="radio" name="rating" value="3" id="star3-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" {{ $rating->rating == 3 ? 'checked' : '' }} aria-label="Rating 3 bintang">
+                                                            <label for="star3-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="3" aria-label="Rating 3 bintang">
                                                                 <i class="bx bxs-star"></i>
+                                                                <span class="visually-hidden">3 Bintang</span>
                                                             </label>
 
-                                                            <input type="radio" name="rating" value="2" id="star2-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" {{ $rating->rating == 2 ? 'checked' : '' }}>
-                                                            <label for="star2-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="2">
+                                                            <input type="radio" name="rating" value="2" id="star2-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" {{ $rating->rating == 2 ? 'checked' : '' }} aria-label="Rating 2 bintang">
+                                                            <label for="star2-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="2" aria-label="Rating 2 bintang">
                                                                 <i class="bx bxs-star"></i>
+                                                                <span class="visually-hidden">2 Bintang</span>
                                                             </label>
 
-                                                            <input type="radio" name="rating" value="1" id="star1-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" {{ $rating->rating == 1 ? 'checked' : '' }}>
-                                                            <label for="star1-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="1">
+                                                            <input type="radio" name="rating" value="1" id="star1-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" {{ $rating->rating == 1 ? 'checked' : '' }} aria-label="Rating 1 bintang">
+                                                            <label for="star1-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="star" data-value="1" aria-label="Rating 1 bintang">
                                                                 <i class="bx bxs-star"></i>
+                                                                <span class="visually-hidden">1 Bintang</span>
                                                             </label>
                                                         </div>
                                                         <div id="rating-text-edit-{{ $detail->peminjaman->id }}-{{ $detail->buku->id }}" class="badge bg-primary px-4 py-2 fs-6 mt-3"></div>

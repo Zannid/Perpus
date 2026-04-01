@@ -28,6 +28,23 @@
             </div>
           @endif
 
+          @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show">
+              {{ session('error') }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          @endif
+
+          @if ($errors->any())
+            <div class="alert alert-danger">
+              <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+                @endforeach
+              </ul>
+            </div>
+          @endif
+
           <form method="POST" action="{{ route('buku.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="row g-3">
@@ -96,6 +113,7 @@
             <div class="mb-3 mt-3">
               <label for="deskripsi" class="form-label">Deskripsi</label>
               <textarea name="deskripsi" id="deskripsi" rows="4" class="form-control" placeholder="Masukkan deskripsi buku (opsional)"></textarea>
+            </div>
 
             {{-- Tombol --}}
             <div class="d-flex justify-content-end mt-4">

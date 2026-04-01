@@ -8,8 +8,6 @@ use App\Models\Lokasi;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
-use Illuminate\Support\Facades\Auth;
-
 
 class BukuController extends Controller
 {
@@ -59,33 +57,40 @@ class BukuController extends Controller
             'foto'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $buku       = new Buku();
-        $lastRecord = Buku::latest('id')->first();
-        $lastId     = $lastRecord ? $lastRecord->id : 0;
-        $kodeBuku   = 'BK-' . str_pad($lastId + 1, 3, '0', STR_PAD_LEFT);
+        try {
+            $buku       = new Buku();
+            $lastRecord = Buku::latest('id')->first();
+            $lastId     = $lastRecord ? $lastRecord->id : 0;
+            $kodeBuku   = 'BK-' . str_pad($lastId + 1, 3, '0', STR_PAD_LEFT);
 
-        $buku->kode_buku    = $kodeBuku;
-        $buku->judul        = $validated['judul'];
-        $buku->penulis      = $validated['penulis'];
-        $buku->penerbit     = $validated['penerbit'];
-        $buku->tahun_terbit = $validated['tahun_terbit'];
-        $buku->id_kategori  = $validated['id_kategori'];
-        $buku->id_lokasi    = $validated['id_lokasi'];
-        $buku->stok         = $validated['stok'];
-        $buku->deskripsi    = $validated['deskripsi'] ?? null;
+            $buku->kode_buku    = $kodeBuku;
+            $buku->judul        = $validated['judul'];
+            $buku->penulis      = $validated['penulis'];
+            $buku->penerbit     = $validated['penerbit'];
+            $buku->tahun_terbit = $validated['tahun_terbit'];
+            $buku->id_kategori  = $validated['id_kategori'];
+            $buku->id_lokasi    = $validated['id_lokasi'];
+            $buku->stok         = $validated['stok'];
+            $buku->deskripsi    = $validated['deskripsi'] ?? null;
 
-        if ($request->hasFile('foto')) {
-            $img  = $request->file('foto');
-            $name = rand(1000, 9999) . $img->getClientOriginalName();
-            $img->move('storage/buku', $name);
-            $buku->foto = $name;
+            if ($request->hasFile('foto')) {
+                $img  = $request->file('foto');
+                $name = rand(1000, 9999) . $img->getClientOriginalName();
+                $img->move('storage/buku', $name);
+                $buku->foto = $name;
+            }
+
+            $buku->save();
+
+            Alert::success('Berhasil', 'Buku berhasil ditambahkan');
+            session()->flash('success', 'Buku berhasil ditambahkan');
+            return redirect()->route('buku.index');
+        } catch (\Exception $e) {
+            \Log::error('Gagal menambahkan buku: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+
+            Alert::error('Gagal', 'Buku gagal ditambahkan. Silakan coba lagi.');
+            return redirect()->back()->withInput()->with('error', 'Buku gagal ditambahkan. Silakan coba lagi.');
         }
-
-        $buku->save();
-
-        Alert::success('Berhasil', 'Buku berhasil ditambahkan');
-        session()->flash('success', 'Buku berhasil ditambahkan');
-        return redirect()->route('buku.index');
     }
 
     public function show(string $id)

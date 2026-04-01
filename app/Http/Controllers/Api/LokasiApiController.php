@@ -30,7 +30,13 @@ class LokasiApiController extends Controller
      */
     public function show(string $id)
     {
-        // 
+        $lokasi = Lokasi::find($id);
+        if ($lokasi) {
+            return response()->json($lokasi);
+        } else{
+            return response()->json(['message' => 'lokasi not found'], 404);
+        }
+
     }
 
     /**
@@ -38,7 +44,13 @@ class LokasiApiController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $lokasi = Lokasi::find($id);
+        if ($lokasi) {
+            $lokasi->update($request->all());
+            return response()->json($lokasi);
+        } else {
+            return response()->json(['message' => 'lokasi not found'], 404);
+        }
     }
 
     /**
@@ -46,6 +58,12 @@ class LokasiApiController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $lokasi = Lokasi::find($id);
+        if ($lokasi) {
+            $lokasi->delete();
+            return response()->json(['message' => 'lokasi deleted']);
+        } else {
+            return response()->json(['message' => 'lokasi not found'], 404);
+        }
     }
 }

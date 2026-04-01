@@ -25,11 +25,11 @@
 
               <div class="slider-wrapper">
                 <div class="book-slides" id="bookSlides">
-                  @foreach($buku as $b)
+                  @foreach($bukuRate as $b)
                   <div class="book-slide active">
                     @if($b->foto === null)
                       <div class="book-image">
-                        <img src="{{ asset('/storage/buku/default-book.png') }}" alt="Default Book Cover" loading="lazy">
+                        <img src="{{ asset('/storage/buku/default.jpg') }}" alt="Default Book Cover" loading="lazy">
                       </div>
                     @else
                     <div class="book-image">

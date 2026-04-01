@@ -133,6 +133,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}/pay', [PeminjamanController::class, 'pay'])->name('pay');
         Route::post('/{id}/pay', [PeminjamanController::class, 'confirmPay'])->name('confirmPay');
         Route::get('/{id}/pay/qris', [PeminjamanController::class, 'payQris'])->name('pay.qris');
+        Route::post('/{id}/pay/qris/confirm', [PeminjamanController::class, 'payQrisConfirm'])->name('pay.qris.confirm');
 
         // Return
         Route::get('/{id}/return', [PeminjamanController::class, 'showReturnForm'])->name('return.form');
@@ -143,15 +144,20 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/notif/mark-all-read', [PeminjamanController::class, 'markAllRead'])->name('markAllRead');
     });
 
-// ===== RATING ROUTES (HARUS DI LUAR GROUP PEMINJAMAN!) =====
+    // ===== RATING ROUTES (HARUS DI LUAR GROUP PEMINJAMAN!) =====
     Route::prefix('rating')->name('rating.')->group(function () {
         Route::get('/show', [RatingController::class, 'show'])->name('show');
         Route::post('/store', [RatingController::class, 'store'])->name('store');
         Route::put('/{id}', [RatingController::class, 'update'])->name('update');
         Route::delete('/{id}', [RatingController::class, 'destroy'])->name('destroy');
     });
+
+    // ===== ADMIN RATING MANAGEMENT =====
+    Route::prefix('admin/rating')->name('admin.rating.')->middleware('CheckAdminRole')->group(function () {
+        Route::get('/', [RatingController::class, 'adminIndex'])->name('index');
+    });
     // ===== PENGEMBALIAN =====
-    Route::prefix('pengembalian')->name('pengembalian.')->middleware('CheckStaffRole')->group(function () {
+    Route::prefix('pengembalian')->name('pengembalian.')->group(function () {
         Route::get('/', [PengembalianController::class, 'index'])->name('index');
         Route::get('/{id}/edit', [PengembalianController::class, 'edit'])->name('edit');
         Route::put('/{id}', [PengembalianController::class, 'update'])->name('update');
@@ -221,6 +227,12 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+
+    // USER - halaman perpanjangan
+    Route::get(
+        '/perpanjangan',
+        [PerpanjanganController::class, 'index']
+    )->name('perpanjangan.index');
 
     // USER - ajukan perpanjangan
     Route::post(

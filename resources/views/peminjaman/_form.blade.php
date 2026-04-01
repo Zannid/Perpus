@@ -21,11 +21,11 @@
                     <!-- Pilih Peminjam -->
                     <div class="col-md-6">
                         <label for="id_user" class="form-label fw-bold">Peminjam <span class="text-danger">*</span></label>
-                        <select name="id_user" id="id_user" class="form-select @error('id_user') is-invalid @enderror" required>
-                            <option value="">-- Pilih Peminjam --</option>
+                        <select name="id_user" id="id_user" class="form-select select2-user @error('id_user') is-invalid @enderror" required>
+                            <option value="">-- Cari Peminjam --</option>
                             @foreach($user as $u)
                                 <option value="{{ $u->id }}" {{ (old('id_user', $peminjaman->id_user ?? '') == $u->id) ? 'selected' : '' }}>
-                                    {{ $u->name }} ({{ $u->role }})
+                                    {{ $u->name }} ({{ $u->kode_user }})
                                 </option>
                             @endforeach
                         </select>
@@ -87,7 +87,7 @@
                                         <td>
                                             <input type="hidden" name="id_buku[]" value="{{ $detail->buku_id }}">
                                             <div class="d-flex align-items-center">
-                                                <img src="{{ asset('storage/buku/' . $detail->buku->foto) }}" class="rounded me-3" style="width: 40px; height: 55px; object-fit: cover;">
+                                                <img src="{{ $detail->buku->foto ? asset('storage/buku/' . $detail->buku->foto) : asset('storage/buku/default-book.png') }}" class="rounded me-3" style="width: 40px; height: 55px; object-fit: cover;">
                                                 <div>
                                                     <span class="fw-bold">{{ $detail->buku->judul }}</span><br>
                                                     <small class="text-muted">Stok: {{ $detail->buku->stok }}</small>
@@ -140,14 +140,14 @@
                         <div class="col-md-6 buku-card-item" data-judul="{{ strtolower($b->judul . ' ' . $b->penulis) }}">
                             <div class="card h-100 border border-light shadow-none hover-shadow">
                                 <div class="card-body p-2 d-flex gap-3 align-items-center">
-                                    <img src="{{ asset('storage/buku/' . $b->foto) }}" class="rounded shadow-sm" style="width: 50px; height: 75px; object-fit: cover;">
+                                    <img src="{{ $b->foto ? asset('storage/buku/' . $b->foto) : asset('storage/buku/default-book.png') }}" class="rounded shadow-sm" style="width: 50px; height: 75px; object-fit: cover;">
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1 fw-bold fs-7">{{ $b->judul }}</h6>
                                         <p class="mb-1 small text-muted">Stok: <span class="badge {{ $b->stok > 0 ? 'bg-label-success' : 'bg-label-danger' }}">{{ $b->stok }}</span></p>
-                                        <button type="button" class="btn btn-xs btn-primary select-buku-btn w-100" 
-                                            data-id="{{ $b->id }}" 
-                                            data-judul="{{ $b->judul }}" 
-                                            data-foto="{{ asset('storage/buku/' . $b->foto) }}"
+                                        <button type="button" class="btn btn-xs btn-primary select-buku-btn w-100"
+                                            data-id="{{ $b->id }}"
+                                            data-judul="{{ $b->judul }}"
+                                            data-foto="{{ $b->foto ? asset('storage/buku/' . $b->foto) : asset('storage/buku/default-book.png') }}"
                                             data-stok="{{ $b->stok }}"
                                             {{ $b->stok <= 0 ? 'disabled' : '' }}>
                                             {{ $b->stok > 0 ? 'Pilih' : 'Stok Habis' }}
@@ -229,7 +229,7 @@
 
             bukuListBody.insertAdjacentHTML('beforeend', row);
             emptyBukuMsg.classList.add('d-none');
-            
+
             // Tutup modal
             bootstrap.Modal.getInstance(document.getElementById('addBukuModal')).hide();
         });
@@ -269,6 +269,96 @@
         }
     });
 
+    // Initialize Select2 untuk pencarian user
+    document.addEventListener('DOMContentLoaded', function() {
+        const select2Css = document.createElement('link');
+        select2Css.rel = 'stylesheet';
+        select2Css.href = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css';
+        document.head.appendChild(select2Css);
+
+        const select2ThemeCss = document.createElement('link');
+        select2ThemeCss.rel = 'stylesheet';
+        select2ThemeCss.href = 'https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css';
+        document.head.appendChild(select2ThemeCss);
+
+        const select2Script = document.createElement('script');
+        select2Script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
+        select2Script.onload = function() {
+            // Tunggu jQuery ready
+            if (typeof jQuery !== 'undefined') {
+                initializeSelect2();
+            } else {
+                // Jika jQuery belum ready, tunggu beberapa saat
+                setTimeout(function() {
+                    if (typeof jQuery !== 'undefined') {
+                        initializeSelect2();
+                    }
+                }, 100);
+            }
+        };
+        document.head.appendChild(select2Script);
+    });
+
+    function initializeSelect2() {
+        const $ = jQuery;
+        const $userSelect = $('#id_user');
+
+        if ($userSelect.length === 0) return;
+
+        // Get the current selected value if in edit mode
+        const currentValue = $userSelect.val();
+        const currentText = $userSelect.find('option:selected').text();
+
+        $userSelect.select2({
+            theme: 'bootstrap-5',
+            placeholder: '-- Cari Peminjam berdasarkan Nama atau Kode User --',
+            ajax: {
+                url: '/api/users/search',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term || ''
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.results
+                    };
+                }
+            },
+            templateResult: formatUserOption,
+            minimumInputLength: 0,
+            allowClear: true,
+            width: '100%',
+            escapeMarkup: function (markup) {
+                return markup;
+            }
+        });
+
+        // Set initial value jika ada (untuk edit mode)
+        if (currentValue && currentText && currentText !== '-- Pilih Peminjam --') {
+            // Create a custom option for the selected value
+            const option = new Option(currentText, currentValue, true, true);
+            $userSelect.append(option).trigger('change');
+        }
+    }
+
+    function formatUserOption(user) {
+        if (!user.id) return user.text;
+
+        const markup = `
+            <div class="d-flex align-items-center gap-2">
+                <img src="${user.foto}" alt="${user.name}" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; flex-shrink: 0;" />
+                <div>
+                    <div style="font-weight: 600; font-size: 0.95rem;">${user.name}</div>
+                    <div style="font-size: 0.85rem; color: #6c757d;">${user.kode_user}</div>
+                </div>
+            </div>
+        `;
+        return jQuery(markup);
+    }
+
 </script>
 <style>
     .hover-shadow:hover {
@@ -277,5 +367,41 @@
     }
     .fs-7 { font-size: 0.9rem; }
     .btn-xs { padding: 0.2rem 0.4rem; font-size: 0.75rem; }
+
+    /* Select2 Custom Styling */
+    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+        padding: 0.375rem 0.75rem;
+        height: auto;
+        border-radius: 0.25rem;
+    }
+    .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    .user-select2-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 0;
+    }
+    .user-select2-option img {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid #ddd;
+    }
+    .user-select2-option .user-info {
+        display: flex;
+        flex-direction: column;
+    }
+    .user-select2-option .user-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+    .user-select2-option .user-code {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
 </style>
 @endsection

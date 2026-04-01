@@ -68,7 +68,6 @@
                     <textarea name="alamat" id="alamat" class="form-control" rows="3"
                               placeholder="Masukkan alamat lengkap">{{ old('alamat', isset($petugas) ? $petugas->alamat : '') }}</textarea>
                 </div>
-
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary">
                         {{ isset($petugas) ? 'Update' : 'Simpan' }}

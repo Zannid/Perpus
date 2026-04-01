@@ -20,7 +20,7 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <label for="tgl_keluar" class="form-label fw-bold">Tanggal Keluar <span class="text-danger">*</span></label>
-                        <input type="date" name="tgl_keluar" id="tgl_keluar" class="form-control" 
+                        <input type="date" name="tgl_keluar" id="tgl_keluar" class="form-control"
                                value="{{ old('tgl_keluar', isset($bk) ? \Carbon\Carbon::parse($bk->tgl_keluar)->format('Y-m-d') : date('Y-m-d')) }}" required>
                     </div>
                     <div class="col-md-6">
@@ -54,7 +54,7 @@
                                     <td>
                                         <input type="hidden" name="id_buku[]" value="{{ $bk->id_buku }}">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('storage/buku/' . $bk->buku->foto) }}" class="rounded me-3" style="width: 40px; height: 55px; object-fit: cover;">
+                                            <img src="{{ $bk->buku->foto ? asset('storage/buku/' . $bk->buku->foto) : asset('storage/buku/default-book.png') }}" class="rounded me-3" style="width: 40px; height: 55px; object-fit: cover;">
                                             <div>
                                                 <span class="fw-bold">{{ $bk->buku->judul }}</span><br>
                                                 <small class="text-muted">Stok: {{ $bk->buku->stok }}</small>
@@ -106,14 +106,14 @@
                         <div class="col-md-6 buku-card-item" data-judul="{{ strtolower($b->judul . ' ' . $b->penulis) }}">
                             <div class="card h-100 border border-light shadow-none hover-shadow">
                                 <div class="card-body p-2 d-flex gap-3 align-items-center">
-                                    <img src="{{ asset('storage/buku/' . $b->foto) }}" class="rounded shadow-sm" style="width: 50px; height: 75px; object-fit: cover;">
+                                    <img src="{{ $b->foto ? asset('storage/buku/' . $b->foto) : asset('storage/buku/default-book.png') }}" class="rounded shadow-sm" style="width: 50px; height: 75px; object-fit: cover;">
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1 fw-bold fs-7">{{ $b->judul }}</h6>
                                         <p class="mb-1 small text-muted">Stok: <span class="badge {{ $b->stok > 0 ? 'bg-label-success' : 'bg-label-danger' }}">{{ $b->stok }}</span></p>
-                                        <button type="button" class="btn btn-xs btn-danger select-buku-btn w-100" 
-                                            data-id="{{ $b->id }}" 
-                                            data-judul="{{ $b->judul }}" 
-                                            data-foto="{{ asset('storage/buku/' . $b->foto) }}"
+                                        <button type="button" class="btn btn-xs btn-danger select-buku-btn w-100"
+                                            data-id="{{ $b->id }}"
+                                            data-judul="{{ $b->judul }}"
+                                            data-foto="{{ $b->foto ? asset('storage/buku/' . $b->foto) : asset('storage/buku/default-book.png') }}"
                                             data-stok="{{ $b->stok }}"
                                             {{ $b->stok <= 0 ? 'disabled' : '' }}>
                                             <span class="btn-text">{{ $b->stok > 0 ? 'Pilih' : 'Stok Habis' }}</span>
@@ -165,7 +165,7 @@
         document.querySelectorAll('.select-buku-btn').forEach(btn => {
             const bukuId = btn.getAttribute('data-id');
             const stok = parseInt(btn.getAttribute('data-stok'));
-            
+
             if (selectedBukuIds.includes(bukuId)) {
                 btn.disabled = true;
                 btn.classList.remove('btn-danger');
@@ -279,7 +279,7 @@
     document.addEventListener('click', function(e) {
         if (e.target.closest('.remove-buku-row')) {
             const row = e.target.closest('tr');
-            
+
             // Konfirmasi hapus
             Swal.fire({
                 title: 'Hapus Buku?',
@@ -294,7 +294,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     row.remove();
-                    
+
                     // Cek apakah masih ada buku
                     if (bukuListBody.children.length === 0) {
                         emptyBukuMsg.classList.remove('d-none');
@@ -318,7 +318,7 @@
     // ============================================================
     const modalSearchInput = document.getElementById('modalSearchBuku');
     const modalBukuCards = document.querySelectorAll('.buku-card-item');
-    
+
     modalSearchInput.addEventListener('keyup', function() {
         const filter = this.value.toLowerCase();
         modalBukuCards.forEach(card => {
@@ -395,12 +395,12 @@
         transition: all 0.3s ease;
     }
 
-    .fs-7 { 
-        font-size: 0.9rem; 
+    .fs-7 {
+        font-size: 0.9rem;
     }
 
-    .btn-xs { 
-        padding: 0.2rem 0.4rem; 
+    .btn-xs {
+        padding: 0.2rem 0.4rem;
         font-size: 0.75rem;
         transition: all 0.3s ease;
     }

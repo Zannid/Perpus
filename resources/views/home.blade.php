@@ -136,6 +136,17 @@
     }
 
     /* User Dashboard Styles */
+    .col-md-2-4 {
+      flex: 0 0 auto;
+      width: 20%;
+    }
+
+    @media (max-width: 768px) {
+      .col-md-2-4 {
+        width: 50%;
+      }
+    }
+
     .gradient-card {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
@@ -543,7 +554,7 @@
                     Aksi Cepat
                   </h5>
                   <div class="row g-3">
-                    <div class="col-md-3 col-sm-6">
+                    <div class="col-md-2-4 col-sm-6">
                       <a href="{{ route('katalog') }}" class="quick-action-btn d-block text-decoration-none">
                         <div class="quick-action-icon bg-label-primary">
                           <i class="bx bx-search text-primary"></i>
@@ -551,7 +562,7 @@
                         <div class="fw-semibold text-dark">Cari Buku</div>
                       </a>
                     </div>
-                    <div class="col-md-3 col-sm-6">
+                    <div class="col-md-2-4 col-sm-6">
                       <a href="{{ route('keranjang.index') }}" class="quick-action-btn d-block text-decoration-none">
                         <div class="quick-action-icon bg-label-success">
                           <i class="bx bx-cart text-success"></i>
@@ -559,7 +570,7 @@
                         <div class="fw-semibold text-dark">Keranjang</div>
                       </a>
                     </div>
-                    <div class="col-md-3 col-sm-6">
+                    <div class="col-md-2-4 col-sm-6">
                       <a href="{{ route('peminjaman.index') }}" class="quick-action-btn d-block text-decoration-none">
                         <div class="quick-action-icon bg-label-info">
                           <i class="bx bx-book-bookmark text-info"></i>
@@ -567,10 +578,18 @@
                         <div class="fw-semibold text-dark">Peminjaman</div>
                       </a>
                     </div>
-                    <div class="col-md-3 col-sm-6">
-                      <a href="{{ route('profile.index') }}" class="quick-action-btn d-block text-decoration-none">
+                    <div class="col-md-2-4 col-sm-6">
+                      <a href="{{ route('perpanjangan.index') }}" class="quick-action-btn d-block text-decoration-none">
                         <div class="quick-action-icon bg-label-warning">
-                          <i class="bx bx-user text-warning"></i>
+                          <i class="bx bx-time text-warning"></i>
+                        </div>
+                        <div class="fw-semibold text-dark">Perpanjangan</div>
+                      </a>
+                    </div>
+                    <div class="col-md-2-4 col-sm-6">
+                      <a href="{{ route('profile.index') }}" class="quick-action-btn d-block text-decoration-none">
+                        <div class="quick-action-icon bg-label-secondary">
+                          <i class="bx bx-user text-secondary"></i>
                         </div>
                         <div class="fw-semibold text-dark">Profil</div>
                       </a>
@@ -593,7 +612,7 @@
                         <div class="activity-item mb-3">
                           <div class="row align-items-center">
                             <div class="col-md-2 col-3">
-                              <img src="{{ asset('storage/buku/' . $peminjaman->buku->foto) }}"
+                              <img src="{{ $peminjaman->buku->foto ? asset('storage/buku/' . $peminjaman->buku->foto) : asset('storage/buku/default-book.png') }}"
                                    alt="{{ $peminjaman->buku->judul }}"
                                    class="img-fluid rounded">
                             </div>
@@ -665,7 +684,7 @@
                           <div class="col-md-3 col-sm-6 mb-3">
                             <div class="book-card card">
                               <div class="card-body p-3">
-                                <img src="{{ asset('storage/buku/' . $buku->foto) }}"
+                                <img src="{{ $buku->foto ? asset('storage/buku/' . $buku->foto) : asset('storage/buku/default-book.png') }}"
                                      alt="{{ $buku->judul }}"
                                      class="book-img mb-2">
                                 <h6 class="mb-1" style="font-size: 0.9rem;">{{ Str::limit($buku->judul, 40) }}</h6>

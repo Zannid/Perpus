@@ -405,7 +405,7 @@
 
 @section('content')
 <!-- Profile Header -->
-<div class="profile-header">
+<div class="profile-header" style="border-top-left-radius: 50px; border-top-right-radius: 50px;">
     <div class="container">
         <div class="profile-header-content">
             <h2 class="text-white"><i class="bx bx-user-circle me-2 text-white "></i>Profil Saya</h2>
@@ -462,7 +462,7 @@
                         </div>
 
                         <h5 class="mb-2">{{ Auth::user()->name }}</h5>
-                        <span class="role-badge">{{ ucfirst(Auth::user()->role) }}</span>
+                        <center><span class="role-badge">{{ ucfirst(Auth::user()->role) }}</span></center>
 
                         <div class="custom-file-upload">
                             <input type="file" name="foto" id="photoInput" accept="image/*" class="@error('foto') is-invalid @enderror">
@@ -517,14 +517,14 @@
                                             <i class="bx bx-book"></i>
                                         </div>
                                         <div class="info-card-label">Buku Dipinjam</div>
-                                        <div class="info-card-value">0</div>
+                                        <div class="info-card-value">{{ $jumlahDipinjam ?? 0 }}</div>
                                     </div>
                                     <div class="info-card">
                                         <div class="info-card-icon">
                                             <i class="bx bx-history"></i>
                                         </div>
                                         <div class="info-card-label">Riwayat</div>
-                                        <div class="info-card-value">0</div>
+                                        <div class="info-card-value">{{ $jumlahRiwayat ?? 0 }}</div>
                                     </div>
                                 </div>
                             </div>

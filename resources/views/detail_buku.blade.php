@@ -837,7 +837,7 @@
                         <div class="book-card">
                             <div class="book-card-image">
                                 <a href="{{ route('detail_buku', $book->id) }}">
-                                    <img src="{{ asset('storage/buku/' . $book->foto) }}" alt="{{ $book->judul }}">
+                                    <img src="{{ $book->foto ? asset('storage/buku/' . $book->foto) : asset('storage/buku/default-book.png') }}" alt="{{ $book->judul }}">
                                 </a>
                                 <button type="button" class="quick-borrow-btn" data-id="{{ $book->id }}">
                                     <i class="bi bi-bookmark-plus"></i> Pinjam

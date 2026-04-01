@@ -15,8 +15,30 @@
     document.getElementById('pay-button').onclick = function(){
         window.snap.pay('{{ $snapToken }}', {
             onSuccess: function(result){
-                window.location.href = "{{ route('peminjaman.index') }}";
+                fetch("{{ route('peminjaman.pay.qris.confirm', $peminjaman->id) }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ result: result })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.message){
+                        window.location.href = "{{ route('peminjaman.index') }}" + '?success=' + encodeURIComponent(data.message);
+                    } else {
+                        window.location.href = "{{ route('peminjaman.index') }}";
+                    }
+                })
+                .catch(() => {
+                    window.location.href = "{{ route('peminjaman.index') }}";
+                });
             },
+            onPending: function(result){
+                alert("Menunggu pembayaran...");
+            },
+
             onPending: function(result){
                 alert("Menunggu pembayaran...");
             },

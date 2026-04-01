@@ -97,7 +97,7 @@ class PeminjamanController extends Controller
     public function create()
     {
         $buku = Buku::all();
-        $user = User::all();
+        $user = User::where('role', 'user')->get();
         return view('peminjaman._form', compact('buku', 'user'));
     }
 
@@ -133,19 +133,18 @@ class PeminjamanController extends Controller
         // Jika admin/petugas yang membuat, langsung set status Dipinjam
         $finalStatus = $isStaff ? 'Dipinjam' : $request->status;
 
-        // Create peminjaman first, then generate kode based on the created ID
+        // Generate unique kode_peminjaman
+        $kodePeminjaman = $this->generateKodePeminjaman();
+
+        // Create peminjaman dengan kode yang sudah di-generate
         $peminjaman = Peminjaman::create([
-            'kode_peminjaman'    => null,
+            'kode_peminjaman'    => $kodePeminjaman,
             'id_user'            => $request->id_user,
             'tgl_pinjam'         => $request->tgl_pinjam,
             'tenggat'            => $request->tenggat,
             'status'             => $finalStatus,
             'jumlah_keseluruhan' => array_sum($request->jumlah),
         ]);
-
-        // Generate a single kode for this peminjaman using its ID
-        $peminjaman->kode_peminjaman = 'PJM-' . str_pad($peminjaman->id, 4, '0', STR_PAD_LEFT);
-        $peminjaman->save();
 
         foreach ($request->id_buku as $index => $bukuId) {
             \App\Models\DetailPeminjaman::create([
@@ -634,6 +633,23 @@ class PeminjamanController extends Controller
         return view('peminjaman.qris', compact('peminjaman', 'snapToken'));
     }
 
+    public function payQrisConfirm(Request $request, $id)
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
+
+        if ($peminjaman->denda <= 0) {
+            return response()->json(['message' => 'Tidak ada denda untuk dibayar.'], 400);
+        }
+
+        if ($peminjaman->status === 'Lunas') {
+            return response()->json(['message' => 'Denda sudah lunas.'], 200);
+        }
+
+        $peminjaman->update(['status' => 'Lunas']);
+
+        return response()->json(['message' => 'Denda berhasil dibayar.'], 200);
+    }
+
     public function edit($id)
     {
         $peminjaman = Peminjaman::with('details.buku')->findOrFail($id);
@@ -810,5 +826,25 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman::with(['user', 'details.buku'])->findOrFail($id);
         return view('peminjaman.show', compact('peminjaman'));
+    }
+
+    /**
+     * Generate unique kode peminjaman
+     */
+    private function generateKodePeminjaman()
+    {
+        $prefix    = 'PJM';
+        $timestamp = now()->format('Ymd');
+        $random    = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+
+        $kodePeminjaman = $prefix . '-' . $timestamp . '-' . $random;
+
+        // Ensure uniqueness
+        while (Peminjaman::where('kode_peminjaman', $kodePeminjaman)->exists()) {
+            $random         = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $kodePeminjaman = $prefix . '-' . $timestamp . '-' . $random;
+        }
+
+        return $kodePeminjaman;
     }
 }

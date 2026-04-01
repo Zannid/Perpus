@@ -126,7 +126,7 @@ class PetugasController extends Controller
      */
     private function generateKodeUser()
     {
-        $prefix    = 'USR';
+        $prefix    = 'PTG';
         $timestamp = time();
         $randomNum = rand(100, 999);
 

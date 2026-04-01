@@ -80,7 +80,7 @@
         <div data-i18n="Basic">Pengembalian</div>
       </a>
     </li>
-    <li class="menu-item {{ Request::is('perpanjangan*') ? 'active' : '' }}">
+    <li class="menu-item {{ request()->routeIs('petugas.perpanjangan.*') ? 'active' : '' }}">
       <a href="{{ route('petugas.perpanjangan.pending') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-time"></i>
         <div data-i18n="Basic">Perpanjangan</div>
@@ -88,7 +88,7 @@
     </li>
 
     @if(Auth::user()->role == 'petugas' || Auth::user()->role == 'admin')
-<li class="menu-item {{ request()->routeIs('acc') ? 'active' : '' }}">
+<li class="menu-item {{ request()->routeIs('petugas.acc') ? 'active' : '' }}">
     <a href="{{ route('petugas.acc') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-check-circle"></i>
         <div data-i18n="Basic">Pengajuan</div>
@@ -121,6 +121,17 @@
               <i class="menu-icon tf-icons bx bx-user-check"></i>
               <div data-i18n="Basic">Petugas</div>
           </a>
+      </li>
+
+      <li class="menu-header small text-uppercase">
+        <span class="menu-header-text">Laporan</span>
+      </li>
+
+      <li class="menu-item {{ request()->routeIs('admin.rating.*') ? 'active' : '' }}">
+        <a href="{{ route('admin.rating.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-star"></i>
+          <div data-i18n="Basic">Rating & Ulasan</div>
+        </a>
       </li>
     @endif
   </ul>

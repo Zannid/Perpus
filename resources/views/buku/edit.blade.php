@@ -69,7 +69,7 @@
                 <select name="id_kategori" id="id_kategori" class="form-select" required>
                   <option value="">-- Pilih Kategori --</option>
                   @foreach($kategori as $k)
-                    <option value="{{ $k->id }}" 
+                    <option value="{{ $k->id }}"
                             {{ old('id_kategori', $buku->id_kategori) == $k->id ? 'selected' : '' }}>
                       {{ $k->nama_kategori }}
                     </option>
@@ -83,7 +83,7 @@
                 <select name="id_lokasi" id="id_lokasi" class="form-select" required>
                   <option value="">-- Pilih Lokasi --</option>
                   @foreach($lokasi as $l)
-                    <option value="{{ $l->id }}" 
+                    <option value="{{ $l->id }}"
                             {{ old('id_lokasi', $buku->id_lokasi) == $l->id ? 'selected' : '' }}>
                       {{ $l->kode_rak }} - {{ $l->keterangan }}
                     </option>
@@ -117,6 +117,12 @@
                 <div class="col-12">
                   <div class="mt-2">
                     <img src="{{ asset('storage/buku/' . $buku->foto) }}" alt="cover" width="120" class="rounded shadow">
+                  </div>
+                </div>
+              @else
+                <div class="col-12">
+                  <div class="mt-2">
+                    <img src="{{ asset('storage/buku/default-book.png') }}" alt="cover" width="120" class="rounded shadow">
                   </div>
                 </div>
               @endif

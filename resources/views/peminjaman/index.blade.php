@@ -19,18 +19,35 @@
             <h5 class="mb-0">Data Peminjaman</h5>
             <div class="d-flex align-items-center gap-2">
                 <div class="d-flex gap-2 align-items-center">
-                    <input type="date" id="tanggal_awal" class="form-control form-control-sm" placeholder="Tanggal Awal">
-                    <input type="date" id="tanggal_akhir" class="form-control form-control-sm" placeholder="Tanggal Akhir">
-                    <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari peminjaman...">
-                    <button class="btn btn-outline-secondary btn-sm" type="button" id="resetBtn">Reset</button>
+                    <div class="d-flex flex-column">
+                        <label for="tanggal_awal" class="form-label small mb-1">Tanggal Awal</label>
+                        <input type="date" id="tanggal_awal" class="form-control form-control-sm" placeholder="Tanggal Awal">
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label for="tanggal_akhir" class="form-label small mb-1">Tanggal Akhir</label>
+                        <input type="date" id="tanggal_akhir" class="form-control form-control-sm" placeholder="Tanggal Akhir">
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label for="searchInput" class="form-label small mb-1">Cari</label>
+                        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari peminjaman...">
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm align-self-end" type="button" id="resetBtn">Reset</button>
                 </div>
-
-                <a href="{{ route('peminjaman.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
+                @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
+                 <a href="{{ route('peminjaman.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
                     <i class="bx bx-plus me-1"></i> Tambah Peminjaman
                 </a>
+                @endif
+                {{-- Rating button accessible to all authenticated users --}}
+                
                 <a href="{{ route('rating.show') }}" class="btn btn-warning btn-sm rounded-pill px-3">
                     <i class="bx bx-star me-1"></i> Rating & Ulasan
                 </a>
+                @if(Auth::user()->role == 'admin')
+                <a href="{{ route('admin.rating.index') }}" class="btn btn-success btn-sm rounded-pill px-3" title="Manajemen Rating">
+                    <i class="bx bx-bar-chart me-1"></i> Kelola Rating
+                </a>
+                @endif
                 <a href="{{ route('peminjaman.export', request()->query()) }}" target="_blank"
                    class="btn btn-danger btn-sm rounded-pill px-3">
                     <i class="bx bx-file"></i> Buat PDF
@@ -184,12 +201,15 @@
                                     @if($data->status == 'Dipinjam')
                                     <form action="{{ route('peminjaman.return', $data->id) }}" method="post" class="d-flex gap-1 justify-content-center">
                                         @csrf
-                                        <select name="kondisi" class="form-select form-select-sm w-auto" required>
-                                            <option value="">Kondisi</option>
-                                            <option value="Bagus">Bagus</option>
-                                            <option value="Rusak">Rusak</option>
-                                            <option value="Hilang">Hilang</option>
-                                        </select>
+                                        <div>
+                                            <label for="kondisi-{{ $data->id }}" class="visually-hidden">Kondisi</label>
+                                            <select id="kondisi-{{ $data->id }}" name="kondisi" class="form-select form-select-sm w-auto" required>
+                                                <option value="">Kondisi</option>
+                                                <option value="Bagus">Bagus</option>
+                                                <option value="Rusak">Rusak</option>
+                                                <option value="Hilang">Hilang</option>
+                                            </select>
+                                        </div>
                                         <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Kembalikan buku ini?')" title="Kembalikan">
                                             <i class="bx bx-undo"></i>
                                         </button>
@@ -214,16 +234,16 @@
                              <form action="{{ route('petugas.peminjaman.approve', $data->id) }}" method="POST">
                                @csrf
                                <div class="modal-body text-start">
-                                 <div class="mb-3">
+                               <div class="mb-3">
                                    <label class="form-label fw-bold">Tanggal Pinjam</label>
                                    <input type="date" name="tgl_pinjam" class="form-control"
-                                          value="{{ date('Y-m-d') }}" required>
+                                          value="{{ date('Y-m-d') }}" required aria-label="Tanggal Pinjam">
                                  </div>
 
                                  <div class="mb-3">
                                    <label class="form-label fw-bold">Tenggat Pengembalian</label>
                                    <input type="date" name="tenggat" class="form-control"
-                                          value="{{ date('Y-m-d', strtotime('+7 days')) }}" required>
+                                          value="{{ date('Y-m-d', strtotime('+7 days')) }}" required aria-label="Tenggat Pengembalian">
                                    <small class="text-muted italic">* Default 7 hari ke depan</small>
                                  </div>
 
@@ -262,7 +282,7 @@
                                             <p>Anda yakin ingin menolak peminjaman dari <strong>{{ $data->user->name }}</strong>?</p>
                                             <div class="mb-3">
                                                 <label class="form-label">Alasan Penolakan</label>
-                                                <textarea name="alasan_tolak" class="form-control" rows="3" required placeholder="Masukkan alasan penolakan..."></textarea>
+                                                <textarea name="alasan_tolak" class="form-control" rows="3" required placeholder="Masukkan alasan penolakan..." aria-label="Alasan Penolakan"></textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -305,6 +325,7 @@
                                                         name="durasi"
                                                         data-tenggat="{{ $data->tenggat }}"
                                                         data-id="{{ $data->id }}"
+                                                        aria-label="Pilih durasi perpanjangan"
                                                         required>
                                                     <option value="">Pilih Durasi...</option>
                                                     <option value="3">3 Hari</option>
