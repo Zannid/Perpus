@@ -27,198 +27,187 @@
   @endif
 
   <div class="card shadow-lg border-0 rounded-3">
-    <div class="card-header">
-      <h5 class="mb-0">
-        <i class="bx bx-time me-2"></i>Daftar Perpanjangan Pending
-      </h5>
-    </div>
 
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
-          <thead class="table-light">
-            <tr>
-              <th>No</th>
-              <th>Peminjam</th>
-              <th>Buku</th>
-              <th>Tenggat Lama</th>
-              <th>Tenggat Baru</th>
-              <th>Alasan</th>
-              <th>Tanggal Ajukan</th>
-              <th class="text-center">Aksi</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            @php $no = 1; @endphp
-
-            @forelse($perpanjangan as $data)
-              <tr>
-                <td>{{ $no++ }}</td>
-                <td>{{ $data->peminjaman->user->name ?? '-' }}</td>
-                <td>{{ $data->peminjaman->buku->judul ?? '-' }}</td>
-                <td>{{ $data->formatted_tenggat_lama }}</td>
-                <td>
-                  <span class="badge bg-success">{{ $data->formatted_tenggat_baru }}</span>
-                </td>
-                <td>{{ Str::limit($data->alasan, 50) }}</td>
-                <td>{{ $data->created_at->format('d M Y H:i') }}</td>
-
-                <td class="text-center">
-                  <div class="btn-group" role="group">
-
-                    {{-- Tombol Detail --}}
-                    <button type="button"
-                            class="btn btn-info btn-sm"
-                            data-bs-toggle="modal"
-                            data-bs-target="#detailModal{{ $data->id }}">
-                      <i class="bx bx-info-circle"></i>
-                    </button>
-
-                    {{-- Tombol ACC --}}
-                    <form action="{{ route('petugas.perpanjangan.approve', $data->id) }}" 
-                          method="POST" class="d-inline">
-                      @csrf
-                      <button type="submit" class="btn btn-success btn-sm"
-                              onclick="return confirm('Setujui perpanjangan ini?')">
-                        <i class="bx bx-check"></i>
-                      </button>
-                    </form>
-
-                    {{-- Tombol Tolak --}}
-                    <button type="button"
-                            class="btn btn-danger btn-sm"
-                            data-bs-toggle="modal"
-                            data-bs-target="#rejectModal{{ $data->id }}">
-                      <i class="bx bx-x"></i>
-                    </button>
-
-                  </div>
-                </td>
-              </tr>
-
-              {{-- Modal Detail --}}
-              <div class="modal fade" id="detailModal{{ $data->id }}" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                  <div class="modal-content">
-                    <div class="modal-header bg-info text-white">
-                      <h5 class="modal-title">Detail Perpanjangan</h5>
-                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                      <table class="table table-borderless">
-                        <tr>
-                          <td width="30%"><strong>Peminjam</strong></td>
-                          <td>: {{ $data->peminjaman->user->name }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Kode Peminjaman</strong></td>
-                          <td>: {{ $data->peminjaman->kode_peminjaman }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Buku</strong></td>
-                          <td>: {{ $data->peminjaman->buku->judul }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Tanggal Pinjam</strong></td>
-                          <td>: {{ $data->peminjaman->formatted_tanggal_pinjam }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Tenggat Lama</strong></td>
-                          <td>: {{ $data->formatted_tenggat_lama }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Tenggat Baru</strong></td>
-                          <td>: <strong class="text-success">{{ $data->formatted_tenggat_baru }}</strong></td>
-                        </tr>
-                        <tr>
-                          <td><strong>Durasi Tambahan</strong></td>
-                          <td>: {{ $data->tenggat_baru->diffInDays($data->tenggat_lama) }} hari</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Alasan</strong></td>
-                          <td>: {{ $data->alasan }}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Sudah Perpanjang</strong></td>
-                          <td>: {{ $data->peminjaman->jumlah_perpanjangan }}x</td>
-                        </tr>
-                      </table>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {{-- Modal Tolak --}}
-              <div class="modal fade" id="rejectModal{{ $data->id }}" tabindex="-1">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                      <h5 class="modal-title">Tolak Perpanjangan</h5>
-                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <form action="{{ route('petugas.perpanjangan.reject', $data->id) }}" method="POST">
-                      @csrf
-
-                      <div class="modal-body">
-                        <p class="fw-semibold">Apakah Anda yakin ingin menolak perpanjangan ini?</p>
-
-                        <div class="alert alert-warning">
-                          <strong>Peminjam:</strong> {{ $data->peminjaman->user->name }} <br>
-                          <strong>Buku:</strong> {{ $data->peminjaman->buku->judul }} <br>
-                          <strong>Tenggat Baru:</strong> {{ $data->formatted_tenggat_baru }}
-                        </div>
-
-                        <div class="mb-3">
-                          <label class="form-label" for="alasan_tolak{{ $data->id }}">
-                            Alasan Penolakan <span class="text-muted">(Opsional)</span>
-                          </label>
-
-                          <textarea class="form-control"
-                                    id="alasan_tolak{{ $data->id }}"
-                                    name="alasan_tolak"
-                                    rows="3"
-                                    placeholder="Contoh: Buku sudah dipesan orang lain, Sudah terlalu lama dipinjam, dll."></textarea>
-                        </div>
-                      </div>
-
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-danger">
-                          <i class="bx bx-x"></i> Ya, Tolak
-                        </button>
-                      </div>
-                    </form>
-
-                  </div>
-                </div>
-              </div>
-
-            @empty
-              <tr>
-                <td colspan="8" class="text-center text-muted py-4">
-                  <i class="bx bx-info-circle fs-1 d-block mb-2"></i>
-                  Tidak ada perpanjangan pending
-                </td>
-              </tr>
-            @endforelse
-
-          </tbody>
-        </table>
-      </div>
-
-      {{-- Pagination --}}
-      <div class="d-flex justify-content-center mt-3">
-        {{ $perpanjangan->links() }}
-      </div>
-
-    </div>
+  <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h5 class="mb-0">
+      <i class="bx bx-time me-2"></i>Daftar Perpanjangan Pending
+    </h5>
   </div>
+
+  <div class="card-body">
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light text-nowrap">
+          <tr>
+            <th>No</th>
+            <th>Peminjam</th>
+            <th>Buku</th>
+            <th>Tenggat</th>
+            <th>Alasan</th>
+            <th>Tanggal</th>
+            <th class="text-center">Aksi</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @forelse($perpanjangan as $index => $data)
+          <tr>
+            {{-- AUTO NUMBER PAGINATION --}}
+            <td>
+              {{ $perpanjangan->firstItem() + $index }}
+            </td>
+
+            <td class="text-nowrap">
+              {{ $data->peminjaman->user->name ?? '-' }}
+            </td>
+
+            <td style="max-width:200px">
+              <div class="text-wrap fw-semibold">
+                {{ $data->peminjaman->buku->judul ?? '-' }}
+              </div>
+            </td>
+
+            <td class="text-nowrap">
+              <div class="small text-muted">
+                {{ $data->formatted_tenggat_lama }}
+              </div>
+              <span class="badge bg-success">
+                {{ $data->formatted_tenggat_baru }}
+              </span>
+            </td>
+
+            <td style="max-width:180px" class="text-wrap">
+              {{ Str::limit($data->alasan, 60) }}
+            </td>
+
+            <td class="text-nowrap small">
+              {{ $data->created_at->format('d M Y') }}<br>
+              <span class="text-muted">{{ $data->created_at->format('H:i') }}</span>
+            </td>
+
+            <td class="text-center">
+              <div class="d-flex justify-content-center gap-1 flex-wrap">
+
+                {{-- DETAIL --}}
+                <button class="btn btn-info btn-sm"
+                        onclick="showDetail(
+                          '{{ $data->peminjaman->user->name }}',
+                          '{{ $data->peminjaman->buku->judul }}',
+                          '{{ $data->formatted_tenggat_lama }}',
+                          '{{ $data->formatted_tenggat_baru }}',
+                          '{{ $data->alasan }}'
+                        )">
+                  <i class="bx bx-info-circle"></i>
+                </button>
+
+                {{-- APPROVE --}}
+                <form action="{{ route('petugas.perpanjangan.approve', $data->id) }}"
+                      method="POST">
+                  @csrf
+                  <button class="btn btn-success btn-sm"
+                          onclick="return confirm('Setujui perpanjangan ini?')">
+                    <i class="bx bx-check"></i>
+                  </button>
+                </form>
+
+                {{-- REJECT --}}
+                <button class="btn btn-danger btn-sm"
+                        onclick="openRejectModal({{ $data->id }}, '{{ $data->peminjaman->user->name }}', '{{ $data->peminjaman->buku->judul }}')">
+                  <i class="bx bx-x"></i>
+                </button>
+
+              </div>
+            </td>
+          </tr>
+
+          @empty
+          <tr>
+            <td colspan="7" class="text-center text-muted py-4">
+              <i class="bx bx-info-circle fs-1 d-block mb-2"></i>
+              Tidak ada perpanjangan pending
+            </td>
+          </tr>
+          @endforelse
+        </tbody>
+      </table>
+    </div>
+
+    {{-- PAGINATION --}}
+    <div class="d-flex justify-content-center mt-3">
+      {{ $perpanjangan->links() }}
+    </div>
+
+  </div>
+</div>
 
 </div>
 
+
+<div class="modal fade" id="detailModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Detail Perpanjangan</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <p><strong>Peminjam:</strong> <span id="dUser"></span></p>
+        <p><strong>Buku:</strong> <span id="dBook"></span></p>
+        <p><strong>Tenggat Lama:</strong> <span id="dOld"></span></p>
+        <p><strong>Tenggat Baru:</strong> <span id="dNew"></span></p>
+        <p><strong>Alasan:</strong> <span id="dReason"></span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="rejectModal">
+  <div class="modal-dialog">
+    <form method="POST" id="rejectForm">
+      @csrf
+
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">Tolak Perpanjangan</h5>
+          <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <p><strong id="rUser"></strong> - <span id="rBook"></span></p>
+
+          <textarea name="alasan_tolak" class="form-control mt-2"
+                    placeholder="Alasan penolakan (opsional)"></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button class="btn btn-danger">Tolak</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function showDetail(user, book, oldDate, newDate, reason){
+    document.getElementById('dUser').innerText = user;
+    document.getElementById('dBook').innerText = book;
+    document.getElementById('dOld').innerText = oldDate;
+    document.getElementById('dNew').innerText = newDate;
+    document.getElementById('dReason').innerText = reason;
+
+    new bootstrap.Modal(document.getElementById('detailModal')).show();
+}
+
+function openRejectModal(id, user, book){
+    document.getElementById('rUser').innerText = user;
+    document.getElementById('rBook').innerText = book;
+
+    document.getElementById('rejectForm').action = `/petugas/perpanjangan/${id}/reject`;
+
+    new bootstrap.Modal(document.getElementById('rejectModal')).show();
+}
+</script>
 @endsection

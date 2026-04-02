@@ -91,7 +91,7 @@
 
         {{-- Pagination --}}
             <div class="mt-4">
-                {{ $kategori->appends(request()->all())->links('vendor.pagination.bootstrap-5') }}
+                {{ $kategori->appends(request()->all())->links('vendor.pagination.bootstrap-4') }}
             </div>
       </div>
     </div>

@@ -51,6 +51,10 @@ class PerpanjanganController extends Controller
             ]);
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
+        $perpanjangan = Perpanjangan::latest()->paginate(10);
+        $peminjamanAktif = Peminjaman::where('user_id', auth()->id())
+            ->where('status', 'dipinjam')
+            ->paginate(6);
     }
 
     /**

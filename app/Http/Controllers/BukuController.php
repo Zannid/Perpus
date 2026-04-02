@@ -27,11 +27,12 @@ class BukuController extends Controller
             $search = $request->get('search');
             $query->where('judul', 'LIKE', "%$search%")
                 ->orWhereHas('kategori', function ($q) use ($search) {
-                    $q->where('nama_kategori', 'LIKE', "%$search%");
+                    $q->where('nama_kategori', 'LIKE', "%$search%")
+                        ->orWhere('kode_buku', 'LIKE', "%$search%");
                 });
         }
 
-        $buku = $query->get();
+        $buku = $query->paginate(10);
 
         return view('buku.index', compact('buku', 'lokasi', 'kategori', 'request'));
     }

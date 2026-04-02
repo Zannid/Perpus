@@ -16,46 +16,67 @@
 
     <div class="card">
         <div class="table-responsive">
-            <table class="table align-middle">
-                <thead class="table-light">
+            <table class="table align-middle table-hover">
+                <thead class="table-light text-nowrap">
                     <tr>
                         <th>Buku</th>
                         <th>User</th>
                         <th>Durasi</th>
                         <th>Alasan</th>
                         <th>Status</th>
-                        <th>Aksi</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($perpanjangan as $item)
                     <tr>
-                        <td class="d-flex align-items-center gap-2">
-                            <img src="{{ asset('storage/buku/' . ($item->peminjaman->details->first()->buku->foto ?? 'default-book.png')) }}"
-                                 width="45" class="rounded">
-                            <span class="fw-semibold">{{ $item->peminjaman->details->first()->buku->judul }}</span>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="{{ asset('storage/buku/' . ($item->peminjaman->details->first()->buku->foto ?? 'default-book.png')) }}"
+                                    width="45" class="rounded">
+                                <span class="fw-semibold text-wrap">
+                                    {{ $item->peminjaman->details->first()->buku->judul }}
+                                </span>
+                            </div>
                         </td>
-                        <td>{{ $item->peminjaman->user->name }}</td>
-                        <td>{{ $item->durasi }} hari</td>
-                        <td class="text-truncate" style="max-width:150px">{{ $item->alasan }}</td>
+
+                        <td class="text-nowrap">
+                            {{ $item->peminjaman->user->name }}
+                        </td>
+
+                        <td class="text-nowrap">
+                            {{ $item->durasi }} hari
+                        </td>
+
+                        <td style="max-width:200px" class="text-wrap">
+                            {{ $item->alasan }}
+                        </td>
+
                         <td>
                             <span class="badge
                                 @if($item->status=='approved') bg-success
                                 @elseif($item->status=='rejected') bg-danger
-                                @else bg-warning @endif">
+                                @else bg-warning text-dark @endif">
                                 {{ ucfirst($item->status) }}
                             </span>
                         </td>
-                        <td>
+
+                        <td class="text-center">
                             @if($item->status=='pending')
-                            <form action="/perpanjangan/{{ $item->id }}/approve" method="POST" class="d-inline">
-                                @csrf
-                                <button class="btn btn-sm btn-success">✓</button>
-                            </form>
-                            <form action="/perpanjangan/{{ $item->id }}/reject" method="POST" class="d-inline">
-                                @csrf
-                                <button class="btn btn-sm btn-danger">✗</button>
-                            </form>
+                            <div class="d-flex justify-content-center gap-1">
+                                <form action="/perpanjangan/{{ $item->id }}/approve" method="POST">
+                                    @csrf
+                                    <button class="btn btn-success btn-sm">
+                                        <i class="bx bx-check"></i>
+                                    </button>
+                                </form>
+                                <form action="/perpanjangan/{{ $item->id }}/reject" method="POST">
+                                    @csrf
+                                    <button class="btn btn-danger btn-sm">
+                                        <i class="bx bx-x"></i>
+                                    </button>
+                                </form>
+                            </div>
                             @else
                             <small class="text-muted">Selesai</small>
                             @endif
@@ -63,11 +84,18 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">Tidak ada data</td>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            Tidak ada data
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        {{-- Pagination --}}
+        <div class="card-footer">
+            {{ $perpanjangan->links() }}
         </div>
     </div>
 
@@ -85,15 +113,17 @@
     <div class="row g-4">
 
         @forelse($peminjamanAktif as $peminjaman)
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm">
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
                 <div class="card-body d-flex flex-column">
 
                     <div class="d-flex gap-3">
                         <img src="{{ asset('storage/buku/' . ($peminjaman->details->first()->buku->foto ?? 'default-book.png')) }}"
-                             class="rounded" width="60">
+                            class="rounded" width="60">
                         <div>
-                            <h6 class="mb-1">{{ $peminjaman->details->first()->buku->judul }}</h6>
+                            <h6 class="mb-1 text-wrap">
+                                {{ $peminjaman->details->first()->buku->judul }}
+                            </h6>
                             <small class="text-muted">
                                 Tenggat: {{ \Carbon\Carbon::parse($peminjaman->tenggat)->format('d M Y') }}
                             </small>
@@ -101,12 +131,13 @@
                     </div>
 
                     <div class="mt-3 small text-muted">
-                        Sisa perpanjangan: {{ 3 - $peminjaman->jumlah_perpanjangan }}x
+                        Sisa perpanjangan:
+                        <strong>{{ 3 - $peminjaman->jumlah_perpanjangan }}x</strong>
                     </div>
 
-                    <button class="btn btn-primary btn-sm mt-auto"
+                    <button class="btn btn-primary btn-sm mt-auto w-100"
                         onclick="openExtensionModal({{ $peminjaman->id }}, '{{ $peminjaman->details->first()->buku->judul }}')">
-                        Ajukan
+                        Ajukan Perpanjangan
                     </button>
                 </div>
             </div>
@@ -117,6 +148,11 @@
         </div>
         @endforelse
 
+    </div>
+
+    {{-- Pagination --}}
+    <div class="mt-4">
+        {{ $peminjamanAktif->links() }}
     </div>
 
 </div>

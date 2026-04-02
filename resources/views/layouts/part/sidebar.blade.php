@@ -88,14 +88,12 @@
     </li>
 
     @if(Auth::user()->role == 'petugas' || Auth::user()->role == 'admin')
-<li class="menu-item {{ request()->routeIs('petugas.acc') ? 'active' : '' }}">
-    <a href="{{ route('petugas.acc') }}" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-check-circle"></i>
-        <div data-i18n="Basic">Pengajuan</div>
-    </a>
-</li>
-
-
+    <li class="menu-item {{ request()->routeIs('petugas.acc') ? 'active' : '' }}">
+        <a href="{{ route('petugas.acc') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-check-circle"></i>
+            <div data-i18n="Basic">Pengajuan</div>
+        </a>
+    </li>
     @endif
 
     @if(Auth::user()->role == 'admin')

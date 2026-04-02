@@ -74,6 +74,9 @@
             </tbody>
           </table>
         </div>
+        <nav aria-label="Page navigation" class="mt-3">
+          {{ $lokasi->links('pagination::bootstrap-4') }}
+        </nav>
       </div>
     </div>
   </div>

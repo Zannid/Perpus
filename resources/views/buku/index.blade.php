@@ -94,6 +94,9 @@
           </tbody>
         </table>
       </div>
+      <nav aria-label="Page navigation" class="mt-3">
+        {{ $buku->links('pagination::bootstrap-4') }}
+      </nav>
     </div>
   </div>
 </div>
