@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 route::middleware('auth:sanctum')->group(function () {
-    Route::resource('/bukus', BukuApiController::class);
+    Route::resource('/books', BukuApiController::class);
     Route::resource('/kategoris', KategoriApiController::class);
     Route::resource('/lokasis', LokasiApiController::class);
 });
@@ -41,3 +41,9 @@ Route::get('/me', fn(Request $request) => $request->user())
     ->middleware('auth:sanctum');
 // //
 // Route::resource('/kategoris', App\Http\Controllers\Api\KategoriApiController::class);
+Route::get('/books', [BukuApiController::class, 'index']);
+Route::get('/books/latest', [BukuApiController::class, 'latest']);
+Route::get('/books/search', [BukuApiController::class, 'search']);
+Route::get('/books/categories', [BukuApiController::class, 'categories']);
+Route::get('/books/{id}', [BukuApiController::class, 'show']);
+Route::get('/books/popular', [BukuApiController::class, 'popular']);

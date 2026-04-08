@@ -17,7 +17,7 @@ class KategoriController extends Controller
             $kategori = Kategori::where('nama_kategori', 'LIKE', '%' . $request->search . '%')
                 ->orWhere('keterangan', 'LIKE', '%' . $request->search . '%')
                 ->orderBy('id', 'desc')
-                ->paginate(5);
+                ->paginate(10);
         }
         return view('kategori.index', compact('kategori'));
     }

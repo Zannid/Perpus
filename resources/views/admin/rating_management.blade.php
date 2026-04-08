@@ -17,10 +17,24 @@
 
     <div class="card shadow-lg">
         <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
-            <h5 class="mb-0">
-                <i class="bx bx-star me-2"></i>Manajemen Rating & Ulasan Buku
-            </h5>
-            <span class="badge bg-white text-primary fs-6">Total: {{ $bukuSudahDirating->count() + $bukuBelumDirating->count() }} Buku</span>
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <h5 class="mb-0">
+                    <i class="bx bx-star me-2"></i>Manajemen Rating & Ulasan Buku
+                </h5>
+                <div class="d-flex align-items-center gap-3">
+                    {{-- Form Search --}}
+                    <form action="{{ route('admin.rating.index') }}" method="get" class="d-flex">
+                        <div class="input-group input-group-sm">
+                            <input type="text" id="searchInput" name="search" class="form-control" placeholder="Cari buku..."
+                                   value="{{ request('search') }}">
+                            <button class="btn btn-light" type="submit">
+                                <i class="bx bx-search-alt text-primary"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <span class="badge bg-white text-primary fs-6">Total: {{ $bukuSudahDirating->count() + $bukuBelumDirating->count() }} Buku</span>
+                </div>
+            </div>
         </div>
 
         <div class="card-body">
@@ -268,4 +282,46 @@
         border-bottom: none !important;
     }
 </style>
+
+<script>
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    if (searchInput && tabPanes.length > 0) {
+        // Set initial value from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchParam = urlParams.get('search');
+        if (searchParam) {
+            searchInput.value = searchParam;
+        }
+
+        searchInput.addEventListener('keyup', function() {
+            const filter = this.value.toLowerCase();
+
+            tabPanes.forEach(tabPane => {
+                const rows = tabPane.querySelectorAll('tbody tr');
+                let hasVisibleRows = false;
+
+                rows.forEach(row => {
+                    const judulBuku = row.querySelector('td:nth-child(2) h6')?.textContent.toLowerCase() ?? '';
+                    const kategori = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() ?? '';
+
+                    if(judulBuku.includes(filter) || kategori.includes(filter)) {
+                        row.style.display = '';
+                        hasVisibleRows = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Show/hide empty state
+                const emptyState = tabPane.querySelector('.alert');
+                if (emptyState) {
+                    emptyState.style.display = hasVisibleRows ? 'none' : 'block';
+                }
+            });
+        });
+    }
+</script>
 @endsection

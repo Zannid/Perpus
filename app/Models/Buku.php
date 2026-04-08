@@ -46,5 +46,12 @@ class Buku extends Model
         return $this->hasMany(DetailPeminjaman::class, 'buku_id');
     }
 
+    protected $appends = ['foto_url'];
+
+    public function getFotoUrlAttribute()
+    {
+        return $this->foto ? url('storage/' . $this->foto) : null;
+    }
+
 
 }

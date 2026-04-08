@@ -32,6 +32,17 @@
     <h5 class="mb-0">
       <i class="bx bx-time me-2"></i>Daftar Perpanjangan Pending
     </h5>
+
+    {{-- Form Search --}}
+    <form action="{{ route('petugas.perpanjangan.pending') }}" method="get" class="d-flex">
+      <div class="input-group input-group-sm">
+        <input type="text" id="searchInput" name="search" class="form-control" placeholder="Cari perpanjangan..."
+               value="{{ request('search') }}">
+        <button class="btn btn-primary" type="submit">
+          <i class="bx bx-search-alt"></i>
+        </button>
+      </div>
+    </form>
   </div>
 
   <div class="card-body">
@@ -143,7 +154,6 @@
 
 </div>
 
-
 <div class="modal fade" id="detailModal">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -191,6 +201,36 @@
 </div>
 
 <script>
+const searchInput = document.getElementById('searchInput');
+const table = document.querySelector('.table')?.getElementsByTagName('tbody')[0];
+
+if (searchInput && table) {
+  // Set initial value from URL parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const searchParam = urlParams.get('search');
+  if (searchParam) {
+    searchInput.value = searchParam;
+  }
+
+  searchInput.addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = table.getElementsByTagName('tr');
+
+    Array.from(rows).forEach(row => {
+      const peminjam = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() ?? '';
+      const buku = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() ?? '';
+      const tenggat = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() ?? '';
+      const alasan = row.querySelector('td:nth-child(5)')?.textContent.toLowerCase() ?? '';
+
+      if(peminjam.includes(filter) || buku.includes(filter) || tenggat.includes(filter) || alasan.includes(filter)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+}
+
 function showDetail(user, book, oldDate, newDate, reason){
     document.getElementById('dUser').innerText = user;
     document.getElementById('dBook').innerText = book;

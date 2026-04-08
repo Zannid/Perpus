@@ -177,6 +177,15 @@ class Peminjaman extends Model
         return $daysLate * 2000 * $totalJumlah;
     }
 
+    public function getDueDendaAttribute()
+    {
+        if ($this->status === 'Dipinjam') {
+            return $this->denda_berjalan;
+        }
+
+        return $this->denda ?? 0;
+    }
+
     public function getFormattedTanggalPinjamAttribute()
     {
         return $this->tgl_pinjam ? Carbon::parse($this->tgl_pinjam)->format('d M Y') : '-';

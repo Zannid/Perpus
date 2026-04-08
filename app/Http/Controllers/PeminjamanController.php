@@ -225,7 +225,7 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman::findOrFail($id);
 
-        if ($peminjaman->denda > 0 && $peminjaman->status !== "Lunas") {
+        if ($peminjaman->due_denda > 0 && $peminjaman->status !== "Lunas") {
             return view('peminjaman.pay', compact('peminjaman'));
         }
 
@@ -235,9 +235,13 @@ class PeminjamanController extends Controller
     public function confirmPay($id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
+        $amount     = $peminjaman->due_denda;
 
-        if ($peminjaman->denda > 0) {
-            $peminjaman->update(['status' => "Lunas"]);
+        if ($amount > 0) {
+            $peminjaman->update([
+                'status' => "Lunas",
+                'denda'  => $amount,
+            ]);
             return redirect()->route('peminjaman.index')->with('success', 'Denda berhasil dibayar.');
         }
 
@@ -619,25 +623,31 @@ class PeminjamanController extends Controller
         $params = [
             'transaction_details' => [
                 'order_id'     => 'PMJ-' . $peminjaman->id . '-' . time(),
-                'gross_amount' => $peminjaman->denda,
+                'gross_amount' => $peminjaman->due_denda,
             ],
             'customer_details'    => [
                 'first_name' => $peminjaman->user->name,
                 'email'      => $peminjaman->user->email,
             ],
-            'enabled_payments'    => ['qris'],
         ];
 
         $snapToken = Snap::getSnapToken($params);
 
+        // Jika request AJAX / JSON, return JSON token untuk snap
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json(['snap_token' => $snapToken]);
+        }
+
+        // Jika bukan AJAX, return view seperti sebelumnya
         return view('peminjaman.qris', compact('peminjaman', 'snapToken'));
     }
 
     public function payQrisConfirm(Request $request, $id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
+        $amount     = $peminjaman->due_denda;
 
-        if ($peminjaman->denda <= 0) {
+        if ($amount <= 0) {
             return response()->json(['message' => 'Tidak ada denda untuk dibayar.'], 400);
         }
 
@@ -645,7 +655,10 @@ class PeminjamanController extends Controller
             return response()->json(['message' => 'Denda sudah lunas.'], 200);
         }
 
-        $peminjaman->update(['status' => 'Lunas']);
+        $peminjaman->update([
+            'status' => 'Lunas',
+            'denda'  => $amount,
+        ]);
 
         return response()->json(['message' => 'Denda berhasil dibayar.'], 200);
     }

@@ -54,7 +54,7 @@ class HomeController extends Controller
 
         // Data untuk user dashboard
         $peminjamanAktif = Peminjaman::where('id_user', $userId)
-            ->whereIn('status', ['dipinjam', 'disetujui'])
+            ->whereIn('status', ['Dipinjam', 'dipinjam', 'Disetujui', 'disetujui'])
             ->count();
 
         $totalPeminjaman = Peminjaman::where('id_user', $userId)->count();
@@ -64,19 +64,18 @@ class HomeController extends Controller
             ->distinct('detail_peminjaman.buku_id')
             ->count();
 
-        // Hitung denda aktif
+        // Hitung denda aktif hanya untuk peminjaman yang sedang dipinjam dan sudah melewati tenggat
         $dendaAktif = Peminjaman::where('id_user', $userId)
-            ->whereIn('status', ['dipinjam', 'disetujui'])
-            ->where('tenggat', '<', Carbon::now())
+            ->whereIn('status', ['Dipinjam', 'dipinjam'])
+            ->whereDate('tenggat', '<', Carbon::today())
             ->get()
             ->sum(function ($peminjaman) {
-                $hariTerlambat = Carbon::parse($peminjaman->tenggat)->diffInDays(Carbon::now());
-                return $hariTerlambat * 1000; // Rp 1.000 per hari
+                return $peminjaman->denda_berjalan;
             });
 
         $peminjamanTerbaru = Peminjaman::with('buku')
             ->where('id_user', $userId)
-            ->whereIn('status', ['dipinjam', 'disetujui'])
+            ->whereIn('status', ['Dipinjam', 'dipinjam', 'Disetujui', 'disetujui'])
             ->latest()
             ->take(3)
             ->get();
@@ -85,6 +84,14 @@ class HomeController extends Controller
             ->inRandomOrder()
             ->take(4)
             ->get();
+
+        $totalDendaLunas = Peminjaman::where('status', 'Lunas')
+            ->where('denda', '>', 0)
+            ->sum('denda');
+
+        $totalDendaBelumBayar = Peminjaman::where('status', '!=', 'Lunas')
+            ->where('denda', '>', 0)
+            ->sum('denda');
 
         $riwayatAktivitas = Peminjaman::with('buku')
             ->where('id_user', $userId)
@@ -96,20 +103,22 @@ class HomeController extends Controller
             ->whereYear('created_at', now()->year)
             ->count();
 
-    return view('home', [
-        'dataPeminjaman'   => json_encode($dataPeminjaman),
-        'dataPengembalian' => json_encode($dataPengembalian),
-        'notifikasiPeminjaman' => $notifikasiPeminjaman,
-        'jumlahNotifikasi' => $jumlahNotifikasi,
-        'peminjamanAktif'  => $peminjamanAktif,
-        'totalPeminjaman'  => $totalPeminjaman,
-        'bukuFavorit'      => $bukuFavorit,
-        'dendaAktif'       => $dendaAktif,
-        'peminjamanTerbaru'=> $peminjamanTerbaru,
-        'rekomendasiBuku'  => $rekomendasiBuku,
-        'riwayatAktivitas' => $riwayatAktivitas,
-        'bukuBaru'         => $bukuBaru
-    ]);
+        return view('home', [
+            'dataPeminjaman'       => json_encode($dataPeminjaman),
+            'dataPengembalian'     => json_encode($dataPengembalian),
+            'notifikasiPeminjaman' => $notifikasiPeminjaman,
+            'jumlahNotifikasi'     => $jumlahNotifikasi,
+            'peminjamanAktif'      => $peminjamanAktif,
+            'totalPeminjaman'      => $totalPeminjaman,
+            'bukuFavorit'          => $bukuFavorit,
+            'dendaAktif'           => $dendaAktif,
+            'totalDendaLunas'      => $totalDendaLunas,
+            'totalDendaBelumBayar' => $totalDendaBelumBayar,
+            'peminjamanTerbaru'    => $peminjamanTerbaru,
+            'rekomendasiBuku'      => $rekomendasiBuku,
+            'riwayatAktivitas'     => $riwayatAktivitas,
+            'bukuBaru'             => $bukuBaru,
+        ]);
     }
 
     public function dashboard()

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -7,147 +8,160 @@ use Illuminate\Http\Request;
 
 class BukuApiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
-    {
-        return response()->json(Buku::all());
-        return response()->json($books)
-            ->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+{
+    $books = Buku::with(['kategori', 'lokasi', 'penerbit'])
+        ->withAvg('ratings', 'nilai')
+        ->withCount('ratings')
+        ->get()
+        ->map(fn($b) => $this->formatBuku($b));
 
+    return response()->json(['success' => true, 'data' => $books]);
+}
+
+public function latest()
+{
+    $books = Buku::with(['kategori', 'lokasi', 'penerbit'])
+        ->withAvg('ratings', 'nilai')
+        ->withCount('ratings')
+        ->latest()->limit(10)->get()
+        ->map(fn($b) => $this->formatBuku($b));
+
+    return response()->json(['success' => true, 'data' => $books]);
+}
+
+// Tambah endpoint popular yang belum ada
+public function popular()
+{
+    $books = Buku::with(['kategori', 'lokasi', 'penerbit'])
+        ->withAvg('ratings', 'nilai')
+        ->withCount('ratings')
+        ->orderByDesc('ratings_count')
+        ->limit(10)->get()
+        ->map(fn($b) => $this->formatBuku($b));
+
+    return response()->json(['success' => true, 'data' => $books]);
+}
+
+public function show($id)
+{
+    $buku = Buku::with(['kategori', 'lokasi', 'penerbit'])
+        ->withAvg('ratings', 'nilai')
+        ->withCount('ratings')
+        ->find($id);
+
+    if (!$buku) {
+        return response()->json(['success' => false, 'message' => 'Buku not found'], 404);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    return response()->json(['success' => true, 'data' => $this->formatBuku($buku)]);
+}
+
+public function search(Request $request)
+{
+    $query = $request->get('q', '');
+
+    $books = Buku::with(['kategori', 'lokasi', 'penerbit'])
+        ->withAvg('ratings', 'nilai')
+        ->withCount('ratings')
+        ->where(function ($q) use ($query) {
+            $q->where('judul', 'like', "%$query%")
+              ->orWhere('penulis', 'like', "%$query%")  // fix: 'pengarang' → sesuaikan nama kolom
+              ->orWhere('penerbit_id', 'like', "%$query%");
+        })
+        ->get()
+        ->map(fn($b) => $this->formatBuku($b));
+
+    return response()->json(['success' => true, 'data' => $books]);
+}
+
+// Helper untuk format response + URL foto yang benar
+private function formatBuku($buku): array
+{
+    return [
+        'id'           => $buku->id,
+        'kode_buku'    => $buku->kode_buku,
+        'judul'        => $buku->judul,
+        'penulis'      => $buku->penulis,
+        'penerbit'     => $buku->penerbit ? [
+            'id'           => $buku->penerbit->id,
+            'nama_penerbit'=> $buku->penerbit->nama_penerbit,
+            'created_at'   => $buku->penerbit->created_at,
+            'updated_at'   => $buku->penerbit->updated_at,
+        ] : ['id' => 0, 'nama_penerbit' => '-', 'created_at' => null, 'updated_at' => null],
+        'tahun_terbit' => $buku->tahun_terbit,
+        'id_kategori'  => $buku->kategori_id,
+        'foto'         => $buku->foto,
+        // ✅ Kirim URL lengkap langsung dari backend
+        'foto_url'     => $buku->foto ? asset('storage/' . $buku->foto) : null,
+        'deskripsi'    => $buku->deskripsi,
+        'id_lokasi'    => $buku->lokasi_id,
+        'stok'         => $buku->stok,
+        'rating_avg'   => round($buku->ratings_avg_nilai ?? 0, 1),
+        'rating_count' => $buku->ratings_count ?? 0,
+        'created_at'   => $buku->created_at,
+        'updated_at'   => $buku->updated_at,
+    ];
+}
+
     public function store(Request $request)
     {
         $buku = Buku::create($request->all());
-        return response()->json($buku, 201);
+
+        return response()->json([
+            'success' => true,
+            'data' => $buku
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $buku = Buku::with(['kategori', 'lokasi'])->find($id);
-        if ($buku) {
-            return response()->json([
-                'success' => true,
-                'data'    => $buku,
-            ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Buku not found',
-            ], 404);
-        }
-    }
+    
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $buku = Buku::find($id);
+
         if ($buku) {
             $buku->update($request->all());
-            return response()->json($buku);
-        } else {
-            return response()->json(['message' => 'Buku not found'], 404);
+
+            return response()->json([
+                'success' => true,
+                'data' => $buku
+            ]);
         }
+
+        return response()->json(['message' => 'Buku not found'], 404);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         $buku = Buku::find($id);
+
         if ($buku) {
             $buku->delete();
-            return response()->json(['message' => 'Buku deleted']);
-        } else {
-            return response()->json(['message' => 'Buku not found'], 404);
-        }
-    }
 
-    /**
-     * Get latest books
-     */
-    public function latest()
-    {
-        $books = Buku::with(['kategori', 'lokasi'])
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data'    => $books,
-        ]);
-    }
-
-    /**
-     * Search books
-     */
-    public function search(Request $request)
-    {
-        $query    = $request->get('q', '');
-        $category = $request->get('category', '');
-
-        $books = Buku::with(['kategori', 'lokasi'])
-            ->where('judul', 'like', '%' . $query . '%')
-            ->orWhere('pengarang', 'like', '%' . $query . '%')
-            ->orWhere('penerbit', 'like', '%' . $query . '%');
-
-        if ($category) {
-            $books->where('kategori_id', $category);
+            return response()->json([
+                'success' => true,
+                'message' => 'Buku deleted'
+            ]);
         }
 
-        $books = $books->get();
-
-        return response()->json([
-            'success' => true,
-            'data'    => $books,
-        ]);
+        return response()->json(['message' => 'Buku not found'], 404);
     }
 
-    /**
-     * Get book categories
-     */
+
     public function categories()
     {
-        $categories = \App\Models\Kategori::all();
-
         return response()->json([
             'success' => true,
-            'data'    => $categories,
+            'data' => \App\Models\Kategori::all(),
         ]);
     }
 
-    /**
-     * Get book bookshelves/locations
-     */
     public function bookshelves()
     {
-        $locations = \App\Models\Lokasi::all();
-
         return response()->json([
             'success' => true,
-            'data'    => $locations,
+            'data' => \App\Models\Lokasi::all(),
         ]);
-    }
-
-    /**
-     * Get book detail (alias for show)
-     */
-    public function detail(string $id)
-    {
-        return $this->show($id);
     }
 }

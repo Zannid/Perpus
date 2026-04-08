@@ -33,13 +33,13 @@
           {{-- Form Search --}}
           <form action="{{ route('kategori.index') }}" method="get" class="d-flex">
             <div class="input-group input-group-sm">
-              <input type="text" name="search" class="form-control"
-                     placeholder="Cari kategori..." value="{{ request('search') }}">
+              <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari kategoriyy..." value="{{ request('search') }}">
               <button class="btn btn-primary" type="submit">
                 <i class="bx bx-search-alt"></i>
               </button>
             </div>
           </form>
+
 
           {{-- Tombol Tambah --}}
           <a href="{{ route('kategori.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">

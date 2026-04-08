@@ -34,6 +34,21 @@
 
     {{-- Tab Navigation --}}
     <div class="card shadow-lg border-0 mb-4">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h5 class="mb-0 fw-bold">Rating & Ulasan Buku</h5>
+                {{-- Form Search --}}
+                <form action="{{ route('peminjaman.rating_list') }}" method="get" class="d-flex">
+                    <div class="input-group input-group-sm">
+                        <input type="text" id="searchInput" name="search" class="form-control" placeholder="Cari buku..."
+                               value="{{ request('search') }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bx bx-search-alt"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
         <div class="card-body p-0">
             <ul class="nav nav-tabs nav-fill" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -500,17 +515,6 @@
         font-style: italic;
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-        .rating-stars .star {
-            font-size: 2rem;
-        }
-
-        .col-md-4,
-        .col-md-8 {
-            flex: 0 0 100%;
-            max-width: 100%;
-        }
     }
 </style>
 
@@ -667,6 +671,46 @@
             bsAlert.close();
         });
     }, 5000);
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    if (searchInput && tabPanes.length > 0) {
+        // Set initial value from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchParam = urlParams.get('search');
+        if (searchParam) {
+            searchInput.value = searchParam;
+        }
+
+        searchInput.addEventListener('keyup', function() {
+            const filter = this.value.toLowerCase();
+
+            tabPanes.forEach(tabPane => {
+                const cards = tabPane.querySelectorAll('.card');
+                let hasVisibleCards = false;
+
+                cards.forEach(card => {
+                    const judulBuku = card.querySelector('h5')?.textContent.toLowerCase() ?? '';
+                    const penulis = card.querySelector('.text-muted small')?.textContent.toLowerCase() ?? '';
+
+                    if(judulBuku.includes(filter) || penulis.includes(filter)) {
+                        card.style.display = '';
+                        hasVisibleCards = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Show/hide empty state
+                const emptyState = tabPane.querySelector('.alert');
+                if (emptyState) {
+                    emptyState.style.display = hasVisibleCards ? 'none' : 'block';
+                }
+            });
+        });
+    }
 </script>
 
 @endsection

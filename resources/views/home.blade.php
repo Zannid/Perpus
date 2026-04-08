@@ -431,6 +431,36 @@
                 </div>
               </div>
 
+              <!-- Total Denda Lunas -->
+              <div class="col-lg-6 col-md-12 col-6 mb-4">
+                <div class="card stat-card-animated" style="animation-delay: 0.6s;">
+                  <div class="card-body d-flex align-items-center">
+                    <div class="avatar flex-shrink-0 bg-success rounded p-2 me-3">
+                      <i class="bx bx-check-circle text-white fs-4"></i>
+                    </div>
+                    <div>
+                      <span class="fw-semibold d-block mb-1">Total Denda Lunas</span>
+                      <h3 class="card-title mb-0">Rp {{ number_format($totalDendaLunas ?? 0, 0, ',', '.') }}</h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Total Denda Belum Bayar -->
+              <div class="col-lg-6 col-md-12 col-6 mb-4">
+                <div class="card stat-card-animated" style="animation-delay: 0.7s;">
+                  <div class="card-body d-flex align-items-center">
+                    <div class="avatar flex-shrink-0 bg-danger rounded p-2 me-3">
+                      <i class="bx bx-error text-white fs-4"></i>
+                    </div>
+                    <div>
+                      <span class="fw-semibold d-block mb-1">Total Denda Belum Bayar</span>
+                      <h3 class="card-title mb-0">Rp {{ number_format($totalDendaBelumBayar ?? 0, 0, ',', '.') }}</h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <!-- Chart Peminjaman & Pengembalian -->
               <div class="col-md-12 col-lg-8 order-1 mb-4">
                <div class="card shadow-sm border-0 rounded-4 p-4 h-100">

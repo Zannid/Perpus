@@ -114,7 +114,7 @@
         </a>
       </li>
 
-      <li class="menu-item {{ request()->routeIs('petugas.*') ? 'active' : '' }}">
+      <li class="menu-item {{ request()->routeIs('petugas.index') ? 'active' : '' }}">
           <a href="{{ route('petugas.index') }}" class="menu-link">
               <i class="menu-icon tf-icons bx bx-user-check"></i>
               <div data-i18n="Basic">Petugas</div>
