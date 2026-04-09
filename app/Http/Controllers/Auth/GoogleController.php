@@ -14,7 +14,7 @@ class GoogleController extends Controller
     {
         // Pastikan config fresh menggunakan APP_URL terkini
         $callbackUrl = url('/auth/google/callback');
-        
+
         return Socialite::driver('google')
             ->setScopes(['openid', 'profile', 'email'])
             ->redirect();
@@ -77,4 +77,3 @@ class GoogleController extends Controller
         }
     }
 }
-
