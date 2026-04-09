@@ -12,7 +12,12 @@ class GoogleController extends Controller
 {
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        // Pastikan config fresh menggunakan APP_URL terkini
+        $callbackUrl = url('/auth/google/callback');
+        
+        return Socialite::driver('google')
+            ->setScopes(['openid', 'profile', 'email'])
+            ->redirect();
     }
 
     public function handleGoogleCallback()
@@ -59,10 +64,11 @@ class GoogleController extends Controller
 
             Auth::login($user, true); // remember login
 
-            return redirect()->intended(route('dashboard'));
+            // Pastikan redirect ke home, bukan dashboard
+            return redirect()->route('home');
 
         } catch (\Throwable $e) {
-            // 🔥 UNCOMMENT kalau mau lihat error asli
+            // Debug: uncomment untuk lihat error
             // dd($e->getMessage());
 
             return redirect()
@@ -71,3 +77,4 @@ class GoogleController extends Controller
         }
     }
 }
+
