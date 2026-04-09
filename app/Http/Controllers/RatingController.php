@@ -46,6 +46,14 @@ class RatingController extends Controller
     }
 
     /**
+     * Alias untuk show() - Rating List
+     */
+    public function ratingList()
+    {
+        return $this->show();
+    }
+
+    /**
      * Simpan atau update rating
      */
     public function store(Request $request)
@@ -203,17 +211,24 @@ class RatingController extends Controller
     /**
      * Tampilkan halaman rating untuk admin (view all books & ratings)
      */
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
-        // Ambil semua buku dengan rating stats mereka
-        $buku = Buku::with(['kategori', 'ratings.user'])
-            ->withCount('ratings')
-            ->get()
-            ->map(function ($b) {
-                $b->avg_rating   = $b->ratings->avg('rating') ?? 0;
-                $b->total_rating = $b->ratings->count();
-                return $b;
-            });
+        $query = Buku::with(['kategori', 'ratings.user'])->withCount('ratings');
+
+        if ($request->has('search') && ! empty($request->search)) {
+            $query->where('judul', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('penulis', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('penerbit', 'LIKE', '%' . $request->search . '%')
+                ->orWhereHas('kategori', function ($q) use ($request) {
+                    $q->where('nama_kategori', 'LIKE', '%' . $request->search . '%');
+                });
+        }
+
+        $buku = $query->get()->map(function ($b) {
+            $b->avg_rating   = $b->ratings->avg('rating') ?? 0;
+            $b->total_rating = $b->ratings->count();
+            return $b;
+        });
 
         // Kelompokkan yang sudah dan belum di-rating
         $bukuSudahDirating = $buku->filter(fn($b) => $b->total_rating > 0);

@@ -277,9 +277,11 @@
         </div>
 
         {{-- Pagination --}}
+        @if(!request()->has('search') || empty(request('search')))
         <nav aria-label="Page navigation" class="mt-3">
           {{ $lokasi->links('pagination::bootstrap-4') }}
         </nav>
+        @endif
 
       </div>
     </div>

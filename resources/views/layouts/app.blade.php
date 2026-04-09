@@ -14,66 +14,8 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
-    <style>
-    .page-loading-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 3000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(15, 23, 42, 0.78);
-        color: #ffffff;
-        transition: opacity 0.25s ease, visibility 0.25s ease;
-    }
-    .page-loading-overlay.hidden {
-        opacity: 0;
-        visibility: hidden;
-    }
-    .page-loading-card {
-        max-width: 300px;
-        width: 100%;
-        padding: 22px 24px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.09);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        backdrop-filter: blur(14px);
-        text-align: center;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-    }
-    .page-loader-ring {
-        width: 55px;
-        height: 55px;
-        margin: 0 auto 16px;
-        border: 6px solid rgba(255, 255, 255, 0.22);
-        border-top-color: #0d6efd;
-        border-radius: 50%;
-        animation: pageLoaderSpin 1s linear infinite;
-    }
-    .page-loading-title {
-        font-size: 1rem;
-        font-weight: 700;
-        margin-bottom: 6px;
-        color: #ffffff;
-    }
-    .page-loading-text {
-        font-size: 0.92rem;
-        color: rgba(255, 255, 255, 0.78);
-        line-height: 1.6;
-    }
-    @keyframes pageLoaderSpin {
-        to { transform: rotate(360deg); }
-    }
-    </style>
 </head>
 <body>
-    <div id="pageLoadingOverlay" class="page-loading-overlay">
-      <div class="page-loading-card">
-        <div class="page-loader-ring"></div>
-        <div class="page-loading-title">Memuat halaman...</div>
-        <div class="page-loading-text">Silakan tunggu, kami sedang menyiapkan konten untuk Anda.</div>
-      </div>
-    </div>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -133,16 +75,5 @@
             @yield('content')
         </main>
     </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const overlay = document.getElementById('pageLoadingOverlay');
-        if (overlay) {
-            overlay.classList.add('hidden');
-            setTimeout(function () {
-                overlay.remove();
-            }, 250);
-        }
-    });
-    </script>
 </body>
 </html>

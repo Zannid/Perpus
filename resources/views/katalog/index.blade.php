@@ -1004,9 +1004,18 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+const loginUrl = '{{ route('login') }}';
+const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+
 $(document).ready(function(){
 
   $('.btn-add-cart').click(function(e){
+    if (!isAuthenticated) {
+      e.preventDefault();
+      window.location.href = loginUrl;
+      return;
+    }
+
     e.preventDefault();
     let bukuId = $(this).data('buku-id');
 

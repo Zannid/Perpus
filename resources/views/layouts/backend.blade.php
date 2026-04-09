@@ -58,60 +58,6 @@
  @yield('css')
  @include('sweetalert::alert')
 
-    <!-- Page CSS -->
-
-    <style>
-    .page-loading-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 3000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(15, 23, 42, 0.78);
-        color: #ffffff;
-        transition: opacity 0.25s ease, visibility 0.25s ease;
-    }
-    .page-loading-overlay.hidden {
-        opacity: 0;
-        visibility: hidden;
-    }
-    .page-loading-card {
-        max-width: 320px;
-        width: 100%;
-        padding: 22px 24px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        backdrop-filter: blur(14px);
-        text-align: center;
-        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
-    }
-    .page-loader-ring {
-        width: 60px;
-        height: 60px;
-        margin: 0 auto 18px;
-        border: 6px solid rgba(255, 255, 255, 0.2);
-        border-top-color: #0d6efd;
-        border-radius: 50%;
-        animation: pageLoaderSpin 1s linear infinite;
-    }
-    .page-loading-title {
-        font-size: 1rem;
-        font-weight: 700;
-        margin-bottom: 6px;
-        color: #ffffff;
-    }
-    .page-loading-text {
-        font-size: 0.92rem;
-        color: rgba(255, 255, 255, 0.78);
-        line-height: 1.6;
-    }
-    @keyframes pageLoaderSpin {
-        to { transform: rotate(360deg); }
-    }
-    </style>
-
     <!-- Helpers -->
     <script src="{{ asset('assets/vendor/js/helpers.js')}}"></script>
 
@@ -121,14 +67,6 @@
   </head>
 
   <body>
-    <div id="pageLoadingOverlay" class="page-loading-overlay">
-      <div class="page-loading-card">
-        <div class="page-loader-ring"></div>
-        <div class="page-loading-title">Memuat halaman...</div>
-        <div class="page-loading-text">Tunggu sebentar, perpustakaan digital sedang menyiapkan konten.</div>
-      </div>
-    </div>
-
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">
@@ -225,16 +163,6 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const overlay = document.getElementById('pageLoadingOverlay');
-        if (overlay) {
-            overlay.classList.add('hidden');
-            setTimeout(function () {
-                if (overlay.parentNode) {
-                    overlay.parentNode.removeChild(overlay);
-                }
-            }, 350);
-        }
-
         // Gunakan setTimeout untuk memastikan DOM benar-benar siap
         setTimeout(function() {
             const body = document.body;

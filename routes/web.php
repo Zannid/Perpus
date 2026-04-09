@@ -139,6 +139,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}/return', [PeminjamanController::class, 'showReturnForm'])->name('return.form');
         Route::post('/{id}/return', [PeminjamanController::class, 'return'])->name('return');
 
+        // Rating & Review
+        Route::get('/rating/list', [RatingController::class, 'ratingList'])->name('rating_list');
+
         // Notifikasi
         Route::post('/notif/read/{id}', [PeminjamanController::class, 'readNotif'])->name('readNotif');
         Route::get('/notif/mark-all-read', [PeminjamanController::class, 'markAllRead'])->name('markAllRead');

@@ -371,18 +371,18 @@
     /* ============================================================
        RESPONSIVE
        ============================================================ */
-    @media (max-width: 768px) {
+    @media (max-width: 992px) {
         .profile-header {
-            padding: 40px 0 80px;
+            padding: 40px 0 75px;
         }
 
         .profile-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
         }
 
         .avatar-image {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
         }
 
         .form-section,
@@ -390,14 +390,134 @@
             padding: 30px 20px;
         }
 
+        .info-cards {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .profile-header {
+            padding: 35px 0 65px;
+        }
+
+        .profile-header h2 {
+            font-size: 1.4rem;
+        }
+
+        .avatar-image {
+            width: 120px;
+            height: 120px;
+        }
+
+        .avatar-section,
+        .form-section {
+            padding: 25px 18px;
+        }
+
+        .info-card {
+            padding: 18px;
+        }
+
+        .info-card-icon {
+            width: 48px;
+            height: 48px;
+            font-size: 22px;
+        }
+
+        .info-card-value {
+            font-size: 1.15rem;
+        }
+
+        .custom-file-upload {
+            max-width: 100%;
+        }
+
+        .file-upload-label {
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            gap: 8px;
+        }
+
+        .form-control-custom {
+            padding: 10px 14px;
+        }
+
+        .d-flex.gap-3 {
+            flex-direction: column;
+        }
+
+        .d-flex.gap-3 .btn {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .container {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .profile-header {
+            padding: 30px 0 55px;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+        }
+
+        .profile-header h2 {
+            font-size: 1.3rem;
+        }
+
+        .avatar-image {
+            width: 100px;
+            height: 100px;
+        }
+
+        .avatar-section,
+        .form-section {
+            padding: 20px 16px;
+        }
+
+        .profile-card {
+            border-radius: 18px;
+        }
+
+        .info-card {
+            padding: 16px;
+        }
+
+        .info-card-icon {
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+        }
+
         .btn-custom-primary,
         .btn-custom-secondary {
             width: 100%;
+            padding: 12px 20px;
+            font-size: 0.95rem;
+        }
+
+        .file-upload-label {
+            flex-wrap: wrap;
             justify-content: center;
+        }
+
+        .form-label-custom {
+            font-size: 0.95rem;
         }
 
         .info-cards {
             grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .profile-wrapper {
+            padding-bottom: 20px;
+        }
+
+        .box-shadow {
+            box-shadow: none;
         }
     }
 </style>

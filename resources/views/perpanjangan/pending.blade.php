@@ -145,9 +145,11 @@
     </div>
 
     {{-- PAGINATION --}}
+    @if(!request()->has('search') || empty(request('search')))
     <div class="d-flex justify-content-center mt-3">
       {{ $perpanjangan->links() }}
     </div>
+    @endif
 
   </div>
 </div>

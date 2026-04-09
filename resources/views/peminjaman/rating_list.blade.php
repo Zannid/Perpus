@@ -70,8 +70,7 @@
             </ul>
         </div>
     </div>
-
-    {{-- Tab Content --}}
+        {{-- Tab Content --}}
     <div class="tab-content">
         {{-- Belum Diberi Rating --}}
         <div class="tab-pane fade show active" id="belum-dirating" role="tabpanel">
@@ -513,8 +512,6 @@
     /* Italic text */
     .italic {
         font-style: italic;
-    }
-
     }
 </style>
 

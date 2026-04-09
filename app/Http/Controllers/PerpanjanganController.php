@@ -51,7 +51,7 @@ class PerpanjanganController extends Controller
             ]);
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-        $perpanjangan = Perpanjangan::latest()->paginate(10);
+        $perpanjangan    = Perpanjangan::latest()->paginate(10);
         $peminjamanAktif = Peminjaman::where('user_id', auth()->id())
             ->where('status', 'dipinjam')
             ->paginate(6);
@@ -132,12 +132,28 @@ class PerpanjanganController extends Controller
     /**
      * PETUGAS: Halaman daftar perpanjangan pending
      */
-    public function pending()
+    public function pending(Request $request)
     {
-        $perpanjangan = Perpanjangan::with(['peminjaman.user', 'peminjaman.details.buku'])
-            ->where('status', 'Pending')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $query = Perpanjangan::with(['peminjaman.user', 'peminjaman.details.buku'])
+            ->where('status', 'Pending');
+
+        if ($request->has('search') && ! empty($request->search)) {
+            $query->whereHas('peminjaman.user', function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->search . '%');
+            })
+                ->orWhereHas('peminjaman.details.buku', function ($q) use ($request) {
+                    $q->where('judul', 'LIKE', '%' . $request->search . '%');
+                })
+                ->orWhere('alasan', 'LIKE', '%' . $request->search . '%');
+        }
+
+        // Jika ada search, tampilkan semua hasil tanpa pagination
+        // Jika tidak ada search, gunakan pagination normal
+        if ($request->has('search') && ! empty($request->search)) {
+            $perpanjangan = $query->orderBy('created_at', 'desc')->get();
+        } else {
+            $perpanjangan = $query->orderBy('created_at', 'desc')->paginate(10);
+        }
 
         return view('perpanjangan.pending', compact('perpanjangan'));
     }

@@ -90,9 +90,11 @@
         </div>
 
         {{-- Pagination --}}
+        @if(!request()->has('search') || empty(request('search')))
             <div class="mt-4">
                 {{ $kategori->appends(request()->all())->links('vendor.pagination.bootstrap-4') }}
             </div>
+        @endif
       </div>
     </div>
 

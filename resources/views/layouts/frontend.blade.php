@@ -190,66 +190,9 @@
 
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    .page-loading-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 3000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(9, 30, 66, 0.78);
-      color: #ffffff;
-      transition: opacity 0.25s ease, visibility 0.25s ease;
-    }
-    .page-loading-overlay.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
-    .page-loading-card {
-      max-width: 320px;
-      width: 100%;
-      padding: 24px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      backdrop-filter: blur(12px);
-      text-align: center;
-      box-shadow: 0 24px 50px rgba(0,0,0,0.18);
-    }
-    .page-loader-ring {
-      width: 56px;
-      height: 56px;
-      margin: 0 auto 16px;
-      border: 6px solid rgba(255,255,255,0.24);
-      border-top-color: #0d6efd;
-      border-radius: 50%;
-      animation: pageLoaderSpin 1s linear infinite;
-    }
-    .page-loading-title {
-      margin-bottom: 8px;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
-    .page-loading-text {
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.8);
-      line-height: 1.6;
-    }
-    @keyframes pageLoaderSpin { to { transform: rotate(360deg); } }
-  </style>
 </head>
 
 <body class="index-page">
-  <div id="pageLoadingOverlay" class="page-loading-overlay">
-    <div class="page-loading-card">
-      <div class="page-loader-ring"></div>
-      <div class="page-loading-title">Memuat halaman...</div>
-      <div class="page-loading-text">Sebentar lagi, konten perpustakaan digital akan tampil.</div>
-    </div>
-  </div>
-
 @include('layouts.partf.navbar')
 
 @yield('content')
@@ -268,15 +211,6 @@
 
   <!-- Main JS File -->
   <script src="{{ asset('assetsf/js/main.js')}}"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var overlay = document.getElementById('pageLoadingOverlay');
-      if (overlay) {
-        overlay.classList.add('hidden');
-        setTimeout(function() { overlay.remove(); }, 250);
-      }
-    });
-  </script>
 
 </body>
 

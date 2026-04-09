@@ -766,38 +766,55 @@
 
                             {{-- Action Buttons --}}
                             <div class="action-section">
-                               <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex: 1;">
-                                    @csrf
-                                    <input type="hidden" name="buku_id" value="{{ $buku->id }}">
-                                    <input type="hidden" name="quantity" value="1">
+                                @auth
+                                    <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex: 1;">
+                                        @csrf
+                                        <input type="hidden" name="buku_id" value="{{ $buku->id }}">
+                                        <input type="hidden" name="quantity" value="1">
 
-                                    <button type="submit"
-                                        class="btn-borrow"
-                                        {{ $buku->stok <= 0 ? 'disabled' : '' }}>
+                                        <button type="submit"
+                                            class="btn-borrow"
+                                            {{ $buku->stok <= 0 ? 'disabled' : '' }}>
 
+                                            <i class="bi bi-bookmark-plus-fill"></i>
+                                            {{ $buku->stok > 0 ? 'Tambah ke Keranjang' : 'Stok Habis' }}
+                                        </button>
+                                    </form>
+                                @else
+                                    <a href="{{ route('login') }}" class="btn-borrow d-block text-center" style="flex: 1; text-decoration: none;" {{ $buku->stok <= 0 ? 'aria-disabled="true"' : '' }}>
                                         <i class="bi bi-bookmark-plus-fill"></i>
                                         {{ $buku->stok > 0 ? 'Tambah ke Keranjang' : 'Stok Habis' }}
-                                    </button>
-                                </form>                                <button type="button" class="btn-wishlist" title="Tambah ke Wishlist">
+                                    </a>
+                                @endauth
+                                <button type="button" class="btn-wishlist" title="Tambah ke Wishlist">
                                     <i class="bi bi-heart"></i>
                                 </button>
                             </div>
                             <div class="action-section mt-2">
-                                <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex: 1; margin-right: 10px;">
-                                    @csrf
-                                    <input type="hidden" name="buku_id" value="{{ $buku->id }}">
-                                    <input type="hidden" name="quantity" value="1">
-                                    <button type="submit" class="btn btn-outline-primary w-100 py-3 fw-bold" style="border-radius: 10px; border-width: 2px;" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
+                                @auth
+                                    <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex: 1; margin-right: 10px;">
+                                        @csrf
+                                        <input type="hidden" name="buku_id" value="{{ $buku->id }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-outline-primary w-100 py-3 fw-bold" style="border-radius: 10px; border-width: 2px;" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
+                                            <i class="bi bi-cart-plus me-2"></i> Tambah ke Keranjang
+                                        </button>
+                                    </form>
+                                    <form class="direct-borrow-form" data-buku-id="{{ $buku->id }}" style="flex: 1;">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $buku->id }}">
+                                        <button type="submit" class="btn btn-success w-100 py-3 fw-bold" style="border-radius: 10px; border-width: 2px;" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
+                                            <i class="bi bi-check-circle me-2"></i> Pinjam Langsung
+                                        </button>
+                                    </form>
+                                @else
+                                    <a href="{{ route('login') }}" class="btn btn-outline-primary w-100 py-3 fw-bold d-inline-flex justify-content-center align-items-center" style="border-radius: 10px; border-width: 2px; margin-right: 10px;" {{ $buku->stok <= 0 ? 'aria-disabled="true"' : '' }}>
                                         <i class="bi bi-cart-plus me-2"></i> Tambah ke Keranjang
-                                    </button>
-                                </form>
-                                <form class="direct-borrow-form" data-buku-id="{{ $buku->id }}" style="flex: 1;">
-                                    @csrf
-                                    <input type="hidden" name="id" value="{{ $buku->id }}">
-                                    <button type="submit" class="btn btn-success w-100 py-3 fw-bold" style="border-radius: 10px; border-width: 2px;" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
+                                    </a>
+                                    <a href="{{ route('login') }}" class="btn btn-success w-100 py-3 fw-bold d-inline-flex justify-content-center align-items-center" style="border-radius: 10px; border-width: 2px;" {{ $buku->stok <= 0 ? 'aria-disabled="true"' : '' }}>
                                         <i class="bi bi-check-circle me-2"></i> Pinjam Langsung
-                                    </button>
-                                </form>
+                                    </a>
+                                @endauth
                             </div>
 
                             {{-- Share Section --}}
@@ -839,9 +856,15 @@
                                 <a href="{{ route('detail_buku', $book->id) }}">
                                     <img src="{{ $book->foto ? asset('storage/buku/' . $book->foto) : asset('storage/buku/default-book.png') }}" alt="{{ $book->judul }}">
                                 </a>
-                                <button type="button" class="quick-borrow-btn" data-id="{{ $book->id }}">
-                                    <i class="bi bi-bookmark-plus"></i> Pinjam
-                                </button>
+                                @auth
+                                    <button type="button" class="quick-borrow-btn" data-id="{{ $book->id }}">
+                                        <i class="bi bi-bookmark-plus"></i> Pinjam
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="quick-borrow-btn">
+                                        <i class="bi bi-bookmark-plus"></i> Pinjam
+                                    </a>
+                                @endauth
                             </div>
                             <div class="book-card-body">
                                 <h3 class="book-card-title">
@@ -911,30 +934,33 @@
 
     <script>
         // Handle Pinjam Langsung Form
-        document.querySelector('.direct-borrow-form').addEventListener('submit', function(e) {
-            e.preventDefault();
+        const directBorrowForm = document.querySelector('.direct-borrow-form');
+        if (directBorrowForm) {
+            directBorrowForm.addEventListener('submit', function(e) {
+                e.preventDefault();
 
-            const bukuId = this.dataset.bukuId;
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '{{ route("peminjaman.storeAuto") }}';
+                const bukuId = this.dataset.bukuId;
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route("peminjaman.storeAuto") }}';
 
-            const csrfToken = document.querySelector('input[name="_token"]').value;
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden';
-            idInput.name = '_token';
-            idInput.value = csrfToken;
-            form.appendChild(idInput);
+                const csrfToken = document.querySelector('input[name="_token"]').value;
+                const idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.name = '_token';
+                idInput.value = csrfToken;
+                form.appendChild(idInput);
 
-            const idBukuInput = document.createElement('input');
-            idBukuInput.type = 'hidden';
-            idBukuInput.name = 'id';
-            idBukuInput.value = bukuId;
-            form.appendChild(idBukuInput);
+                const idBukuInput = document.createElement('input');
+                idBukuInput.type = 'hidden';
+                idBukuInput.name = 'id';
+                idBukuInput.value = bukuId;
+                form.appendChild(idBukuInput);
 
-            document.body.appendChild(form);
-            form.submit();
-        });
+                document.body.appendChild(form);
+                form.submit();
+            });
+        }
     </script>
 
     @endsection

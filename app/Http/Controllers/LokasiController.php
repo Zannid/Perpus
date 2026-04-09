@@ -15,7 +15,7 @@ class LokasiController extends Controller
         $kategori = Kategori::all();
         $query    = Lokasi::query();
 
-        if ($request->has('search')) {
+        if ($request->has('search') && ! empty($request->search)) {
             $query->whereHas('kategori', function ($q) use ($request) {
                 $q->where('nama_kategori', 'LIKE', '%' . $request->search . '%');
             })
@@ -23,7 +23,13 @@ class LokasiController extends Controller
                 ->orWhere('keterangan', 'LIKE', '%' . $request->search . '%');
         }
 
-        $lokasi = $query->orderBy('id', 'desc')->paginate(10);
+        // Jika ada search, tampilkan semua hasil tanpa pagination
+        // Jika tidak ada search, gunakan pagination normal
+        if ($request->has('search') && ! empty($request->search)) {
+            $lokasi = $query->orderBy('id', 'desc')->get();
+        } else {
+            $lokasi = $query->orderBy('id', 'desc')->paginate(10);
+        }
 
         return view('lokasi.index', compact('lokasi', 'kategori'));
     }

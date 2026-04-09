@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Kategori;
+use Illuminate\Http\Request;
 
 class KategoriController extends Controller
 {
@@ -12,13 +11,21 @@ class KategoriController extends Controller
      */
     public function index(Request $request)
     {
-        $kategori = Kategori::orderBy('id', 'desc')->paginate(5);
-        if ($request->has('search')) {
-            $kategori = Kategori::where('nama_kategori', 'LIKE', '%' . $request->search . '%')
-                ->orWhere('keterangan', 'LIKE', '%' . $request->search . '%')
-                ->orderBy('id', 'desc')
-                ->paginate(10);
+        $query = Kategori::query();
+
+        if ($request->has('search') && ! empty($request->search)) {
+            $query->where('nama_kategori', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('keterangan', 'LIKE', '%' . $request->search . '%');
         }
+
+        // Jika ada search, tampilkan semua hasil tanpa pagination
+        // Jika tidak ada search, gunakan pagination normal
+        if ($request->has('search') && ! empty($request->search)) {
+            $kategori = $query->orderBy('id', 'desc')->get();
+        } else {
+            $kategori = $query->orderBy('id', 'desc')->paginate(5);
+        }
+
         return view('kategori.index', compact('kategori'));
     }
 
@@ -36,9 +43,9 @@ class KategoriController extends Controller
      */
     public function store(Request $request)
     {
-        $kategori = new Kategori;
+        $kategori                = new Kategori;
         $kategori->nama_kategori = $request->nama_kategori;
-        $kategori->keterangan = $request->keterangan;
+        $kategori->keterangan    = $request->keterangan;
         $kategori->save();
         return redirect()->route('kategori.index')->with('success', 'Data Berhasil Ditambahkan');
     }
@@ -50,7 +57,7 @@ class KategoriController extends Controller
     {
         $kategori = Kategori::findOrFail($id);
         return view('kategori.show', compact('kategori'));
-   
+
     }
 
     /**
@@ -68,14 +75,13 @@ class KategoriController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $kategori = Kategori::findOrFail($id);
+        $kategori                = Kategori::findOrFail($id);
         $kategori->nama_kategori = $request->nama_kategori;
-        $kategori->keterangan = $request->keterangan;
+        $kategori->keterangan    = $request->keterangan;
 
         $kategori->save();
         session()->flash('success', 'Data Berhasil Diubah');
         return redirect()->route('kategori.index');
-
 
     }
 

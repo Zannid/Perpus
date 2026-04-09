@@ -5,6 +5,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Kategori;
 use App\Models\Lokasi;
 use App\Models\Buku;
+use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
@@ -15,10 +16,11 @@ class DatabaseSeeder extends Seeder
         Kategori::truncate();
         Lokasi::truncate();
         Buku::truncate();
+        User::truncate();
         Schema::enableForeignKeyConstraints();
 
         $this->call([
-            // UserTableSeeder::class,
+            UserTableSeeder::class,
             KategoriSeeder::class,
             LokasiSeeder::class,
             BukuSeeder::class,
