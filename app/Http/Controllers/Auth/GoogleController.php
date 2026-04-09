@@ -13,15 +13,14 @@ class GoogleController extends Controller
     public function redirectToGoogle()
     {
         return Socialite::driver('google')
-            ->setScopes(['openid', 'profile', 'email'])
-            ->redirectUrl(config('services.google.redirect'))
-            ->redirect();
+        ->setScopes(['openid', 'profile', 'email'])
+        ->redirect();
     }
 
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')->stateless()->user();
 
             // Cari user berdasarkan google_id ATAU email
             $user = User::where('google_id', $googleUser->getId())
