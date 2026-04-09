@@ -13,7 +13,7 @@ class GoogleController extends Controller
     public function redirectToGoogle()
     {
         return Socialite::driver('google')
-        ->setScopes(['openid', 'profile', 'email'])
+        ->redirectUrl('https://eperpustakaan.qzz.io/auth/google/callback')
         ->redirect();
     }
 

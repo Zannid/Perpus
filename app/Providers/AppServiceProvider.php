@@ -4,6 +4,9 @@ namespace App\Providers;
 use App\Models\Peminjaman;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\URL;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        URL::forceScheme('https');
         // Share data notifikasi ke semua view
         View::composer('*', function ($view) {
             $notifikasiPeminjaman = collect();
