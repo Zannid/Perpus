@@ -14,7 +14,7 @@ class GoogleController extends Controller
     {
         // Dynamic redirect URI untuk support localhost & production
         $redirectUri = $this->getRedirectUri();
-        
+
         return Socialite::driver('google')
             ->setScopes(['openid', 'profile', 'email'])
             ->redirectUrl($redirectUri)
@@ -27,7 +27,7 @@ class GoogleController extends Controller
         if (request()->getHost() === '127.0.0.1' || request()->getHost() === 'localhost') {
             return 'http://' . request()->getHost() . ':' . request()->getPort() . '/auth/google/callback';
         }
-        
+
         // Jika akses dari domain production, gunakan https
         return url('/auth/google/callback');
     }
