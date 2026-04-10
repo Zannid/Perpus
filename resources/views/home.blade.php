@@ -31,7 +31,9 @@
   <script src="../assets/js/config.js"></script>
 
   <style>
-    /* Bar Chart Styles */
+    /* =============================================
+       BAR CHART STYLES
+    ============================================= */
     .bar-chart {
       display: flex;
       align-items: flex-end;
@@ -83,7 +85,9 @@
       font-weight: 500;
     }
 
-    /* Tab Styles */
+    /* =============================================
+       TAB STYLES
+    ============================================= */
     .chart-tabs {
       display: flex;
       gap: 10px;
@@ -119,7 +123,9 @@
       display: block;
     }
 
-    /* Stat Cards Animation */
+    /* =============================================
+       ANIMATION
+    ============================================= */
     @keyframes fadeInUp {
       from {
         opacity: 0;
@@ -135,18 +141,17 @@
       animation: fadeInUp 0.5s ease;
     }
 
-    /* User Dashboard Styles */
+    /* =============================================
+       LAYOUT HELPERS
+    ============================================= */
     .col-md-2-4 {
       flex: 0 0 auto;
       width: 20%;
     }
 
-    @media (max-width: 768px) {
-      .col-md-2-4 {
-        width: 50%;
-      }
-    }
-
+    /* =============================================
+       GRADIENT WELCOME CARD
+    ============================================= */
     .gradient-card {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
@@ -167,6 +172,9 @@
       transform: translate(30%, -30%);
     }
 
+    /* =============================================
+       STAT CARDS
+    ============================================= */
     .stat-card {
       border: none;
       border-radius: 15px;
@@ -187,8 +195,12 @@
       align-items: center;
       justify-content: center;
       font-size: 28px;
+      flex-shrink: 0;
     }
 
+    /* =============================================
+       BOOK CARDS
+    ============================================= */
     .book-card {
       border: none;
       border-radius: 12px;
@@ -208,6 +220,9 @@
       border-radius: 8px;
     }
 
+    /* =============================================
+       PROGRESS
+    ============================================= */
     .progress-custom {
       height: 8px;
       border-radius: 10px;
@@ -219,6 +234,9 @@
       background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
     }
 
+    /* =============================================
+       ACTIVITY ITEMS
+    ============================================= */
     .activity-item {
       padding: 15px;
       border-radius: 10px;
@@ -231,6 +249,9 @@
       border-left-color: #667eea;
     }
 
+    /* =============================================
+       QUICK ACTIONS
+    ============================================= */
     .quick-action-btn {
       border: none;
       border-radius: 12px;
@@ -257,6 +278,9 @@
       margin-bottom: 10px;
     }
 
+    /* =============================================
+       SECTION TITLE
+    ============================================= */
     .section-title {
       font-size: 1.25rem;
       font-weight: 700;
@@ -271,6 +295,9 @@
       color: #667eea;
     }
 
+    /* =============================================
+       NOTIFICATION BADGE
+    ============================================= */
     .notification-badge {
       position: absolute;
       top: -5px;
@@ -287,12 +314,288 @@
       font-weight: 700;
     }
 
+    /* =============================================
+       CHART WRAPPER — RESPONSIVE SCROLL
+    ============================================= */
+    .chart-scroll-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chart-scroll-inner {
+      min-width: 400px;
+    }
+
+    /* =============================================
+       PROGRESS CIRCLE — RESPONSIVE
+    ============================================= */
+    .progress-circle {
+      position: relative;
+      width: min(200px, 100%);
+      margin: 0 auto;
+      aspect-ratio: 1;
+    }
+
+    .progress-circle svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .progress-circle-inner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    /* =============================================
+       RESPONSIVE — TABLET (max 768px)
+    ============================================= */
     @media (max-width: 768px) {
+      /* Quick action: 3 kolom */
+      .col-md-2-4 {
+        width: 33.333%;
+      }
+
+      /* Rekomendasi buku: 2 kolom */
+      .col-buku-rekomendasi {
+        width: 50% !important;
+        flex: 0 0 50%;
+      }
+
+      /* Stat card: 2 kolom */
       .stat-card {
         margin-bottom: 15px;
       }
+
       .book-card {
         margin-bottom: 20px;
+      }
+
+      /* Book image lebih kecil */
+      .book-img {
+        height: 140px;
+      }
+
+      /* Activity item padding lebih kecil */
+      .activity-item {
+        padding: 10px;
+      }
+
+      /* Quick action padding lebih kecil */
+      .quick-action-btn {
+        padding: 14px 8px;
+      }
+
+      .quick-action-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        margin-bottom: 6px;
+      }
+
+      .quick-action-btn .fw-semibold {
+        font-size: 12px;
+      }
+
+      /* Section title lebih kecil */
+      .section-title {
+        font-size: 1rem;
+      }
+
+      /* Progress circle lebih kecil */
+      .progress-circle {
+        width: min(180px, 90%);
+      }
+    }
+
+    /* =============================================
+       RESPONSIVE — MOBILE (max 576px)
+    ============================================= */
+    @media (max-width: 576px) {
+      /* Stat cards user: 2 kolom */
+      .col-stat-user {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+      }
+
+      /* Quick action: 3 kolom */
+      .col-md-2-4 {
+        width: 33.333% !important;
+        flex: 0 0 33.333% !important;
+      }
+
+      /* Admin stat cards: 2 kolom */
+      .col-admin-stat {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+      }
+
+      /* Denda cards full width */
+      .col-denda {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+      }
+
+      /* Card body padding lebih kecil */
+      .card-body {
+        padding: 0.75rem !important;
+      }
+
+      /* Card header padding */
+      .card-header {
+        padding: 0.75rem !important;
+      }
+
+      /* Welcome card: sembunyikan ilustrasi */
+      .welcome-illustration {
+        display: none !important;
+      }
+
+      /* Welcome gradient card text */
+      .gradient-card .col-md-8 {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+
+      /* Welcome gradient card img col */
+      .gradient-card .col-md-4 {
+        display: none !important;
+      }
+
+      /* Stat icon lebih kecil */
+      .stat-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+      }
+
+      /* h3 dalam card lebih kecil */
+      .card-title.mb-0 {
+        font-size: 1.25rem;
+      }
+
+      /* Denda card teks */
+      h3.card-title.mb-0 {
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* h4 stat user */
+      h4.mb-0 {
+        font-size: 1.2rem;
+      }
+
+      /* Avatar flex-shrink */
+      .avatar.flex-shrink-0 {
+        width: 36px !important;
+        height: 36px !important;
+      }
+
+      .avatar.flex-shrink-0 i {
+        font-size: 16px !important;
+      }
+
+      /* Peminjaman image lebih kecil */
+      .activity-item img {
+        width: 100%;
+        max-height: 60px;
+        object-fit: cover;
+      }
+
+      /* Button kecil */
+      .btn-sm {
+        font-size: 11px;
+        padding: 4px 8px;
+      }
+
+      /* Table text kecil */
+      .table-responsive {
+        font-size: 12px;
+      }
+
+      /* Progress circle */
+      .progress-circle {
+        width: min(160px, 80%);
+      }
+
+      /* Section title */
+      .section-title {
+        font-size: 0.95rem;
+        margin-bottom: 12px;
+      }
+
+      /* Admin welcome card col-sm-5 */
+      .col-sm-5.welcome-illustration {
+        display: none !important;
+      }
+
+      /* Col-sm-7 full width di mobile */
+      .col-sm-7 {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+
+      /* Rekomendasi buku: 2 kolom */
+      .col-buku-rekomendasi {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+      }
+
+      /* Book img di mobile */
+      .book-img {
+        height: 110px;
+      }
+
+      /* Tips alert */
+      .alert small {
+        font-size: 11px;
+      }
+
+      /* Admin chart full width */
+      .col-md-12.col-lg-8 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+      }
+
+      /* Admin col-lg-4 full width */
+      .col-lg-4.col-md-4 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+      }
+    }
+
+    /* =============================================
+       EXTRA SMALL (max 400px)
+    ============================================= */
+    @media (max-width: 400px) {
+      .quick-action-btn {
+        padding: 10px 4px;
+      }
+
+      .quick-action-btn .fw-semibold {
+        font-size: 10px;
+      }
+
+      .quick-action-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+
+      h3.card-title.mb-0 {
+        font-size: 0.875rem;
+      }
+
+      .stat-icon {
+        width: 36px !important;
+        height: 36px !important;
       }
     }
   </style>
@@ -310,8 +613,11 @@
           <div class="container-xxl flex-grow-1 container-p-y">
 
             @if(Auth::user()->role === 'admin' || Auth::user()->role === 'petugas')
-            <!-- ADMIN/PETUGAS DASHBOARD -->
+            <!-- ====================================================
+                 ADMIN / PETUGAS DASHBOARD
+            ==================================================== -->
             <div class="row">
+
               <!-- Welcome Card -->
               <div class="col-lg-12 mb-4 order-0">
                 <div class="card">
@@ -327,7 +633,7 @@
                         <a href="javascript:;" class="btn btn-sm btn-outline-primary">Lihat Detail</a>
                       </div>
                     </div>
-                    <div class="col-sm-5 text-center text-sm-left">
+                    <div class="col-sm-5 text-center text-sm-left welcome-illustration">
                       <div class="card-body pb-0 px-0 px-md-4">
                         <img src="../assets/img/illustrations/man-with-laptop-light.png" height="140" alt="User Illustration" />
                       </div>
@@ -337,16 +643,17 @@
               </div>
 
               <!-- Statistik Buku & Rak -->
-              <div class="col-lg-4 col-md-4 order-1">
+              <div class="col-lg-4 col-md-4 order-1 mb-4">
                 <div class="row">
+
                   <!-- Buku -->
-                  <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card stat-card-animated">
+                  <div class="col-admin-stat col-lg-6 col-md-12 col-6 mb-4">
+                    <div class="card stat-card-animated h-100">
                       <div class="card-body d-flex align-items-center">
                         <div class="avatar flex-shrink-0 bg-primary rounded p-2 me-3">
                           <i class="bx bx-book text-white fs-4"></i>
                         </div>
-                        <div>
+                        <div class="overflow-hidden">
                           <span class="fw-semibold d-block mb-1">Buku</span>
                           <h3 class="card-title mb-0">{{ \App\Models\Buku::count() }}</h3>
                         </div>
@@ -355,13 +662,13 @@
                   </div>
 
                   <!-- Rak -->
-                  <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card stat-card-animated" style="animation-delay: 0.1s;">
+                  <div class="col-admin-stat col-lg-6 col-md-12 col-6 mb-4">
+                    <div class="card stat-card-animated h-100" style="animation-delay: 0.1s;">
                       <div class="card-body d-flex align-items-center">
                         <div class="avatar flex-shrink-0 bg-info rounded p-2 me-3">
                           <i class="bx bx-grid-alt text-white fs-4"></i>
                         </div>
-                        <div>
+                        <div class="overflow-hidden">
                           <span class="fw-semibold d-block mb-1">Rak</span>
                           <h3 class="card-title mb-0">{{ \App\Models\Lokasi::count() }}</h3>
                         </div>
@@ -370,13 +677,13 @@
                   </div>
 
                   <!-- Barang Masuk -->
-                  <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card stat-card-animated" style="animation-delay: 0.2s;">
+                  <div class="col-admin-stat col-lg-6 col-md-12 col-6 mb-4">
+                    <div class="card stat-card-animated h-100" style="animation-delay: 0.2s;">
                       <div class="card-body d-flex align-items-center">
                         <div class="avatar flex-shrink-0 bg-success rounded p-2 me-3">
                           <i class="bx bx-log-in-circle text-white fs-4"></i>
                         </div>
-                        <div>
+                        <div class="overflow-hidden">
                           <span class="fw-semibold d-block mb-1">Barang Masuk</span>
                           <h3 class="card-title mb-0">{{ \App\Models\BarangMasuk::count() }}</h3>
                         </div>
@@ -385,13 +692,13 @@
                   </div>
 
                   <!-- Barang Keluar -->
-                  <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card stat-card-animated" style="animation-delay: 0.3s;">
+                  <div class="col-admin-stat col-lg-6 col-md-12 col-6 mb-4">
+                    <div class="card stat-card-animated h-100" style="animation-delay: 0.3s;">
                       <div class="card-body d-flex align-items-center">
                         <div class="avatar flex-shrink-0 bg-danger rounded p-2 me-3">
                           <i class="bx bx-log-out-circle text-white fs-4"></i>
                         </div>
-                        <div>
+                        <div class="overflow-hidden">
                           <span class="fw-semibold d-block mb-1">Barang Keluar</span>
                           <h3 class="card-title mb-0">{{ \App\Models\BarangKeluar::count() }}</h3>
                         </div>
@@ -400,13 +707,13 @@
                   </div>
 
                   <!-- Petugas -->
-                  <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card stat-card-animated" style="animation-delay: 0.4s;">
+                  <div class="col-admin-stat col-lg-6 col-md-12 col-6 mb-4">
+                    <div class="card stat-card-animated h-100" style="animation-delay: 0.4s;">
                       <div class="card-body d-flex align-items-center">
                         <div class="avatar flex-shrink-0 bg-warning rounded p-2 me-3">
                           <i class="bx bx-user-pin text-white fs-4"></i>
                         </div>
-                        <div>
+                        <div class="overflow-hidden">
                           <span class="fw-semibold d-block mb-1">Petugas</span>
                           <h3 class="card-title mb-0">{{ \App\Models\User::where('role', 'petugas')->count() }}</h3>
                         </div>
@@ -415,30 +722,31 @@
                   </div>
 
                   <!-- User -->
-                  <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card stat-card-animated" style="animation-delay: 0.5s;">
+                  <div class="col-admin-stat col-lg-6 col-md-12 col-6 mb-4">
+                    <div class="card stat-card-animated h-100" style="animation-delay: 0.5s;">
                       <div class="card-body d-flex align-items-center">
                         <div class="avatar flex-shrink-0 bg-secondary rounded p-2 me-3">
                           <i class="bx bx-user text-white fs-4"></i>
                         </div>
-                        <div>
+                        <div class="overflow-hidden">
                           <span class="fw-semibold d-block mb-1">User</span>
                           <h3 class="card-title mb-0">{{ \App\Models\User::where('role', 'user')->count() }}</h3>
                         </div>
                       </div>
                     </div>
                   </div>
+
                 </div>
               </div>
 
               <!-- Total Denda Lunas -->
-              <div class="col-lg-6 col-md-12 col-6 mb-4">
-                <div class="card stat-card-animated" style="animation-delay: 0.6s;">
+              <div class="col-denda col-lg-6 col-md-12 col-12 mb-4">
+                <div class="card stat-card-animated h-100" style="animation-delay: 0.6s;">
                   <div class="card-body d-flex align-items-center">
                     <div class="avatar flex-shrink-0 bg-success rounded p-2 me-3">
                       <i class="bx bx-check-circle text-white fs-4"></i>
                     </div>
-                    <div>
+                    <div class="overflow-hidden">
                       <span class="fw-semibold d-block mb-1">Total Denda Lunas</span>
                       <h3 class="card-title mb-0">Rp {{ number_format($totalDendaLunas ?? 0, 0, ',', '.') }}</h3>
                     </div>
@@ -447,13 +755,13 @@
               </div>
 
               <!-- Total Denda Belum Bayar -->
-              <div class="col-lg-6 col-md-12 col-6 mb-4">
-                <div class="card stat-card-animated" style="animation-delay: 0.7s;">
+              <div class="col-denda col-lg-6 col-md-12 col-12 mb-4">
+                <div class="card stat-card-animated h-100" style="animation-delay: 0.7s;">
                   <div class="card-body d-flex align-items-center">
                     <div class="avatar flex-shrink-0 bg-danger rounded p-2 me-3">
                       <i class="bx bx-error text-white fs-4"></i>
                     </div>
-                    <div>
+                    <div class="overflow-hidden">
                       <span class="fw-semibold d-block mb-1">Total Denda Belum Bayar</span>
                       <h3 class="card-title mb-0">Rp {{ number_format($totalDendaBelumBayar ?? 0, 0, ',', '.') }}</h3>
                     </div>
@@ -463,25 +771,39 @@
 
               <!-- Chart Peminjaman & Pengembalian -->
               <div class="col-md-12 col-lg-8 order-1 mb-4">
-               <div class="card shadow-sm border-0 rounded-4 p-4 h-100">
-                    <h5 class="fw-bold mb-3">Statistik Peminjaman & Pengembalian {{ date('Y') }}</h5>
-                    <canvas id="adminChart"></canvas>
+                <div class="card shadow-sm border-0 rounded-4 p-3 p-md-4 h-100">
+                  <h5 class="fw-bold mb-3" style="font-size: clamp(0.9rem, 3vw, 1.1rem);">
+                    Statistik Peminjaman & Pengembalian {{ date('Y') }}
+                  </h5>
+                  <div class="chart-scroll-wrapper">
+                    <div class="chart-scroll-inner">
+                      <canvas id="adminChart"></canvas>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+
+            </div><!-- end row admin -->
 
             @else
-            <!-- USER DASHBOARD -->
+            <!-- ====================================================
+                 USER DASHBOARD
+            ==================================================== -->
+
             <!-- Welcome Banner -->
             <div class="row">
               <div class="col-12 mb-4">
                 <div class="card gradient-card">
-                  <div class="card-body p-4">
+                  <div class="card-body p-3 p-md-4">
                     <div class="row align-items-center">
                       <div class="col-md-8">
-                        <h3 class="mb-2 text-white">Selamat Datang Kembali, {{ Auth::user()->name }}! 👋</h3>
-                        <p class="mb-3 opacity-75">Jelajahi koleksi buku terbaru kami dan nikmati pengalaman membaca yang menyenangkan</p>
-                        <div class="d-flex gap-2">
+                        <h3 class="mb-2 text-white" style="font-size: clamp(1rem, 4vw, 1.5rem);">
+                          Selamat Datang Kembali, {{ Auth::user()->name }}! 👋
+                        </h3>
+                        <p class="mb-3 opacity-75" style="font-size: clamp(0.8rem, 2.5vw, 0.9rem);">
+                          Jelajahi koleksi buku terbaru kami dan nikmati pengalaman membaca yang menyenangkan
+                        </p>
+                        <div class="d-flex gap-2 flex-wrap">
                           <a href="{{ route('katalog') }}" class="btn btn-light btn-sm">
                             <i class="bx bx-book me-1"></i> Jelajahi Katalog
                           </a>
@@ -501,17 +823,18 @@
 
             <!-- Statistics Cards -->
             <div class="row mb-4">
+
               <!-- Sedang Dipinjam -->
-              <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
-                <div class="card stat-card">
-                  <div class="card-body">
+              <div class="col-stat-user col-lg-3 col-md-6 col-6 mb-3">
+                <div class="card stat-card h-100">
+                  <div class="card-body p-3">
                     <div class="d-flex align-items-center">
-                      <div class="stat-icon bg-label-primary me-3">
+                      <div class="stat-icon bg-label-primary me-2 me-md-3">
                         <i class="bx bx-book-open text-primary"></i>
                       </div>
-                      <div class="flex-grow-1">
-                        <span class="d-block mb-1 text-muted">Sedang Dipinjam</span>
-                        <h4 class="mb-0">{{ $peminjamanAktif ?? 0 }}</h4>
+                      <div class="flex-grow-1 overflow-hidden">
+                        <span class="d-block mb-1 text-muted" style="font-size: clamp(10px, 2.5vw, 13px);">Sedang Dipinjam</span>
+                        <h4 class="mb-0" style="font-size: clamp(1rem, 4vw, 1.5rem);">{{ $peminjamanAktif ?? 0 }}</h4>
                       </div>
                     </div>
                   </div>
@@ -519,16 +842,16 @@
               </div>
 
               <!-- Total Peminjaman -->
-              <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
-                <div class="card stat-card">
-                  <div class="card-body">
+              <div class="col-stat-user col-lg-3 col-md-6 col-6 mb-3">
+                <div class="card stat-card h-100">
+                  <div class="card-body p-3">
                     <div class="d-flex align-items-center">
-                      <div class="stat-icon bg-label-success me-3">
+                      <div class="stat-icon bg-label-success me-2 me-md-3">
                         <i class="bx bx-history text-success"></i>
                       </div>
-                      <div class="flex-grow-1">
-                        <span class="d-block mb-1 text-muted">Total Peminjaman</span>
-                        <h4 class="mb-0">{{ $totalPeminjaman ?? 0 }}</h4>
+                      <div class="flex-grow-1 overflow-hidden">
+                        <span class="d-block mb-1 text-muted" style="font-size: clamp(10px, 2.5vw, 13px);">Total Peminjaman</span>
+                        <h4 class="mb-0" style="font-size: clamp(1rem, 4vw, 1.5rem);">{{ $totalPeminjaman ?? 0 }}</h4>
                       </div>
                     </div>
                   </div>
@@ -536,16 +859,16 @@
               </div>
 
               <!-- Buku Favorit -->
-              <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
-                <div class="card stat-card">
-                  <div class="card-body">
+              <div class="col-stat-user col-lg-3 col-md-6 col-6 mb-3">
+                <div class="card stat-card h-100">
+                  <div class="card-body p-3">
                     <div class="d-flex align-items-center">
-                      <div class="stat-icon bg-label-warning me-3">
+                      <div class="stat-icon bg-label-warning me-2 me-md-3">
                         <i class="bx bx-heart text-warning"></i>
                       </div>
-                      <div class="flex-grow-1">
-                        <span class="d-block mb-1 text-muted">Buku Favorit</span>
-                        <h4 class="mb-0">{{ $bukuFavorit ?? 0 }}</h4>
+                      <div class="flex-grow-1 overflow-hidden">
+                        <span class="d-block mb-1 text-muted" style="font-size: clamp(10px, 2.5vw, 13px);">Buku Favorit</span>
+                        <h4 class="mb-0" style="font-size: clamp(1rem, 4vw, 1.5rem);">{{ $bukuFavorit ?? 0 }}</h4>
                       </div>
                     </div>
                   </div>
@@ -553,16 +876,18 @@
               </div>
 
               <!-- Denda Aktif -->
-              <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
-                <div class="card stat-card">
-                  <div class="card-body">
+              <div class="col-stat-user col-lg-3 col-md-6 col-6 mb-3">
+                <div class="card stat-card h-100">
+                  <div class="card-body p-3">
                     <div class="d-flex align-items-center position-relative">
-                      <div class="stat-icon bg-label-danger me-3">
+                      <div class="stat-icon bg-label-danger me-2 me-md-3">
                         <i class="bx bx-error text-danger"></i>
                       </div>
-                      <div class="flex-grow-1">
-                        <span class="d-block mb-1 text-muted">Denda Aktif</span>
-                        <h4 class="mb-0">Rp {{ number_format($dendaAktif ?? 0) }}</h4>
+                      <div class="flex-grow-1 overflow-hidden">
+                        <span class="d-block mb-1 text-muted" style="font-size: clamp(10px, 2.5vw, 13px);">Denda Aktif</span>
+                        <h4 class="mb-0" style="font-size: clamp(0.85rem, 3.5vw, 1.25rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                          Rp {{ number_format($dendaAktif ?? 0) }}
+                        </h4>
                       </div>
                       @if(($dendaAktif ?? 0) > 0)
                         <span class="notification-badge">!</span>
@@ -571,7 +896,8 @@
                   </div>
                 </div>
               </div>
-            </div>
+
+            </div><!-- end stat cards -->
 
             <div class="row">
               <!-- Left Column -->
@@ -583,8 +909,8 @@
                     <i class="bx bx-zap"></i>
                     Aksi Cepat
                   </h5>
-                  <div class="row g-3">
-                    <div class="col-md-2-4 col-sm-6">
+                  <div class="row g-2 g-md-3">
+                    <div class="col-md-2-4 col-sm-4 col-4">
                       <a href="{{ route('katalog') }}" class="quick-action-btn d-block text-decoration-none">
                         <div class="quick-action-icon bg-label-primary">
                           <i class="bx bx-search text-primary"></i>
@@ -592,7 +918,7 @@
                         <div class="fw-semibold text-dark">Cari Buku</div>
                       </a>
                     </div>
-                    <div class="col-md-2-4 col-sm-6">
+                    <div class="col-md-2-4 col-sm-4 col-4">
                       <a href="{{ route('keranjang.index') }}" class="quick-action-btn d-block text-decoration-none">
                         <div class="quick-action-icon bg-label-success">
                           <i class="bx bx-cart text-success"></i>
@@ -600,7 +926,7 @@
                         <div class="fw-semibold text-dark">Keranjang</div>
                       </a>
                     </div>
-                    <div class="col-md-2-4 col-sm-6">
+                    <div class="col-md-2-4 col-sm-4 col-4">
                       <a href="{{ route('peminjaman.index') }}" class="quick-action-btn d-block text-decoration-none">
                         <div class="quick-action-icon bg-label-info">
                           <i class="bx bx-book-bookmark text-info"></i>
@@ -608,7 +934,7 @@
                         <div class="fw-semibold text-dark">Peminjaman</div>
                       </a>
                     </div>
-                    <div class="col-md-2-4 col-sm-6">
+                    <div class="col-md-2-4 col-sm-4 col-4">
                       <a href="{{ route('perpanjangan.index') }}" class="quick-action-btn d-block text-decoration-none">
                         <div class="quick-action-icon bg-label-warning">
                           <i class="bx bx-time text-warning"></i>
@@ -616,7 +942,7 @@
                         <div class="fw-semibold text-dark">Perpanjangan</div>
                       </a>
                     </div>
-                    <div class="col-md-2-4 col-sm-6">
+                    <div class="col-md-2-4 col-sm-4 col-4">
                       <a href="{{ route('profile.index') }}" class="quick-action-btn d-block text-decoration-none">
                         <div class="quick-action-icon bg-label-secondary">
                           <i class="bx bx-user text-secondary"></i>
@@ -630,7 +956,7 @@
                 <!-- Buku Sedang Dipinjam -->
                 <div class="card mb-4">
                   <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0" style="font-size: clamp(0.9rem, 3vw, 1rem);">
                       <i class="bx bx-book-open me-2 text-primary"></i>
                       Buku Sedang Dipinjam
                     </h5>
@@ -640,24 +966,25 @@
                     @if(isset($peminjamanTerbaru) && $peminjamanTerbaru->count() > 0)
                       @foreach($peminjamanTerbaru as $peminjaman)
                         <div class="activity-item mb-3">
-                          <div class="row align-items-center">
-                            <div class="col-md-2 col-3">
+                          <div class="row align-items-center g-2">
+                            <div class="col-3 col-md-2">
                               <img src="{{ $peminjaman->buku->foto ? asset('storage/buku/' . $peminjaman->buku->foto) : asset('storage/buku/default-book.png') }}"
                                    alt="{{ $peminjaman->buku->judul }}"
-                                   class="img-fluid rounded">
+                                   class="img-fluid rounded"
+                                   style="max-height: 70px; width: 100%; object-fit: cover;">
                             </div>
-                            <div class="col-md-7 col-9">
-                              <h6 class="mb-1">{{ $peminjaman->buku->judul }}</h6>
-                              <small class="text-muted d-block mb-1">
+                            <div class="col-9 col-md-7">
+                              <h6 class="mb-1" style="font-size: clamp(0.8rem, 2.5vw, 0.95rem);">{{ $peminjaman->buku->judul }}</h6>
+                              <small class="text-muted d-block mb-1" style="font-size: clamp(10px, 2vw, 12px);">
                                 <i class="bx bx-calendar me-1"></i>
                                 Dipinjam: {{ \Carbon\Carbon::parse($peminjaman->tgl_pinjam)->format('d M Y') }}
                               </small>
-                              <small class="text-muted">
+                              <small class="text-muted" style="font-size: clamp(10px, 2vw, 12px);">
                                 <i class="bx bx-time me-1"></i>
                                 Batas: {{ \Carbon\Carbon::parse($peminjaman->tenggat)->format('d M Y') }}
                               </small>
                             </div>
-                            <div class="col-md-3 col-12 text-md-end mt-2 mt-md-0">
+                            <div class="col-12 col-md-3 text-md-end mt-1 mt-md-0">
                               @php
                                 $now = \Carbon\Carbon::now();
                                 $tenggat = \Carbon\Carbon::parse($peminjaman->tenggat);
@@ -702,28 +1029,28 @@
                 <!-- Rekomendasi Buku -->
                 <div class="card">
                   <div class="card-header">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0" style="font-size: clamp(0.9rem, 3vw, 1rem);">
                       <i class="bx bx-star me-2 text-warning"></i>
                       Rekomendasi Buku Untukmu
                     </h5>
                   </div>
                   <div class="card-body">
-                    <div class="row">
+                    <div class="row g-2 g-md-3">
                       @if(isset($rekomendasiBuku) && $rekomendasiBuku->count() > 0)
                         @foreach($rekomendasiBuku->take(4) as $buku)
-                          <div class="col-md-3 col-sm-6 mb-3">
-                            <div class="book-card card">
-                              <div class="card-body p-3">
+                          <div class="col-buku-rekomendasi col-md-3 col-sm-6 col-6 mb-2">
+                            <div class="book-card card h-100">
+                              <div class="card-body p-2 p-md-3">
                                 <img src="{{ $buku->foto ? asset('storage/buku/' . $buku->foto) : asset('storage/buku/default-book.png') }}"
                                      alt="{{ $buku->judul }}"
                                      class="book-img mb-2">
-                                <h6 class="mb-1" style="font-size: 0.9rem;">{{ Str::limit($buku->judul, 40) }}</h6>
-                                <small class="text-muted d-block mb-2">{{ $buku->penulis }}</small>
-                                <div class="d-flex justify-content-between align-items-center">
-                                  <span class="badge bg-label-{{ $buku->stok > 0 ? 'success' : 'danger' }}">
+                                <h6 class="mb-1" style="font-size: clamp(0.75rem, 2.5vw, 0.9rem);">{{ Str::limit($buku->judul, 30) }}</h6>
+                                <small class="text-muted d-block mb-2" style="font-size: clamp(10px, 2vw, 12px);">{{ $buku->penulis }}</small>
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-1">
+                                  <span class="badge bg-label-{{ $buku->stok > 0 ? 'success' : 'danger' }}" style="font-size: 10px;">
                                     {{ $buku->stok > 0 ? 'Tersedia' : 'Habis' }}
                                   </span>
-                                  <a href="{{ route('detail_buku', $buku->id) }}" class="btn btn-sm btn-outline-primary">
+                                  <a href="{{ route('detail_buku', $buku->id) }}" class="btn btn-sm btn-outline-primary" style="font-size: 10px; padding: 2px 6px;">
                                     Detail
                                   </a>
                                 </div>
@@ -740,7 +1067,8 @@
                     </div>
                   </div>
                 </div>
-              </div>
+
+              </div><!-- end left column -->
 
               <!-- Right Column -->
               <div class="col-lg-4">
@@ -748,7 +1076,7 @@
                 <!-- Reading Progress -->
                 <div class="card mb-4">
                   <div class="card-header">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0" style="font-size: clamp(0.9rem, 3vw, 1rem);">
                       <i class="bx bx-line-chart me-2 text-success"></i>
                       Progress Membaca
                     </h5>
@@ -758,23 +1086,29 @@
                       <h2 class="mb-0">{{ $totalPeminjaman ?? 0 }}</h2>
                       <small class="text-muted">Total Buku Dibaca Tahun Ini</small>
                     </div>
-                    <div class="progress-circle" style="position: relative; width: 200px; height: 200px; margin: 0 auto;">
-                      <svg width="200" height="200" viewBox="0 0 200 200">
+
+                    <!-- Progress Circle (responsive) -->
+                    <div class="progress-circle">
+                      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="100" cy="100" r="80" stroke="#e9ecef" stroke-width="20" fill="none"/>
                         <circle cx="100" cy="100" r="80" stroke="#667eea" stroke-width="20" fill="none"
                                 stroke-dasharray="{{ min((($totalPeminjaman ?? 0) / 20) * 502.65, 502.65) }} 502.65"
                                 stroke-linecap="round" transform="rotate(-90 100 100)"/>
                       </svg>
-                      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                        <div style="font-size: 24px; font-weight: 600; color: #667eea;">{{ min(round((($totalPeminjaman ?? 0) / 20) * 100), 100) }}%</div>
-                        <div style="font-size: 12px; color: #6c757d;">{{ $totalPeminjaman ?? 0 }} / 20</div>
+                      <div class="progress-circle-inner">
+                        <div style="font-size: clamp(16px, 5vw, 24px); font-weight: 600; color: #667eea;">
+                          {{ min(round((($totalPeminjaman ?? 0) / 20) * 100), 100) }}%
+                        </div>
+                        <div style="font-size: clamp(10px, 2.5vw, 12px); color: #6c757d;">
+                          {{ $totalPeminjaman ?? 0 }} / 20
+                        </div>
                       </div>
                     </div>
 
                     <div class="mt-3">
                       <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Target Tahunan</span>
-                        <span class="fw-semibold">20 Buku</span>
+                        <span class="text-muted" style="font-size: 13px;">Target Tahunan</span>
+                        <span class="fw-semibold" style="font-size: 13px;">20 Buku</span>
                       </div>
                       <div class="progress progress-custom">
                         <div class="progress-bar" role="progressbar"
@@ -790,7 +1124,7 @@
                 <!-- Riwayat Aktivitas -->
                 <div class="card mb-4">
                   <div class="card-header">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0" style="font-size: clamp(0.9rem, 3vw, 1rem);">
                       <i class="bx bx-time me-2 text-info"></i>
                       Riwayat Terbaru
                     </h5>
@@ -800,12 +1134,14 @@
                       @foreach($riwayatAktivitas->take(5) as $aktivitas)
                         <div class="activity-item mb-2">
                           <div class="d-flex align-items-start">
-                            <div class="avatar avatar-sm bg-label-primary rounded me-2">
+                            <div class="avatar avatar-sm bg-label-primary rounded me-2 flex-shrink-0">
                               <i class="bx bx-book-bookmark"></i>
                             </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1" style="font-size: 0.85rem;">{{ $aktivitas->buku->judul }}</h6>
-                              <small class="text-muted">
+                            <div class="flex-grow-1 overflow-hidden">
+                              <h6 class="mb-1 text-truncate" style="font-size: clamp(0.78rem, 2.5vw, 0.85rem);">
+                                {{ $aktivitas->buku->judul }}
+                              </h6>
+                              <small class="text-muted" style="font-size: 11px;">
                                 {{ $aktivitas->status }} - {{ \Carbon\Carbon::parse($aktivitas->created_at)->diffForHumans() }}
                               </small>
                             </div>
@@ -827,29 +1163,30 @@
                 <!-- Tips & Pengumuman -->
                 <div class="card">
                   <div class="card-header">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0" style="font-size: clamp(0.9rem, 3vw, 1rem);">
                       <i class="bx bx-bell me-2 text-warning"></i>
                       Tips & Pengumuman
                     </h5>
                   </div>
                   <div class="card-body">
                     <div class="alert alert-primary mb-3" role="alert">
-                      <h6 class="alert-heading mb-1">💡 Tips Hari Ini</h6>
+                      <h6 class="alert-heading mb-1" style="font-size: 13px;">💡 Tips Hari Ini</h6>
                       <small>Kembalikan buku tepat waktu untuk menghindari denda dan tetap bisa meminjam buku lainnya!</small>
                     </div>
 
                     <div class="alert alert-info mb-0" role="alert">
-                      <h6 class="alert-heading mb-1">📚 Koleksi Baru</h6>
+                      <h6 class="alert-heading mb-1" style="font-size: 13px;">📚 Koleksi Baru</h6>
                       <small>Ada {{ $bukuBaru ?? 5 }} buku baru bulan ini. Jelajahi sekarang!</small>
                     </div>
                   </div>
                 </div>
 
-              </div>
-            </div>
+              </div><!-- end right column -->
+            </div><!-- end row user -->
+
             @endif
 
-          </div>
+          </div><!-- end container -->
 
           <!-- Footer -->
           <footer class="content-footer footer bg-footer-theme">
@@ -877,83 +1214,95 @@
   <script src="../assets/vendor/libs/apex-charts/apexcharts.js"></script>
   <script src="../assets/js/main.js"></script>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <script>
+    const ctx = document.getElementById('adminChart');
+    if (ctx) {
+      const context = ctx.getContext('2d');
 
-<script>
-    const ctx = document.getElementById('adminChart').getContext('2d');
+      const gradientPinjam = context.createLinearGradient(0, 0, 0, 400);
+      gradientPinjam.addColorStop(0, 'rgba(54, 162, 235, 0.6)');
+      gradientPinjam.addColorStop(1, 'rgba(54, 162, 235, 0.05)');
 
-    const gradientPinjam = ctx . createLinearGradient(0, 0, 0, 400);
-    gradientPinjam . addColorStop(0, 'rgba(54, 162, 235, 0.6)');
-    gradientPinjam . addColorStop(1, 'rgba(54, 162, 235, 0.05)');
-    const gradientKembali = ctx . createLinearGradient(0, 0, 0, 400);
-    gradientKembali . addColorStop(0, 'rgba(141, 75, 192, 0.6)');
-    gradientKembali . addColorStop(1, 'rgba(147, 75, 192, 0.05)');
+      const gradientKembali = context.createLinearGradient(0, 0, 0, 400);
+      gradientKembali.addColorStop(0, 'rgba(141, 75, 192, 0.6)');
+      gradientKembali.addColorStop(1, 'rgba(147, 75, 192, 0.05)');
 
-
-    const adminChart = new Chart(ctx, {
+      const adminChart = new Chart(context, {
         type: 'line',
         data: {
-            labels: [
-                'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-                'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
-            ],
-            datasets: [
-                {
-                    label: 'Peminjaman',
-                    data: {!! $dataPeminjaman !!},
-                    backgroundColor: gradientPinjam,
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 4
-                },
-                {
-                    label: 'Pengembalian',
-                    data: {!! $dataPengembalian !!},
-                    backgroundColor: gradientKembali,
-                    borderColor: 'rgb(212, 96, 251)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 4
-                }
-            ]
+          labels: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+            'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+          ],
+          datasets: [
+            {
+              label: 'Peminjaman',
+              data: {!! $dataPeminjaman !!},
+              backgroundColor: gradientPinjam,
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4,
+              pointRadius: 4
+            },
+            {
+              label: 'Pengembalian',
+              data: {!! $dataPengembalian !!},
+              backgroundColor: gradientKembali,
+              borderColor: 'rgb(212, 96, 251)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4,
+              pointRadius: 4
+            }
+          ]
         },
         options: {
-            responsive: true,
-            interaction: {
-                mode: 'index',
-                intersect: false
+          responsive: true,
+          maintainAspectRatio: true,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                boxWidth: 12,
+                font: { size: 12 }
+              }
             },
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                tooltip: {
-                    backgroundColor: '#1e293b',
-                    padding: 12,
-                    cornerRadius: 8
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(200,200,200,0.1)'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
+            tooltip: {
+              backgroundColor: '#1e293b',
+              padding: 12,
+              cornerRadius: 8
             }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(200,200,200,0.1)'
+              },
+              ticks: {
+                font: { size: 11 }
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                font: { size: 11 }
+              }
+            }
+          }
         }
-    });
-</script>
+      });
+    }
+  </script>
 </body>
 </html>

@@ -164,4 +164,26 @@ class BukuController extends Controller
         Alert::success('Berhasil', 'Buku berhasil dihapus');
         return redirect()->route('buku.index');
     }
+    public function ulasan($id, Request $request)
+    {
+        $buku = Buku::with('kategori', 'ratings.user')->findOrFail($id);
+    
+        $query = $buku->ratings()->with('user');
+    
+        // Filter bintang
+        if ($request->filled('bintang') && $request->bintang > 0) {
+            $query->where('rating', $request->bintang);
+        }
+    
+        // Sorting
+        match ($request->get('sort', 'terbaru')) {
+            'tertinggi' => $query->orderBy('rating', 'desc'),
+            'terendah'  => $query->orderBy('rating', 'asc'),
+            default     => $query->latest(),
+        };
+    
+        $ratings = $query->paginate(10)->withQueryString();
+    
+        return view('ulasan', compact('buku', 'ratings'));
+    }
 }

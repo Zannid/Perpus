@@ -1,16 +1,26 @@
 <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
         <a href="{{ Route('welcome')}}" class="logo d-flex align-items-center me-auto me-xl-0">
-            <h1 class="sitename">E-Perpustakaan</h1>
+            <img src="{{ asset('assets/img/logo1.png') }}" alt="E-Perpustakaan" class="logo-mobile">
+            <h1 class="sitename logo-desktop">E-Perpustakaan</h1>
         </a>
 
-        <nav id="navmenu" class="navmenu">
+       <nav id="navmenu" class="navmenu">
             <ul>
                 <li><a href="{{ Route('welcome')}}" class="active">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="{{ route('katalog') }}">Katalog</a></li>
                 <li><a href="#contact">Contact</a></li>
+
+                {{-- Item Dashboard/Login hanya muncul di mobile (dalam nav) --}}
+                <li class="mobile-only-nav-action">
+                    @if(Auth::check())
+                        <a href="{{ url('/dashboard') }}">Dashboard</a>
+                    @else
+                        <a href="{{ url('login') }}">Login</a>
+                    @endif
+                </li>
             </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
@@ -33,7 +43,6 @@
                         </span>
                     </button>
 
-                    <!-- Cart Dropdown -->
                     <div class="cart-dropdown" id="cartDropdown">
                         <div class="cart-dropdown-header">
                             <h5><i class="bi bi-cart-check"></i> Keranjang Buku</h5>
@@ -49,11 +58,14 @@
                 </div>
             @endif
 
-            @if(Auth::check())
-                <a href="{{ url('/dashboard') }}" class="btn-getstarted">Dashboard</a>
-            @else
-                <a href="{{ url('login') }}" class="btn-getstarted">Login</a>
-            @endif
+            {{-- Dashboard/Login hanya tampil di desktop --}}
+            <div class="desktop-only-action">
+                @if(Auth::check())
+                    <a href="{{ url('/dashboard') }}" class="btn-getstarted">Dashboard</a>
+                @else
+                    <a href="{{ url('login') }}" class="btn-getstarted">Login</a>
+                @endif
+            </div>
         </div>
     </div>
 </header>
@@ -69,17 +81,25 @@
 }
 
 /* Pastikan sitename tidak meluber di HP */
+/* Ganti nilai max-width sitename yang lama */
 .sitename {
   font-size: clamp(0.95rem, 3vw, 1.4rem);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 160px;
+  max-width: none; /* naikkan dari 160px */
+}
+
+@media (min-width: 576px) {
+  .sitename {
+    max-width: none; /* desktop: tidak ada batas, tampil penuh */
+    overflow: visible;
+  }
 }
 
 @media (max-width: 400px) {
   .sitename {
-    max-width: 120px;
+    max-width: 130px; /* HP sangat kecil boleh dipotong */
     font-size: 0.9rem;
   }
 }
@@ -573,6 +593,71 @@
     width: 38px;
     height: 38px;
     font-size: 16px;
+  }
+}
+
+/* ============================================================
+   LOGO PALING KANAN DI MOBILE — override urutan flex
+   ============================================================ */
+@media (max-width: 575.98px) {
+
+  /* Header: logo kiri, sisanya kanan */
+  .header-container {
+    flex-wrap: nowrap;
+  }
+
+  /* Sembunyikan tombol Dashboard/Login di luar nav saat mobile */
+  .desktop-only-action {
+    display: none !important;
+  }
+
+  /* Tampilkan item Dashboard/Login di dalam nav mobile */
+  .mobile-only-nav-action {
+    display: block;
+  }
+
+  /* Sitename tetap di kiri, keranjang + hamburger di kanan */
+  .logo {
+    order: 0;
+    flex: 0 0 auto;
+  }
+
+  .header-actions {
+    order: 1;
+    margin-left: auto;
+  }
+}
+
+/* Desktop: sembunyikan nav item Dashboard/Login (sudah ada tombol di luar) */
+@media (min-width: 576px) {
+  .mobile-only-nav-action {
+    display: none !important;
+  }
+
+  .desktop-only-action {
+    display: block;
+  }
+}
+/* Desktop: tampilkan teks, sembunyikan logo gambar */
+.logo-mobile {
+  display: none;
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.logo-desktop {
+  display: block;
+}
+
+/* Mobile: tampilkan logo gambar, sembunyikan teks */
+@media (max-width: 575.98px) {
+  .logo-mobile {
+    display: block;
+  }
+
+  .logo-desktop {
+    display: none !important;
   }
 }
 </style>

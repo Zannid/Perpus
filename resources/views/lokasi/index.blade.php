@@ -100,7 +100,7 @@
     display: flex;
     gap: 0.4rem;
     margin-top: 0.6rem;
-    justify-content: flex-end;
+    justify-content: center;
   }
 
   /* ===== PAGINATION ===== */
@@ -217,18 +217,20 @@
                 <td>{{ $data->kategori->nama_kategori }}</td>
                 <td>{{ $data->keterangan }}</td>
                 <td class="text-center">
-                  <a href="{{ route('lokasi.edit', $data->id) }}" class="btn btn-sm btn-warning me-1">
-                    <i class="bx bx-pencil"></i>
-                  </a>
-                  <form action="{{ route('lokasi.destroy', $data->id) }}" method="post"
-                        style="display:inline;"
-                        onsubmit="return confirm('Apakah anda yakin ingin menghapus data ini?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger">
-                      <i class="bx bx-trash"></i>
-                    </button>
-                  </form>
+                  <div class="d-flex justify-content-center gap-1">
+                    <a href="{{ route('lokasi.edit', $data->id) }}" class="btn btn-sm btn-warning">
+                      <i class="bx bx-pencil"></i>
+                    </a>
+                    <form action="{{ route('lokasi.destroy', $data->id) }}" method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('Apakah anda yakin ingin menghapus data ini?')">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="btn btn-sm btn-danger">
+                        <i class="bx bx-trash"></i>
+                      </button>
+                    </form>
+                  </div>
                 </td>
               </tr>
               @endforeach
@@ -255,17 +257,19 @@
               <span class="item-value text-muted">{{ $data->keterangan ?: '-' }}</span>
             </div>
             <div class="item-actions">
-              <a href="{{ route('lokasi.edit', $data->id) }}" class="btn btn-sm btn-warning">
-                <i class="bx bx-pencil me-1"></i> Edit
-              </a>
-              <form action="{{ route('lokasi.destroy', $data->id) }}" method="post"
-                    onsubmit="return confirm('Apakah anda yakin ingin menghapus data ini?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-sm btn-danger">
-                  <i class="bx bx-trash me-1"></i> Hapus
-                </button>
-              </form>
+              <div class="d-flex justify-content-center gap-1">
+                <a href="{{ route('lokasi.edit', $data->id) }}" class="btn btn-sm btn-warning">
+                  <i class="bx bx-pencil me-1"></i> Edit
+                </a>
+                <form action="{{ route('lokasi.destroy', $data->id) }}" method="post"
+                      onsubmit="return confirm('Apakah anda yakin ingin menghapus data ini?')">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="btn btn-sm btn-danger">
+                    <i class="bx bx-trash me-1"></i> Hapus
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
           @empty

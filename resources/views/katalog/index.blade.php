@@ -157,7 +157,7 @@
                             <!-- Hover Overlay -->
                             <div class="book-overlay-hover">
                                 <div class="book-quick-info">
-                                    <h5 class="book-title">{{ $buku->judul }}</h5>
+                                    <h5 class="book-title">{{ Str::limit($buku->judul, 15) }}</h5>
                                     <p class="book-author">{{ $buku->penulis }}</p>
                                     <p class="book-category">
                                         <i class="bi bi-tag"></i>
@@ -651,7 +651,8 @@
     padding: 25px;
 }
 
-.book-card:hover .book-overlay-hover {
+.book-card:hover .book-overlay-hover,
+.book-card.overlay-visible .book-overlay-hover {
     opacity: 1;
 }
 
@@ -949,6 +950,29 @@
         width: 100%;
         justify-content: center;
     }
+
+    /* Mobile overlay adjustments */
+    .book-overlay-hover {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .book-quick-info .book-title {
+        font-size: 16px;
+    }
+
+    .book-quick-info .book-author {
+        font-size: 13px;
+    }
+
+    .book-actions {
+        gap: 8px;
+    }
+
+    .btn-action {
+        padding: 10px;
+        font-size: 11px;
+    }
 }
 </style>
 
@@ -998,6 +1022,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const savedView = localStorage.getItem('catalogView');
     if (savedView) {
         toggleView(savedView);
+    }
+
+    // Handle overlay for touch devices
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isTouchDevice) {
+        const bookCards = document.querySelectorAll('.book-card');
+        bookCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                // Prevent toggle if clicking on buttons/links inside overlay
+                if (e.target.closest('.book-overlay-hover')) {
+                    return;
+                }
+                this.classList.toggle('overlay-visible');
+            });
+        });
+
+        // Close overlay when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.book-card')) {
+                document.querySelectorAll('.book-card.overlay-visible').forEach(card => {
+                    card.classList.remove('overlay-visible');
+                });
+            }
+        });
     }
 });
 </script>

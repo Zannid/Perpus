@@ -12,15 +12,30 @@ class GoogleController extends Controller
 {
     public function redirectToGoogle()
     {
+        // Dynamic redirect URI untuk support localhost & production
+        $redirectUri = $this->getRedirectUri();
+        
         return Socialite::driver('google')
-        ->redirectUrl('https://eperpustakaan.qzz.io/auth/google/callback')
-        ->redirect();
+            ->setScopes(['openid', 'profile', 'email'])
+            ->redirectUrl($redirectUri)
+            ->redirect();
+    }
+
+    private function getRedirectUri()
+    {
+        // Jika akses dari localhost, gunakan http
+        if (request()->getHost() === '127.0.0.1' || request()->getHost() === 'localhost') {
+            return 'http://' . request()->getHost() . ':' . request()->getPort() . '/auth/google/callback';
+        }
+        
+        // Jika akses dari domain production, gunakan https
+        return url('/auth/google/callback');
     }
 
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
+            $googleUser = Socialite::driver('google')->user();
 
             // Cari user berdasarkan google_id ATAU email
             $user = User::where('google_id', $googleUser->getId())

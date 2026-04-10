@@ -286,6 +286,7 @@ Route::middleware(['auth'])->prefix('keranjang')->name('keranjang.')->group(func
     Route::post('/submit', [KeranjangController::class, 'submit'])->name('submit');
 });
 
+Route::get('/buku/{id}/ulasan', [BukuController::class, 'ulasan'])->name('buku.ulasan');
 // ========================================
 // ROUTES CART AJAX (AJAX Cart Routes)
 // ========================================

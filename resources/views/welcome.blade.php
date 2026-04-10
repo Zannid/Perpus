@@ -26,7 +26,7 @@
               <div class="slider-wrapper">
                 <div class="book-slides" id="bookSlides">
                   @foreach($bukuRate as $b)
-                  <div class="book-slide active">
+                  <div class="book-slide {{ $loop->first ? 'active' : '' }}">
                     @if($b->foto === null)
                       <div class="book-image">
                         <img src="{{ asset('/storage/buku/default.jpg') }}" alt="Default Book Cover" loading="lazy">
@@ -47,10 +47,12 @@
                           <i class="bi bi-star-fill"></i>
                           <i class="bi bi-star-half"></i>
                         </div>
-                        <span class="rating-value">4.5</span>
+                        <span class="rating-value">{{ number_format($b->rating_avg ?? 0, 1) }}</span>
                       </div>
                       <p class="book-desc">{{ $b->deskripsi }}</p>
-                      <span class="book-badge">Tersedia</span>
+                      <span class="book-badge {{ $b->stok > 0 ? 'available' : 'unavailable' }}">
+                        {{ $b->stok > 0 ? 'Tersedia' : 'Kosong' }}
+                      </span>
                     </div>
                   </div>
                   @endforeach
@@ -71,7 +73,7 @@
                 <i class="bi bi-book"></i>
               </div>
               <div class="metric-content">
-                <span class="metric-number">5000+</span>
+                <span class="metric-number">{{ number_format($totalBooks) }}</span>
                 <span class="metric-label">Koleksi Buku</span>
               </div>
             </div>
@@ -80,7 +82,7 @@
                 <i class="bi bi-people"></i>
               </div>
               <div class="metric-content">
-                <span class="metric-number">2500+</span>
+                <span class="metric-number">{{ number_format($totalMembers) }}</span>
                 <span class="metric-label">Anggota Aktif</span>
               </div>
             </div>
@@ -89,7 +91,7 @@
                 <i class="bi bi-download"></i>
               </div>
               <div class="metric-content">
-                <span class="metric-number">15K+</span>
+                <span class="metric-number">{{ number_format($totalLoans) }}</span>
                 <span class="metric-label">Peminjaman</span>
               </div>
             </div>
@@ -337,6 +339,7 @@
         <h2>Hubungi Kami</h2>
         <p>Ada pertanyaan atau butuh bantuan? Tim kami siap membantu Anda dengan senang hati</p>
       </div>
+    </section>
     <section id="faq" class="faq section">
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -438,136 +441,6 @@
       </div>
 
     </section><!-- /Faq Section -->
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact section light-background">
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Hubungi Kami</h2>
-        <p>Ada pertanyaan atau butuh bantuan? Tim kami siap membantu Anda dengan senang hati</p>
-      </div><!-- End Section Title -->
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <div class="row g-0">
-          <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="200">
-            <div class="contact-info-panel">
-              <div class="panel-content">
-                <div class="info-header">
-                  <h2>Mari Terhubung!</h2>
-                  <p>Kami senang mendengar dari Anda. Hubungi kami melalui berbagai saluran komunikasi yang tersedia atau kunjungi langsung kantor kami untuk diskusi lebih lanjut.</p>
-                </div>
-
-                <div class="info-grid">
-                  <div class="info-card" data-aos="slide-up" data-aos-delay="250">
-                    <div class="card-icon">
-                      <i class="bi bi-house-door"></i>
-                    </div>
-                    <div class="card-content">
-                      <h4>Kunjungi Kantor Kami</h4>
-                      <p>Jl. Merdeka No. 123<br>Bandung, Jawa Barat 40111</p>
-                    </div>
-                  </div>
-
-                  <div class="info-card" data-aos="slide-up" data-aos-delay="300">
-                    <div class="card-icon">
-                      <i class="bi bi-chat-dots"></i>
-                    </div>
-                    <div class="card-content">
-                      <h4>Kirim Email</h4>
-                      <p>info@eperpustakaan.id<br>support@eperpustakaan.id</p>
-                    </div>
-                  </div>
-
-                  <div class="info-card" data-aos="slide-up" data-aos-delay="350">
-                    <div class="card-icon">
-                      <i class="bi bi-headset"></i>
-                    </div>
-                    <div class="card-content">
-                      <h4>Hubungi Langsung</h4>
-                      <p>+62 812-3456-7890<br>+62 22-7654-3210</p>
-                    </div>
-                  </div>
-
-                  <div class="info-card" data-aos="slide-up" data-aos-delay="400">
-                    <div class="card-icon">
-                      <i class="bi bi-calendar3"></i>
-                    </div>
-                    <div class="card-content">
-                      <h4>Jam Operasional</h4>
-                      <p>Senin-Jumat: 08.00-17.00 WIB<br>Sabtu: 09.00-15.00 WIB</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="social-section" data-aos="fade-in" data-aos-delay="450">
-                  <h5>Ikuti Media Sosial Kami</h5>
-                  <div class="social-icons">
-                    <a href="#" class="social-icon">
-                      <i class="bi bi-facebook"></i>
-                    </a>
-                    <a href="#" class="social-icon">
-                      <i class="bi bi-twitter-x"></i>
-                    </a>
-                    <a href="#" class="social-icon">
-                      <i class="bi bi-linkedin"></i>
-                    </a>
-                    <a href="#" class="social-icon">
-                      <i class="bi bi-instagram"></i>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-6" data-aos="slide-left" data-aos-delay="300">
-            <div class="contact-form-wrapper">
-              <div class="form-header">
-                <h3>Kirim Pesan</h3>
-                <div class="header-line"></div>
-              </div>
-
-              <form action="forms/contact.php" method="post" class="php-email-form modern-form">
-                <div class="form-group">
-                  <input type="text" name="name" class="form-control" id="fullName" placeholder="Nama Lengkap" required="">
-                </div>
-
-                <div class="form-group">
-                  <input type="email" class="form-control" name="email" id="emailAddress" placeholder="Alamat Email" required="">
-                </div>
-
-                <div class="form-group">
-                  <input type="tel" class="form-control" name="phone" id="phoneNumber" placeholder="Nomor Telepon">
-                </div>
-
-                <div class="form-group">
-                  <input type="text" class="form-control" name="subject" id="emailSubject" placeholder="Subjek" required="">
-                </div>
-
-                <div class="form-group">
-                  <textarea class="form-control" name="message" id="messageContent" rows="6" placeholder="Tulis pesan Anda di sini..." required=""></textarea>
-                </div>
-
-                <div class="my-3">
-                  <div class="loading">Mengirim...</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Pesan Anda telah terkirim. Terima kasih!</div>
-                </div>
-
-                <button type="submit" class="submit-btn">
-                  <span class="btn-text">Kirim Pesan</span>
-                  <span class="btn-icon">
-                    <i class="bi bi-arrow-right"></i>
-                  </span>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section><!-- /Contact Section -->
-
-</head>
 
 </main>
 
@@ -1207,6 +1080,13 @@ body, main.main {
 
   .hero-metrics {
     gap: 20px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-metrics .metric-item {
+    width: 100%;
+    max-width: 320px;
   }
 
   .slider-container {
@@ -1374,6 +1254,106 @@ body, main.main {
   .nav-pills .nav-link {
     padding: 8px 16px;
     font-size: 13px;
+  }
+}
+#services-development .row,
+#services-marketing .row,
+#services-support .row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Hapus col-lg-4 behavior agar grid kita yang kontrol */
+#services-development .col-lg-4,
+#services-marketing .col-lg-4,
+#services-support .col-lg-4 {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+
+/* Tablet: 2 kolom */
+@media (max-width: 991px) {
+  #services-development .row,
+  #services-marketing .row,
+  #services-support .row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+/* Mobile: 2 kolom compact */
+@media (max-width: 575.98px) {
+  #services-development .row,
+  #services-marketing .row,
+  #services-support .row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  /* Cover lebih pendek di HP agar tidak terlalu panjang scroll */
+  .book-cover-wrapper {
+    aspect-ratio: 2/3;
+    border-radius: 12px;
+  }
+
+  .book-card {
+    border-radius: 12px;
+  }
+
+  /* Overlay info lebih compact */
+  .book-quick-info .book-title {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .book-quick-info .book-author {
+    font-size: 11px;
+  }
+
+  .book-status {
+    font-size: 10px;
+    padding: 5px 10px;
+    margin-top: 6px;
+  }
+
+  .book-actions {
+    gap: 6px;
+    flex-direction: column;
+  }
+
+  .btn-action {
+    padding: 8px 6px;
+    font-size: 11px;
+    border-radius: 8px;
+    gap: 4px;
+  }
+
+  /* Tab pills lebih kecil */
+  #services-tabs .nav-link {
+    padding: 7px 14px !important;
+    font-size: 12px !important;
+  }
+
+  /* Section title */
+  #services .section-title h2 {
+    font-size: 24px;
+  }
+}
+
+/* HP sangat kecil (≤360px): tetap 2 kolom tapi lebih rapat */
+@media (max-width: 360px) {
+  #services-development .row,
+  #services-marketing .row,
+  #services-support .row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .btn-action {
+    font-size: 10px;
+    padding: 6px 4px;
   }
 }
 </style>

@@ -1,968 +1,530 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Detail Buku - E-Perpustakaan</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <!-- Favicons -->
-    <link href="{{ asset('assetsf/img/favicon.png')}}" rel="icon">
-    <link href="{{ asset('assetsf/img/apple-touch-icon.png')}}" rel="apple-touch-icon">
-
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
-
-    <!-- Vendor CSS Files -->
-    <link href="{{ asset('assetsf/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
-    <link href="{{ asset('assetsf/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
-    <link href="{{ asset('assetsf/vendor/aos/aos.css')}}" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <style>
-        :root {
-            --primary-color: #0b1ae9;
-            --secondary-color: #667eea;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --light-bg: #f5f6ff;
-            --dark-text: #242859;
-            --border-color: #e9ecef;
-            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.08);
-            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.12);
-            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            color: var(--dark-text);
-            background: #fff;
-            overflow-x: hidden;
-        }
-
-        /* Main Content */
-        .main {
-            margin-top: 100px;
-        }
-
-        /* Breadcrumb */
-        .breadcrumb-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 25px 0;
-            margin-bottom: 0;
-        }
-
-        .breadcrumb {
-            background: transparent;
-            padding: 0;
-            margin: 0;
-        }
-
-        .breadcrumb-item {
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 14px;
-        }
-
-        .breadcrumb-item.active {
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .breadcrumb-item + .breadcrumb-item::before {
-            color: rgba(255, 255, 255, 0.85);
-            content: "›";
-            font-size: 18px;
-        }
-
-        .breadcrumb a {
-            color: #fff;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .breadcrumb a:hover {
-            opacity: 0.8;
-        }
-
-        /* Product Detail Section */
-        .product-detail {
-            padding: 60px 0;
-            background: #fff;
-        }
-
-        /* Book Image Section */
-        .book-image-wrapper {
-            position: sticky;
-            top: 120px;
-            background: var(--light-bg);
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .main-book-image {
-            width: 100%;
-            max-width: 350px;
-            height: 500px;
-            object-fit: contain;
-            border-radius: 12px;
-            box-shadow: var(--shadow-lg);
-            transition: transform 0.5s ease;
-        }
-
-        .main-book-image:hover {
-            transform: scale(1.03);
-        }
-
-        /* Product Info */
-        .product-info-wrapper {
-            padding-left: 30px;
-        }
-
-        .product-title {
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--dark-text);
-            margin-bottom: 12px;
-            line-height: 1.3;
-        }
-
-        .product-author {
-            font-size: 18px;
-            color: #6c757d;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .product-author i {
-            color: var(--primary-color);
-        }
-
-        .product-author strong {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        /* Product Meta Info Card */
-        .meta-info-card {
-            background: #fff;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .meta-info-card h5 {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--dark-text);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .meta-info-card h5 i {
-            color: var(--primary-color);
-        }
-
-        .meta-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .meta-row:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .meta-label {
-            font-weight: 500;
-            color: #6c757d;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .meta-label i {
-            font-size: 16px;
-            color: var(--secondary-color);
-        }
-
-        .meta-value {
-            font-weight: 600;
-            color: var(--dark-text);
-            font-size: 14px;
-        }
-
-        /* Stock Badges */
-        .stock-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stock-available {
-            background: #d4edda;
-            color: var(--success-color);
-        }
-
-        .stock-low {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .stock-out {
-            background: #f8d7da;
-            color: var(--danger-color);
-        }
-
-        /* Description Section */
-        .description-section {
-            background: var(--light-bg);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .description-section h5 {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--dark-text);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .description-section h5 i {
-            color: var(--primary-color);
-        }
-
-        .description-section p {
-            font-size: 15px;
-            line-height: 1.8;
-            color: #555;
-            text-align: justify;
-            margin: 0;
-        }
-
-        /* Action Buttons */
-        .action-section {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
-        .btn-borrow {
-            flex: 1;
-            background: linear-gradient(135deg, var(--primary-color), #0056b3);
-            color: #fff;
-            padding: 16px 30px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(11, 26, 233, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-borrow:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(11, 26, 233, 0.4);
-        }
-
-        .btn-borrow:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .btn-wishlist {
-            width: 56px;
-            height: 56px;
-            background: #fff;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-            border-radius: 10px;
-            font-size: 22px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-wishlist:hover {
-            background: var(--primary-color);
-            color: #fff;
-            transform: scale(1.08);
-        }
-
-        /* Share Section */
-        .share-section {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 20px;
-            border-radius: 12px;
-            border: 2px dashed var(--border-color);
-        }
-
-        .share-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--dark-text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .share-title i {
-            color: var(--primary-color);
-        }
-
-        .share-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .share-btn {
-            width: 40px;
-            height: 40px;
-            background: #fff;
-            border: 2px solid var(--border-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-            text-decoration: none;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .share-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .share-btn.fb:hover {
-            background: #1877f2;
-            color: #fff;
-            border-color: #1877f2;
-        }
-
-        .share-btn.tw:hover {
-            background: #1da1f2;
-            color: #fff;
-            border-color: #1da1f2;
-        }
-
-        .share-btn.wa:hover {
-            background: #25d366;
-            color: #fff;
-            border-color: #25d366;
-        }
-
-        .share-btn.em:hover {
-            background: var(--danger-color);
-            color: #fff;
-            border-color: var(--danger-color);
-        }
-
-        /* Related Books Section */
-        .related-books {
-            background: var(--light-bg);
-            padding: 60px 0;
-        }
-
-        .section-title {
-            font-size: 32px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 50px;
-            color: var(--dark-text);
-            position: relative;
-            padding-bottom: 20px;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: 0;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 2px;
-        }
-
-        /* Related Book Card */
-        .book-card {
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-sm);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .book-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .book-card-image {
-            position: relative;
-            overflow: hidden;
-            background: var(--light-bg);
-            height: 320px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .book-card-image img {
-            width: 100%;
-            max-width: 200px;
-            height: 300px;
-            object-fit: contain;
-            transition: all 0.5s ease;
-        }
-
-        .book-card:hover .book-card-image img {
-            transform: scale(1.05);
-        }
-
-        .quick-borrow-btn {
-            position: absolute;
-            bottom: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, var(--primary-color), #0056b3);
-            color: #fff;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            opacity: 0;
-            box-shadow: 0 5px 20px rgba(11, 26, 233, 0.4);
-            white-space: nowrap;
-        }
-
-        .book-card:hover .quick-borrow-btn {
-            bottom: 15px;
-            opacity: 1;
-        }
-
-        .quick-borrow-btn:hover {
-            transform: translateX(-50%) translateY(-3px);
-            box-shadow: 0 8px 30px rgba(11, 26, 233, 0.5);
-        }
-
-        .book-card-body {
-            padding: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .book-card-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            line-height: 1.4;
-            min-height: 44px;
-        }
-
-        .book-card-title a {
-            color: var(--dark-text);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .book-card-title a:hover {
-            color: var(--primary-color);
-        }
-
-        .book-card-author {
-            color: #6c757d;
-            font-size: 13px;
-            font-style: italic;
-            margin-bottom: 12px;
-        }
-
-        .book-card-stock {
-            font-weight: 600;
-            color: var(--primary-color);
-            font-size: 14px;
-            margin-top: auto;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .book-card-stock i {
-            font-size: 16px;
-        }
-
-        /* Responsive */
-        @media (max-width: 991px) {
-            .main {
-                margin-top: 80px;
-            }
-
-            .product-info-wrapper {
-                padding-left: 0;
-                margin-top: 30px;
-            }
-
-            .product-title {
-                font-size: 28px;
-            }
-
-            .book-image-wrapper {
-                position: relative;
-                top: 0;
-                padding: 30px;
-            }
-
-            .main-book-image {
-                max-width: 300px;
-                height: 420px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .product-title {
-                font-size: 24px;
-            }
-
-            .section-title {
-                font-size: 26px;
-            }
-
-            .action-section {
-                flex-direction: column;
-            }
-
-            .btn-wishlist {
-                width: 100%;
-                height: 50px;
-            }
-
-            .book-image-wrapper {
-                padding: 20px;
-            }
-
-            .main-book-image {
-                max-width: 250px;
-                height: 360px;
-            }
-
-            .book-card-image {
-                height: 280px;
-            }
-
-            .book-card-image img {
-                max-width: 180px;
-                height: 260px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .breadcrumb-section {
-                padding: 20px 0;
-            }
-
-            .product-detail {
-                padding: 40px 0;
-            }
-
-            .share-buttons {
-                justify-content: center;
-            }
-        }
-        .rating-section { background: #f7f9fc; padding:20px; border-radius:12px; }
-        .average-rating { text-align:center; margin-bottom:15px; }
-        .average-rating .rating-number { font-size:40px; font-weight:bold; }
-        .rating-stars i { color:#ffc107; font-size:22px; }
-        .review-item { padding:10px 0; }
-        .review-stars i { color:#ffc107; }
-    </style>
-</head>
-
-<body>
-    @extends('layouts.frontend')
-    @section('content')
-
-    <main class="main">
-        {{-- Breadcrumb --}}
-        <section class="breadcrumb-section">
-            <div class="container">
-                <nav aria-label="breadcrumb" data-aos="fade-up">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">Books</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ $buku->judul ?? 'Detail Buku' }}</li>
-                    </ol>
-                </nav>
-            </div>
-        </section>
-
-        {{-- Detail Buku --}}
-        <section class="product-detail">
-            <div class="container">
-                <div class="row">
-                    {{-- Book Image --}}
-                    <div class="col-lg-5" data-aos="fade-right">
-                        <div class="book-image-wrapper">
-                            <img src="{{ asset('storage/buku/' . ($buku->foto ?? 'default.jpg')) }}"
-                                 alt="{{ $buku->judul ?? 'Book' }}"
-                                 class="main-book-image">
-                        </div>
-                    </div>
-
-                    {{-- Book Info --}}
-                    <div class="col-lg-7" data-aos="fade-left">
-                        <div class="product-info-wrapper">
-                            <h1 class="product-title">{{ $buku->judul ?? 'Judul Buku' }}</h1>
-                            <p class="product-author">
-                                <i class="bi bi-pen"></i>
-                                Oleh <strong>{{ $buku->penulis ?? 'Penulis Tidak Diketahui' }}</strong>
-                            </p>
-
-                            {{-- Meta Information --}}
-                            <div class="meta-info-card">
-                                <h5><i class="bi bi-info-circle"></i> Informasi Buku</h5>
-                                <div class="meta-row">
-                                    <span class="meta-label"><i class="bi bi-folder"></i> Kategori</span>
-                                    <span class="meta-value">{{ $buku->kategori->nama_kategori ?? 'Umum' }}</span>
-                                </div>
-                                <div class="meta-row">
-                                    <span class="meta-label"><i class="bi bi-building"></i> Penerbit</span>
-                                    <span class="meta-value">{{ $buku->penerbit ?? '-' }}</span>
-                                </div>
-                                <div class="meta-row">
-                                    <span class="meta-label"><i class="bi bi-calendar"></i> Tahun Terbit</span>
-                                    <span class="meta-value">{{ $buku->tahun_terbit ?? '-' }}</span>
-                                </div>
-                                <div class="meta-row">
-                                    <span class="meta-label"><i class="bi bi-upc"></i> ISBN</span>
-                                    <span class="meta-value">{{ $buku->isbn ?? '-' }}</span>
-                                </div>
-                                <div class="meta-row">
-                                    <span class="meta-label"><i class="bi bi-box-seam"></i> Ketersediaan</span>
-                                    <span class="meta-value">
-                                        @if($buku->stok > 10)
-                                            <span class="stock-badge stock-available">
-                                                <i class="bi bi-check-circle-fill"></i> Tersedia ({{ $buku->stok }})
-                                            </span>
-                                        @elseif($buku->stok > 0)
-                                            <span class="stock-badge stock-low">
-                                                <i class="bi bi-exclamation-circle-fill"></i> Terbatas ({{ $buku->stok }})
-                                            </span>
-                                        @else
-                                            <span class="stock-badge stock-out">
-                                                <i class="bi bi-x-circle-fill"></i> Habis
-                                            </span>
-                                        @endif
-                                    </span>
-                                </div>
-                            </div>
-
-                            {{-- Description --}}
-                            <div class="description-section">
-                                <h5><i class="bi bi-book"></i> Deskripsi Buku</h5>
-                                <p>{{ $buku->deskripsi ?? 'Tidak ada deskripsi tersedia untuk buku ini.' }}</p>
-                                {{-- Rating Buku --}}
-<div class="rating-section">
-    <h5><i class="bi bi-star-fill"></i> Rating Buku</h5>
-
-    {{-- Average Rating --}}
-    <div class="average-rating">
-        @php
-            $avg = number_format($buku->ratings->avg('rating'), 1);
-            $count = $buku->ratings->count();
-        @endphp
-
-        <h3 class="rating-number">{{ $avg }} <span>/ 5</span></h3>
-        <div class="rating-stars">
-            @for($i = 1; $i <= 5; $i++)
-                <i class="bi bi-star{{ $i <= round($avg) ? '-fill' : '' }}"></i>
-            @endfor
+@extends('layouts.frontend')
+
+@section('content')
+<main class="main">
+
+    {{-- Breadcrumb --}}
+    <section class="breadcrumb-section">
+        <div class="container">
+            <nav aria-label="breadcrumb" data-aos="fade-up">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Books</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ $buku->judul ?? 'Detail Buku' }}</li>
+                </ol>
+            </nav>
         </div>
-        <p class="rating-count">({{ $count }} ulasan)</p>
-    </div>
+    </section>
 
+    {{-- Detail Buku --}}
+    <section class="product-detail">
+        <div class="container">
+            <div class="row">
 
-
-    {{-- Daftar Review --}}
-    <div class="review-list mt-4">
-        <h6 class="mb-3">Ulasan Pembaca</h6>
-
-        @forelse($buku->ratings as $rating)
-            <div class="review-item">
-                <div class="review-header">
-                    <strong>{{ $rating->user->name }}</strong>
-                    <span class="review-stars">
-                        @for($i = 1; $i <= 5; $i++)
-                            <i class="bi bi-star{{ $i <= $rating->rating ? '-fill' : '' }}"></i>
-                        @endfor
-                    </span>
+                {{-- Book Image --}}
+                <div class="col-lg-5 mb-4 mb-lg-0" data-aos="fade-right">
+                    <div class="book-image-wrapper">
+                        <img src="{{ asset('storage/buku/' . ($buku->foto ?? 'default.jpg')) }}"
+                             alt="{{ $buku->judul ?? 'Book' }}"
+                             class="main-book-image">
+                    </div>
                 </div>
-                <p class="review-text">{{ $rating->review }}</p>
-                <small class="text-muted">{{ $rating->created_at->diffForHumans() }}</small>
-                <hr>
-            </div>
-        @empty
-            <p class="text-muted">Belum ada ulasan untuk buku ini.</p>
-        @endforelse
-    </div>
-</div>
+
+                {{-- Book Info --}}
+                <div class="col-lg-7" data-aos="fade-left">
+                    <div class="product-info-wrapper">
+                        <h1 class="product-title">{{ $buku->judul ?? 'Judul Buku' }}</h1>
+                        <p class="product-author">
+                            <i class="bi bi-pen"></i>
+                            Oleh <strong>{{ $buku->penulis ?? 'Penulis Tidak Diketahui' }}</strong>
+                        </p>
+
+                        {{-- Meta Information --}}
+                        <div class="meta-info-card">
+                            <h5><i class="bi bi-info-circle"></i> Informasi Buku</h5>
+                            <div class="meta-row">
+                                <span class="meta-label"><i class="bi bi-folder"></i> Kategori</span>
+                                <span class="meta-value">{{ $buku->kategori->nama_kategori ?? 'Umum' }}</span>
                             </div>
+                            <div class="meta-row">
+                                <span class="meta-label"><i class="bi bi-building"></i> Penerbit</span>
+                                <span class="meta-value">{{ $buku->penerbit ?? '-' }}</span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-label"><i class="bi bi-calendar"></i> Tahun Terbit</span>
+                                <span class="meta-value">{{ $buku->tahun_terbit ?? '-' }}</span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-label"><i class="bi bi-upc"></i> ISBN</span>
+                                <span class="meta-value">{{ $buku->isbn ?? '-' }}</span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-label"><i class="bi bi-box-seam"></i> Ketersediaan</span>
+                                <span class="meta-value">
+                                    @if($buku->stok > 10)
+                                        <span class="stock-badge stock-available">
+                                            <i class="bi bi-check-circle-fill"></i> Tersedia ({{ $buku->stok }})
+                                        </span>
+                                    @elseif($buku->stok > 0)
+                                        <span class="stock-badge stock-low">
+                                            <i class="bi bi-exclamation-circle-fill"></i> Terbatas ({{ $buku->stok }})
+                                        </span>
+                                    @else
+                                        <span class="stock-badge stock-out">
+                                            <i class="bi bi-x-circle-fill"></i> Habis
+                                        </span>
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
 
-                            {{-- Action Buttons --}}
-                            <div class="action-section">
-                                @auth
-                                    <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex: 1;">
-                                        @csrf
-                                        <input type="hidden" name="buku_id" value="{{ $buku->id }}">
-                                        <input type="hidden" name="quantity" value="1">
-
-                                        <button type="submit"
-                                            class="btn-borrow"
-                                            {{ $buku->stok <= 0 ? 'disabled' : '' }}>
-
-                                            <i class="bi bi-bookmark-plus-fill"></i>
-                                            {{ $buku->stok > 0 ? 'Tambah ke Keranjang' : 'Stok Habis' }}
-                                        </button>
-                                    </form>
-                                @else
-                                    <a href="{{ route('login') }}" class="btn-borrow d-block text-center" style="flex: 1; text-decoration: none;" {{ $buku->stok <= 0 ? 'aria-disabled="true"' : '' }}>
-                                        <i class="bi bi-bookmark-plus-fill"></i>
-                                        {{ $buku->stok > 0 ? 'Tambah ke Keranjang' : 'Stok Habis' }}
-                                    </a>
-                                @endauth
+                        {{-- ============================================================
+                             ACTION BUTTONS — di atas deskripsi & rating
+                             ============================================================ --}}
+                        <div class="action-section">
+                            @auth
+                                <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex:1;">
+                                    @csrf
+                                    <input type="hidden" name="buku_id" value="{{ $buku->id }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn-borrow" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
+                                        <i class="bi bi-cart-plus"></i>
+                                        Tambah Keranjang
+                                    </button>
+                                </form>
+                                <form class="direct-borrow-form" data-buku-id="{{ $buku->id }}" style="flex:1;">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{ $buku->id }}">
+                                    <button type="submit" class="btn-borrow btn-borrow-green" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
+                                        <i class="bi bi-check-circle"></i>
+                                        Pinjam Langsung
+                                    </button>
+                                </form>
                                 <button type="button" class="btn-wishlist" title="Tambah ke Wishlist">
                                     <i class="bi bi-heart"></i>
                                 </button>
-                            </div>
-                            <div class="action-section mt-2">
-                                @auth
-                                    <form class="add-to-cart-form" data-buku-id="{{ $buku->id }}" style="flex: 1; margin-right: 10px;">
-                                        @csrf
-                                        <input type="hidden" name="buku_id" value="{{ $buku->id }}">
-                                        <input type="hidden" name="quantity" value="1">
-                                        <button type="submit" class="btn btn-outline-primary w-100 py-3 fw-bold" style="border-radius: 10px; border-width: 2px;" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
-                                            <i class="bi bi-cart-plus me-2"></i> Tambah ke Keranjang
-                                        </button>
-                                    </form>
-                                    <form class="direct-borrow-form" data-buku-id="{{ $buku->id }}" style="flex: 1;">
-                                        @csrf
-                                        <input type="hidden" name="id" value="{{ $buku->id }}">
-                                        <button type="submit" class="btn btn-success w-100 py-3 fw-bold" style="border-radius: 10px; border-width: 2px;" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
-                                            <i class="bi bi-check-circle me-2"></i> Pinjam Langsung
-                                        </button>
-                                    </form>
-                                @else
-                                    <a href="{{ route('login') }}" class="btn btn-outline-primary w-100 py-3 fw-bold d-inline-flex justify-content-center align-items-center" style="border-radius: 10px; border-width: 2px; margin-right: 10px;" {{ $buku->stok <= 0 ? 'aria-disabled="true"' : '' }}>
-                                        <i class="bi bi-cart-plus me-2"></i> Tambah ke Keranjang
-                                    </a>
-                                    <a href="{{ route('login') }}" class="btn btn-success w-100 py-3 fw-bold d-inline-flex justify-content-center align-items-center" style="border-radius: 10px; border-width: 2px;" {{ $buku->stok <= 0 ? 'aria-disabled="true"' : '' }}>
-                                        <i class="bi bi-check-circle me-2"></i> Pinjam Langsung
-                                    </a>
-                                @endauth
-                            </div>
-
-                            {{-- Share Section --}}
-                            <div class="share-section">
-                                <h6 class="share-title">
-                                    <i class="bi bi-share"></i>
-                                    Bagikan Buku Ini:
-                                </h6>
-                                <div class="share-buttons">
-                                    <a href="#" class="share-btn fb" title="Share to Facebook">
-                                        <i class="bi bi-facebook"></i>
-                                    </a>
-                                    <a href="#" class="share-btn tw" title="Share to Twitter">
-                                        <i class="bi bi-twitter"></i>
-                                    </a>
-                                    <a href="#" class="share-btn wa" title="Share to WhatsApp">
-                                        <i class="bi bi-whatsapp"></i>
-                                    </a>
-                                    <a href="#" class="share-btn em" title="Share via Email">
-                                        <i class="bi bi-envelope"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {{-- Related Books --}}
-        <section class="related-books">
-            <div class="container">
-                <h2 class="section-title" data-aos="fade-up">Buku Terkait</h2>
-                <div class="row">
-                    @foreach($relatedBooks ?? [] as $book)
-                    <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                        <div class="book-card">
-                            <div class="book-card-image">
-                                <a href="{{ route('detail_buku', $book->id) }}">
-                                    <img src="{{ $book->foto ? asset('storage/buku/' . $book->foto) : asset('storage/buku/default-book.png') }}" alt="{{ $book->judul }}">
+                            @else
+                                <a href="{{ route('login') }}" class="btn-borrow" style="flex:1; text-decoration:none;">
+                                    <i class="bi bi-cart-plus"></i> Tambah Keranjang
                                 </a>
-                                @auth
-                                    <button type="button" class="quick-borrow-btn" data-id="{{ $book->id }}">
-                                        <i class="bi bi-bookmark-plus"></i> Pinjam
-                                    </button>
-                                @else
-                                    <a href="{{ route('login') }}" class="quick-borrow-btn">
-                                        <i class="bi bi-bookmark-plus"></i> Pinjam
-                                    </a>
-                                @endauth
+                                <a href="{{ route('login') }}" class="btn-borrow btn-borrow-green" style="flex:1; text-decoration:none;">
+                                    <i class="bi bi-check-circle"></i> Pinjam Langsung
+                                </a>
+                                <button type="button" class="btn-wishlist" title="Tambah ke Wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            @endauth
+                        </div>
+
+                        {{-- Share Section --}}
+                        <div class="share-section">
+                            <h6 class="share-title">
+                                <i class="bi bi-share"></i> Bagikan Buku Ini:
+                            </h6>
+                            <div class="share-buttons">
+                                <a href="#" class="share-btn fb" title="Share to Facebook"><i class="bi bi-facebook"></i></a>
+                                <a href="#" class="share-btn tw" title="Share to Twitter"><i class="bi bi-twitter"></i></a>
+                                <a href="#" class="share-btn wa" title="Share to WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                                <a href="#" class="share-btn em" title="Share via Email"><i class="bi bi-envelope"></i></a>
                             </div>
-                            <div class="book-card-body">
-                                <h3 class="book-card-title">
-                                    <a href="{{ route('detail_buku', $book->id) }}">{{ $book->judul }}</a>
-                                </h3>
-                                <p class="book-card-author">{{ $book->penulis }}</p>
-                                <div class="book-card-stock">
-                                    <i class="bi bi-box-seam"></i>
-                                    Stok: {{ $book->stok }}
+                        </div>
+
+                        {{-- Description --}}
+                        <div class="description-section">
+                            <h5><i class="bi bi-book"></i> Deskripsi Buku</h5>
+                            <p>{{ $buku->deskripsi ?? 'Tidak ada deskripsi tersedia untuk buku ini.' }}</p>
+                        </div>
+
+                        {{-- Rating & Ulasan --}}
+                        <div class="rating-section">
+                            <h5><i class="bi bi-star-fill"></i> Rating & Ulasan</h5>
+
+                            {{-- Average Rating --}}
+                            @php
+                                $avg   = number_format($buku->ratings->avg('rating'), 1);
+                                $count = $buku->ratings->count();
+                                $preview = $buku->ratings->take(5);
+                            @endphp
+                            <div class="average-rating">
+                                <div class="rating-big-number">{{ $avg }}</div>
+                                <div class="rating-stars-row">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="bi bi-star{{ $i <= round($avg) ? '-fill' : '' }}"></i>
+                                    @endfor
                                 </div>
+                                <p class="rating-count">{{ $count }} ulasan</p>
+                            </div>
+
+                            {{-- Preview 5 Ulasan --}}
+                            <div class="review-list">
+                                <h6 class="review-list-title">Ulasan Pembaca</h6>
+
+                                @forelse($preview as $rating)
+                                    <div class="review-item">
+                                        <div class="review-header">
+                                            <div class="reviewer-avatar">
+                                                {{ strtoupper(substr($rating->user->name, 0, 1)) }}
+                                            </div>
+                                            <div class="reviewer-info">
+                                                <strong>{{ $rating->user->name }}</strong>
+                                                <div class="review-stars-sm">
+                                                    @for($i = 1; $i <= 5; $i++)
+                                                        <i class="bi bi-star{{ $i <= $rating->rating ? '-fill' : '' }}"></i>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                            <small class="review-time text-muted">{{ $rating->created_at->diffForHumans() }}</small>
+                                        </div>
+                                        <p class="review-text">{{ $rating->review }}</p>
+                                    </div>
+                                @empty
+                                    <p class="text-muted text-center py-3">Belum ada ulasan untuk buku ini.</p>
+                                @endforelse
+
+                                @if($count > 5)
+                                    <a href="{{ route('buku.ulasan', $buku->id) }}" class="btn-see-all-reviews">
+                                        <i class="bi bi-chat-square-text"></i>
+                                        Lihat Semua {{ $count }} Ulasan
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Related Books --}}
+    <section class="related-books">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Buku Terkait</h2>
+            <div class="row g-3">
+                @foreach($relatedBooks ?? [] as $book)
+                <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
+                    <div class="book-card">
+                        <div class="book-card-image">
+                            <a href="{{ route('detail_buku', $book->id) }}">
+                                <img src="{{ $book->foto ? asset('storage/buku/' . $book->foto) : asset('storage/buku/default-book.png') }}"
+                                     alt="{{ $book->judul }}">
+                            </a>
+                            @auth
+                                <button type="button" class="quick-borrow-btn" data-id="{{ $book->id }}">
+                                    <i class="bi bi-bookmark-plus"></i> Pinjam
+                                </button>
+                            @else
+                                <a href="{{ route('login') }}" class="quick-borrow-btn">
+                                    <i class="bi bi-bookmark-plus"></i> Pinjam
+                                </a>
+                            @endauth
+                        </div>
+                        <div class="book-card-body">
+                            <h3 class="book-card-title">
+                                <a href="{{ route('detail_buku', $book->id) }}">{{ $book->judul }}</a>
+                            </h3>
+                            <p class="book-card-author">{{ $book->penulis }}</p>
+                            <div class="book-card-stock">
+                                <i class="bi bi-box-seam"></i> Stok: {{ $book->stok }}
                             </div>
                         </div>
                     </div>
-                    @endforeach
                 </div>
+                @endforeach
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
-    <!-- Vendor JS Files -->
-    <script src="{{ asset('assetsf/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-    <script src="{{ asset('assetsf/vendor/aos/aos.js')}}"></script>
+</main>
 
-    <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
-    </script>
+<style>
+:root {
+    --primary: #0b1ae9;
+    --primary-dark: #0815b8;
+    --secondary: #667eea;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --light-bg: #f5f6ff;
+    --dark-text: #1e2459;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --shadow-sm: 0 1px 8px rgba(0,0,0,0.07);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.10);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,0.13);
+    --radius: 12px;
+}
 
-    {{-- SweetAlert --}}
-    <style>
-        .btn-outline-primary:disabled,
-        .btn-borrow:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            background-color: #f8f9fa;
-            color: #6c757d;
-            border-color: #dee2e6;
-            pointer-events: none;
-        }
-    </style>
-    @if(session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: '{{ session('success') }}',
-                confirmButtonColor: '#0b1ae9',
-                confirmButtonText: 'OK'
-            });
-        </script>
-    @endif
-    @if(session('error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: '{{ session('error') }}',
-                confirmButtonColor: '#0b1ae9',
-                confirmButtonText: 'OK'
-            });
-        </script>
-    @endif
+.main { margin-top: 90px; }
 
-    <script>
-        // Handle Pinjam Langsung Form
-        const directBorrowForm = document.querySelector('.direct-borrow-form');
-        if (directBorrowForm) {
-            directBorrowForm.addEventListener('submit', function(e) {
-                e.preventDefault();
+/* ── Breadcrumb ── */
+.breadcrumb-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 22px 0;
+}
+.breadcrumb { background: transparent; padding: 0; margin: 0; }
+.breadcrumb-item { color: rgba(255,255,255,0.85); font-size: 14px; }
+.breadcrumb-item.active { color: #fff; font-weight: 600; }
+.breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.7); content: "›"; font-size: 18px; }
+.breadcrumb a { color: #fff; text-decoration: none; }
+.breadcrumb a:hover { opacity: 0.8; }
 
-                const bukuId = this.dataset.bukuId;
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '{{ route("peminjaman.storeAuto") }}';
+/* ── Product Detail ── */
+.product-detail { padding: 50px 0 60px; background: #fff; }
 
-                const csrfToken = document.querySelector('input[name="_token"]').value;
-                const idInput = document.createElement('input');
-                idInput.type = 'hidden';
-                idInput.name = '_token';
-                idInput.value = csrfToken;
-                form.appendChild(idInput);
+/* ── Book Image ── */
+.book-image-wrapper {
+    position: sticky;
+    top: 110px;
+    background: var(--light-bg);
+    border-radius: var(--radius);
+    padding: 36px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.main-book-image {
+    width: 100%;
+    max-width: 320px;
+    height: 460px;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.4s ease;
+}
+.main-book-image:hover { transform: scale(1.03); }
 
-                const idBukuInput = document.createElement('input');
-                idBukuInput.type = 'hidden';
-                idBukuInput.name = 'id';
-                idBukuInput.value = bukuId;
-                form.appendChild(idBukuInput);
+/* ── Product Info ── */
+.product-info-wrapper { padding-left: 20px; }
+.product-title { font-size: 30px; font-weight: 700; color: var(--dark-text); margin-bottom: 10px; line-height: 1.3; }
+.product-author { font-size: 16px; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 7px; }
+.product-author i { color: var(--primary); }
+.product-author strong { color: var(--primary); }
 
-                document.body.appendChild(form);
-                form.submit();
-            });
-        }
-    </script>
+/* ── Meta Card ── */
+.meta-info-card {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+}
+.meta-info-card h5 { font-size: 16px; font-weight: 700; color: var(--dark-text); margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
+.meta-info-card h5 i { color: var(--primary); }
+.meta-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 6px; }
+.meta-row:last-child { border-bottom: none; padding-bottom: 0; }
+.meta-label { font-weight: 500; color: var(--muted); font-size: 13px; display: flex; align-items: center; gap: 5px; }
+.meta-label i { color: var(--secondary); font-size: 15px; }
+.meta-value { font-weight: 600; color: var(--dark-text); font-size: 13px; text-align: right; }
+.stock-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.stock-available { background: #dcfce7; color: #15803d; }
+.stock-low { background: #fef9c3; color: #92400e; }
+.stock-out { background: #fee2e2; color: #b91c1c; }
 
-    @endsection
-</body>
-</html>
+/* ── Action Buttons ── */
+.action-section { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.btn-borrow {
+    flex: 1;
+    min-width: 140px;
+    background: linear-gradient(135deg, var(--primary), #0056b3);
+    color: #fff;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(11,26,233,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+}
+.btn-borrow:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 7px 25px rgba(11,26,233,0.35); color: #fff; }
+.btn-borrow:disabled { background: #d1d5db; cursor: not-allowed; box-shadow: none; }
+.btn-borrow-green {
+    background: linear-gradient(135deg, var(--success), #14532d) !important;
+    box-shadow: 0 4px 15px rgba(22,163,74,0.25) !important;
+}
+.btn-borrow-green:hover:not(:disabled) { box-shadow: 0 7px 25px rgba(22,163,74,0.35) !important; }
+.btn-wishlist {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    background: #fff;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    border-radius: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-wishlist:hover { background: var(--primary); color: #fff; transform: scale(1.06); }
+
+/* ── Share ── */
+.share-section { background: #f8f9fa; padding: 16px 18px; border-radius: var(--radius); border: 1.5px dashed var(--border); margin-bottom: 20px; }
+.share-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--dark-text); display: flex; align-items: center; gap: 7px; }
+.share-title i { color: var(--primary); }
+.share-buttons { display: flex; gap: 8px; }
+.share-btn { width: 38px; height: 38px; background: #fff; border: 1.5px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--muted); text-decoration: none; font-size: 15px; transition: all 0.3s ease; }
+.share-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.share-btn.fb:hover { background: #1877f2; color: #fff; border-color: #1877f2; }
+.share-btn.tw:hover { background: #1da1f2; color: #fff; border-color: #1da1f2; }
+.share-btn.wa:hover { background: #25d366; color: #fff; border-color: #25d366; }
+.share-btn.em:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+/* ── Description ── */
+.description-section { background: var(--light-bg); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+.description-section h5 { font-size: 16px; font-weight: 700; color: var(--dark-text); margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+.description-section h5 i { color: var(--primary); }
+.description-section p { font-size: 14px; line-height: 1.8; color: #555; text-align: justify; margin: 0; }
+
+/* ── Rating & Ulasan ── */
+.rating-section { background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+.rating-section h5 { font-size: 16px; font-weight: 700; color: var(--dark-text); margin-bottom: 16px; display: flex; align-items: center; gap: 7px; }
+.rating-section h5 i { color: #f59e0b; }
+.average-rating { display: flex; flex-direction: column; align-items: center; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+.rating-big-number { font-size: 48px; font-weight: 800; color: var(--dark-text); line-height: 1; }
+.rating-stars-row { display: flex; gap: 3px; margin: 6px 0 4px; }
+.rating-stars-row i { color: #f59e0b; font-size: 20px; }
+.rating-count { font-size: 13px; color: var(--muted); margin: 0; }
+
+.review-list-title { font-size: 14px; font-weight: 700; color: var(--dark-text); margin-bottom: 12px; }
+.review-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+.review-item:last-of-type { border-bottom: none; }
+.review-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.reviewer-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--secondary), #764ba2);
+    color: #fff; font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.reviewer-info { flex: 1; }
+.reviewer-info strong { font-size: 13px; color: var(--dark-text); display: block; }
+.review-stars-sm i { color: #f59e0b; font-size: 11px; }
+.review-time { font-size: 11px; color: var(--muted); margin-left: auto; white-space: nowrap; }
+.review-text { font-size: 13px; color: #555; line-height: 1.7; margin: 0; padding-left: 46px; }
+
+.btn-see-all-reviews {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 12px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.btn-see-all-reviews:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.35); color: #fff; }
+
+/* ── Related Books ── */
+.related-books { background: var(--light-bg); padding: 50px 0; }
+.section-title { font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 40px; color: var(--dark-text); position: relative; padding-bottom: 16px; }
+.section-title::after { content: ''; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 70px; height: 4px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 2px; }
+.book-card { background: #fff; border-radius: var(--radius); overflow: hidden; transition: all 0.3s ease; box-shadow: var(--shadow-sm); height: 100%; display: flex; flex-direction: column; }
+.book-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.book-card-image { position: relative; overflow: hidden; background: var(--light-bg); height: 260px; display: flex; justify-content: center; align-items: center; }
+.book-card-image img { width: 100%; max-width: 160px; height: 240px; object-fit: contain; transition: all 0.4s ease; }
+.book-card:hover .book-card-image img { transform: scale(1.05); }
+.quick-borrow-btn { position: absolute; bottom: -45px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary), #0056b3); color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s ease; opacity: 0; box-shadow: 0 5px 15px rgba(11,26,233,0.35); white-space: nowrap; text-decoration: none; }
+.book-card:hover .quick-borrow-btn { bottom: 12px; opacity: 1; }
+.book-card-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; }
+.book-card-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
+.book-card-title a { color: var(--dark-text); text-decoration: none; transition: color 0.3s; }
+.book-card-title a:hover { color: var(--primary); }
+.book-card-author { color: var(--muted); font-size: 12px; font-style: italic; margin-bottom: 8px; }
+.book-card-stock { font-weight: 600; color: var(--primary); font-size: 13px; margin-top: auto; display: flex; align-items: center; gap: 4px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 991px) {
+    .main { margin-top: 75px; }
+    .product-info-wrapper { padding-left: 0; margin-top: 24px; }
+    .product-title { font-size: 24px; }
+    .book-image-wrapper { position: relative; top: 0; padding: 24px; }
+    .main-book-image { max-width: 260px; height: 380px; }
+}
+
+@media (max-width: 767px) {
+    .product-detail { padding: 30px 0 40px; }
+    .product-title { font-size: 20px; }
+    .product-author { font-size: 14px; }
+    .book-image-wrapper { padding: 18px; border-radius: 10px; }
+    .main-book-image { max-width: 220px; height: 320px; }
+    .action-section { gap: 8px; }
+    .btn-borrow { font-size: 13px; padding: 12px 10px; min-width: 120px; }
+    .btn-wishlist { width: 44px; height: 44px; font-size: 18px; }
+    .section-title { font-size: 22px; }
+    .book-card-image { height: 200px; }
+    .book-card-image img { max-width: 130px; height: 185px; }
+    .review-text { padding-left: 0; margin-top: 6px; }
+}
+
+@media (max-width: 575px) {
+    .main { margin-top: 65px; }
+    .book-image-wrapper { padding: 14px; }
+    .main-book-image { max-width: 180px; height: 270px; }
+    .product-title { font-size: 18px; }
+    .btn-borrow { font-size: 12px; padding: 11px 8px; gap: 5px; }
+    .btn-wishlist { width: 42px; height: 42px; }
+    .meta-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .meta-value { text-align: left; }
+    .rating-big-number { font-size: 38px; }
+    .rating-stars-row i { font-size: 17px; }
+    .book-card-image { height: 180px; }
+    .book-card-image img { max-width: 110px; height: 165px; }
+    .quick-borrow-btn { font-size: 11px; padding: 6px 14px; }
+}
+</style>
+
+<script>
+AOS.init({ duration: 700, easing: 'ease-in-out', once: true });
+
+// Handle Pinjam Langsung
+const directBorrowForm = document.querySelector('.direct-borrow-form');
+if (directBorrowForm) {
+    directBorrowForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const bukuId = this.dataset.bukuId;
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ route("peminjaman.storeAuto") }}';
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = document.querySelector('input[name="_token"]').value;
+        form.appendChild(csrfInput);
+
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'id';
+        idInput.value = bukuId;
+        form.appendChild(idInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    });
+}
+
+@if(session('success'))
+Swal.fire({ icon:'success', title:'Berhasil!', text:'{{ session("success") }}', confirmButtonColor:'#0b1ae9', timer:2000 });
+@endif
+@if(session('error'))
+Swal.fire({ icon:'error', title:'Gagal!', text:'{{ session("error") }}', confirmButtonColor:'#0b1ae9' });
+@endif
+</script>
+@endsection
