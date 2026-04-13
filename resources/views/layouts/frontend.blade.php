@@ -208,6 +208,7 @@
   <script src="{{ asset('assetsf/vendor/php-email-form/validate.js')}}"></script>
   <script src="{{ asset('assetsf/vendor/aos/aos.js')}}"></script>
   <script src="{{ asset('assetsf/vendor/swiper/swiper-bundle.min.js')}}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- Main JS File -->
   <script src="{{ asset('assetsf/js/main.js')}}"></script>

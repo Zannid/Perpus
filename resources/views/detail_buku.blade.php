@@ -92,7 +92,7 @@
                                         Tambah Keranjang
                                     </button>
                                 </form>
-                                <form class="direct-borrow-form" data-buku-id="{{ $buku->id }}" style="flex:1;">
+                                <form class="direct-borrow-form" data-buku-id="{{ $buku->id }}" action="{{ route('peminjaman.storeAuto') }}" method="POST" style="flex:1;">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $buku->id }}">
                                     <button type="submit" class="btn-borrow btn-borrow-green" {{ $buku->stok <= 0 ? 'disabled' : '' }}>
@@ -491,40 +491,60 @@
 </style>
 
 <script>
-AOS.init({ duration: 700, easing: 'ease-in-out', once: true });
+function initDetailBukuPage() {
+    if (window.AOS) {
+        AOS.init({ duration: 700, easing: 'ease-in-out', once: true });
+    }
 
-// Handle Pinjam Langsung
-const directBorrowForm = document.querySelector('.direct-borrow-form');
-if (directBorrowForm) {
+    const directBorrowForm = document.querySelector('.direct-borrow-form');
+    if (!directBorrowForm) {
+        return;
+    }
+
     directBorrowForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const bukuId = this.dataset.bukuId;
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ route("peminjaman.storeAuto") }}';
 
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_token';
-        csrfInput.value = document.querySelector('input[name="_token"]').value;
-        form.appendChild(csrfInput);
+        if (!window.Swal) {
+            return this.submit();
+        }
 
-        const idInput = document.createElement('input');
-        idInput.type = 'hidden';
-        idInput.name = 'id';
-        idInput.value = bukuId;
-        form.appendChild(idInput);
-
-        document.body.appendChild(form);
-        form.submit();
+        Swal.fire({
+            title: 'Konfirmasi Pinjam Langsung',
+            text: 'Apakah Anda yakin ingin meminjam buku ini langsung?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#0b1ae9',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Pinjam!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit();
+            }
+        });
     });
 }
 
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDetailBukuPage);
+} else {
+    initDetailBukuPage();
+}
+
 @if(session('success'))
-Swal.fire({ icon:'success', title:'Berhasil!', text:'{{ session("success") }}', confirmButtonColor:'#0b1ae9', timer:2000 });
+if (window.Swal) {
+    Swal.fire({ icon:'success', title:'Berhasil!', text:'{{ session("success") }}', confirmButtonColor:'#0b1ae9', timer:2002 });
+} else {
+    alert('{{ session("success") }}');
+}
 @endif
 @if(session('error'))
-Swal.fire({ icon:'error', title:'Gagal!', text:'{{ session("error") }}', confirmButtonColor:'#0b1ae9' });
+if (window.Swal) {
+    Swal.fire({ icon:'error', title:'Gagal!', text:'{{ session("error") }}', confirmButtonColor:'#0b1ae9' });
+} else {
+    alert('{{ session("error") }}');
+}
 @endif
 </script>
 @endsection
