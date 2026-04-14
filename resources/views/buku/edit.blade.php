@@ -48,13 +48,6 @@
                        value="{{ old('penulis', $buku->penulis) }}" placeholder="Masukkan nama penulis">
               </div>
 
-              {{-- Penerbit --}}
-              <div class="col-md-6">
-                <label class="form-label">Penerbit</label>
-                <input type="text" class="form-control" name="penerbit"
-                       value="{{ old('penerbit', $buku->penerbit) }}" placeholder="Masukkan nama penerbit">
-              </div>
-
               {{-- Tahun Terbit --}}
               <div class="col-md-6">
                 <label class="form-label">Tahun Terbit</label>

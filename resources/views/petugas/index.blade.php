@@ -60,13 +60,13 @@
                 <td>
                   <div class="d-flex gap-2">
                     <a href="{{ route('petugas.edit', $data->id) }}" class="btn btn-sm btn-warning">
-                      <i class="mdi mdi-pencil"></i> Edit
+                      <i class="mdi mdi-pencil"></i> Sunting
                     </a>
                     <form action="{{ route('petugas.destroy', $data->id) }}" method="post" style="display:inline;">
                       @csrf
                       @method('DELETE')
                       <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah anda yakin?')">
-                        <i class="lni lni-trash-can"></i> Delete
+                        <i class="lni lni-trash-can"></i> Hapus
                       </button>
                     </form>
                   </div>

@@ -316,7 +316,7 @@
         <form action="{{ route('pengembalian.index') }}" method="get" class="search-form">
           <div class="input-group input-group-sm">
             <input type="text" name="search" value="{{ request('search') }}"
-                   class="form-control" placeholder="Cari kode/nama/buku...">
+                   class="form-control" placeholder="Cari kode peminjaman, nama, buku...">
             <button class="btn btn-primary" type="submit">
               <i class="bx bx-search-alt"></i>
             </button>

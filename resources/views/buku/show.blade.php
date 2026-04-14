@@ -49,10 +49,6 @@
                 <td>{{ $buku->penulis }}</td>
               </tr>
               <tr>
-                <th class="text-muted">Penerbit</th>
-                <td>{{ $buku->penerbit }}</td>
-              </tr>
-              <tr>
                 <th class="text-muted">Tahun Terbit</th>
                 <td>{{ $buku->tahun_terbit }}</td>
               </tr>

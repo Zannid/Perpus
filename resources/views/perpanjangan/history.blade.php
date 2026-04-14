@@ -37,12 +37,14 @@
                                         <td>{{ $item->durasi }} hari</td>
                                         <td>{{ $item->alasan }}</td>
                                         <td>
-                                            @if($item->status == 'pending')
+                                            @if(in_array($item->status, ['pending', 'Pending']))
                                                 <span class="badge bg-warning">Menunggu</span>
-                                            @elseif($item->status == 'approved')
+                                            @elseif(in_array($item->status, ['approved', 'Disetujui']))
                                                 <span class="badge bg-success">Disetujui</span>
-                                            @elseif($item->status == 'rejected')
+                                            @elseif(in_array($item->status, ['rejected', 'Ditolak']))
                                                 <span class="badge bg-danger">Ditolak</span>
+                                            @else
+                                                <span class="badge bg-secondary">{{ ucfirst($item->status) }}</span>
                                             @endif
                                         </td>
                                         <td>

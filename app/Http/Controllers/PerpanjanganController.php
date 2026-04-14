@@ -15,46 +15,21 @@ class PerpanjanganController extends Controller
      */
     public function index()
     {
-        try {
-            // Ambil peminjaman aktif user yang bisa diperpanjang
-            $peminjamanAktif = Peminjaman::with(['details.buku', 'perpanjangan'])
-                ->where('id_user', auth()->id())
-                ->where('status', 'dipinjam')
-                ->where('tenggat', '>', now())
-                ->get()
-                ->filter(function ($peminjaman) {
-                    return $peminjaman->canExtend();
-                });
-
-            // Ambil peminjaman yang sedang menunggu perpanjangan
-            $peminjamanPending = Peminjaman::with(['details.buku', 'perpanjangan'])
-                ->where('id_user', auth()->id())
-                ->whereHas('perpanjangan', function ($query) {
-                    $query->where('status', 'pending');
-                })
-                ->get();
-
+        if (auth()->user()->role === 'user') {
             // Ambil riwayat perpanjangan semua peminjaman user
             $riwayatPerpanjangan = Perpanjangan::with(['peminjaman.details.buku'])
                 ->whereHas('peminjaman', function ($query) {
                     $query->where('id_user', auth()->id());
                 })
                 ->orderBy('created_at', 'desc')
-                ->limit(10)
-                ->get();
+                ->paginate(12);
 
-            return view('perpanjangan.index', compact('peminjamanAktif', 'peminjamanPending', 'riwayatPerpanjangan'));
-
-        } catch (\Exception $e) {
-            Log::error('Error index perpanjangan', [
-                'message' => $e->getMessage(),
-            ]);
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return view('perpanjangan.user', compact('riwayatPerpanjangan'));
         }
-        $perpanjangan    = Perpanjangan::latest()->paginate(10);
-        $peminjamanAktif = Peminjaman::where('user_id', auth()->id())
-            ->where('status', 'dipinjam')
-            ->paginate(6);
+
+        // Untuk admin/petugas
+        $perpanjangan = Perpanjangan::latest()->paginate(10);
+        return view('perpanjangan.index', compact('perpanjangan'));
     }
 
     /**

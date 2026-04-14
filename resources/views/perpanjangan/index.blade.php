@@ -54,15 +54,17 @@
 
                         <td>
                             <span class="badge
-                                @if($item->status=='approved') bg-success
-                                @elseif($item->status=='rejected') bg-danger
+                                @if(in_array($item->status, ['approved', 'Disetujui'])) bg-success
+                                @elseif(in_array($item->status, ['rejected', 'Ditolak'])) bg-danger
                                 @else bg-warning text-dark @endif">
-                                {{ ucfirst($item->status) }}
+                                @if(in_array($item->status, ['approved', 'Disetujui'])) Disetujui
+                                @elseif(in_array($item->status, ['rejected', 'Ditolak'])) Ditolak
+                                @else Menunggu @endif
                             </span>
                         </td>
 
                         <td class="text-center">
-                            @if($item->status=='pending')
+                            @if(in_array($item->status, ['pending','Pending']))
                             <div class="d-flex justify-content-center gap-1">
                                 <form action="/perpanjangan/{{ $item->id }}/approve" method="POST">
                                     @csrf

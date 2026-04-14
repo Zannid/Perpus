@@ -622,7 +622,7 @@
                             </button>
                         </form>
 
-                        <a href="{{ route('welcome') }}" class="btn-add-more">
+                        <a href="{{ route('katalog') }}" class="btn-add-more">
                             <i class="bi bi-plus-lg"></i> Tambah Buku Lagi
                         </a>
                     </div>

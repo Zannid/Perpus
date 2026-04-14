@@ -76,28 +76,28 @@
 <div class="app-brand justify-content-center">
   <a href="{{ url('/') }}" class="app-brand-link gap-2">
     <span class="app-brand-logo demo">
-      <img src="{{ asset('assets/img/logo.png') }}" 
-           alt="Logo E-Perpustakaan" 
+      <img src="{{ asset('assets/img/logo.png') }}"
+           alt="Logo E-Perpustakaan"
            width="120" />
     </span>
   </a>
 </div>
 
               <!-- /Logo -->
-              <h4 class="mb-2">Adventure starts here 🚀</h4>
-              <p class="mb-4">Make your app management easy and fun!</p>
+              <h4 class="mb-2">Petualangan dimulai di sini 🚀</h4>
+              <p class="mb-4">Buat pengelolaan aplikasi Anda mudah dan menyenangkan!</p>
 
                 <form id="formAuthentication" class="mb-3" action="{{ route('register')}}" method="POST">
                 @csrf
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
+                    <label for="username" class="form-label">Nama Pengguna</label>
                     <input
                     type="text"
                     class="form-control @error('name') is-invalid @enderror"
                     id="username"
                     name="name"
                     value="{{ old('name') }}"
-                    placeholder="Enter your username"
+                    placeholder="Masukkan nama pengguna"
                     required
                     autofocus
                     />
@@ -108,13 +108,13 @@
 
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input 
+                    <input
                     type="email"
                     class="form-control @error('email') is-invalid @enderror"
                     id="email"
                     name="email"
                     value="{{ old('email') }}"
-                    placeholder="Enter your email"
+                    placeholder="Masukkan email Anda"
                     required
                     />
                     @error('email')
@@ -123,7 +123,7 @@
                 </div>
 
                 <div class="mb-3 form-password-toggle">
-                    <label class="form-label" for="password">Password</label>
+                    <label class="form-label" for="password">Kata Sandi</label>
                     <div class="input-group input-group-merge">
                     <input
                         type="password"
@@ -141,7 +141,7 @@
                 </div>
 
                 <div class="mb-3 form-password-toggle">
-                    <label class="form-label" for="password-confirm">Confirm Password</label>
+                    <label class="form-label" for="password-confirm">Konfirmasi Kata Sandi</label>
                     <div class="input-group input-group-merge">
                     <input
                         type="password"
@@ -155,14 +155,14 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary d-grid w-100">Sign up</button>
+                <button type="submit" class="btn btn-primary d-grid w-100">Daftar</button>
                 </form>
 
 
               <p class="text-center">
-                <span>Already have an account?</span>
+                <span>Sudah punya akun?</span>
                 <a href="{{ route('login')}}" >
-                  <span>Sign in instead</span>
+                  <span>Masuk saja</span>
                 </a>
               </p>
             </div>

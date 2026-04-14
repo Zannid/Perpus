@@ -75,7 +75,7 @@
                   </a>
                   @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
                   {{-- Edit --}}
-                  <a href="{{ route('buku.edit', $data->id) }}" class="btn btn-sm btn-warning" title="Edit">
+                  <a href="{{ route('buku.edit', $data->id) }}" class="btn btn-sm btn-warning" title="Sunting">
                     <i class="bx bx-pencil"></i>
                   </a>
                   {{-- Delete --}}

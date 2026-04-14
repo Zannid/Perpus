@@ -1,6 +1,4 @@
 
-
-
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
   <div class="app-brand demo">
     <a href="{{ url('/') }}" class="app-brand-link">
@@ -21,7 +19,7 @@
     <li class="menu-item {{ Request::is('home') ? 'active' : '' }}">
       <a href="{{ route('home') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-home-circle"></i>
-        <div data-i18n="Analytics">Dashboard</div>
+        <div data-i18n="Analytics">Dasbor</div>
       </a>
     </li>
 
@@ -29,7 +27,8 @@
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text">Menu Utama</span>
     </li>
-
+    
+    @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
     <li class="menu-item {{ Request::is('buku*') ? 'active' : '' }}">
       <a href="{{ url('buku/daftarbuku') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-book"></i>
@@ -37,7 +36,6 @@
       </a>
     </li>
 
-    @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
       <li class="menu-item {{ Request::is('kategori*') ? 'active' : '' }}">
         <a href="{{ route('kategori.index') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-category"></i>
@@ -80,12 +78,24 @@
         <div data-i18n="Basic">Pengembalian</div>
       </a>
     </li>
+
+    @if(Auth::user()->role == 'user' || Auth::user()->role == 'member')
+    <li class="menu-item {{ Request::is('perpanjangan*') ? 'active' : '' }}">
+      <a href="{{ route('perpanjangan.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-time"></i>
+        <div data-i18n="Basic">Perpanjangan</div>
+      </a>
+    </li>
+    @endif
+
+    @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
     <li class="menu-item {{ request()->routeIs('petugas.perpanjangan.*') ? 'active' : '' }}">
       <a href="{{ route('petugas.perpanjangan.pending') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-time"></i>
         <div data-i18n="Basic">Perpanjangan</div>
       </a>
     </li>
+    @endif
 
     @if(Auth::user()->role == 'petugas' || Auth::user()->role == 'admin')
     <li class="menu-item {{ request()->routeIs('petugas.acc') ? 'active' : '' }}">

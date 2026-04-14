@@ -63,8 +63,8 @@
             </div>
             <!-- /Logo -->
 
-            <h4 class="mb-2 text-center">Forgot Your Password? 🔑</h4>
-            <p class="mb-4 text-center">Enter your email address to receive a password reset link.</p>
+            <h4 class="mb-2 text-center">Lupa Kata Sandi? 🔑</h4>
+            <p class="mb-4 text-center">Masukkan alamat email Anda untuk menerima link reset kata sandi.</p>
 
             <!-- Forgot Password Form -->
             <form method="POST" action="{{ route('password.email') }}">
@@ -88,7 +88,7 @@
                   required
                   autocomplete="email"
                   autofocus
-                  placeholder="Enter your email"
+                  placeholder="Masukkan email Anda"
                 />
                 @error('email')
                   <span class="invalid-feedback" role="alert">
@@ -100,14 +100,14 @@
               <!-- Submit Button -->
               <div class="mb-3">
                 <button type="submit" class="btn btn-primary d-grid w-100">
-                  Send Password Reset Link
+                  Kirim Link Reset Kata Sandi
                 </button>
               </div>
 
               <!-- Back to Login -->
               <div class="text-center">
                 <a href="{{ route('login') }}" class="btn btn-link p-0">
-                  Back to Login
+                  Kembali ke Login
                 </a>
               </div>
             </form>

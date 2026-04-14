@@ -62,8 +62,9 @@
             </div>
             <!-- /Logo -->
 
-            <h4 class="mb-2 text-center">Welcome to E-PERPUSTAKAAN 👋</h4>
-            <p class="mb-4 text-center">Sign in to continue your journey</p>
+            <h4 class="mb-2 text-center">Selamat Datang di</h4>
+            <h4 class="mb-2 text-center">E - PERPUSTAKAAN 👋</h4>
+            <p class="mb-4 text-center">Masuk untuk melanjutkan perjalanan Anda</p>
 
             <!-- Login Form -->
             <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
@@ -77,7 +78,7 @@
                   id="email"
                   name="email"
                   value="{{ old('email') }}"
-                  placeholder="Enter your email"
+                  placeholder="Masukkan email Anda"
                   autofocus
                 />
                 @error('email')
@@ -88,7 +89,7 @@
               <!-- Password -->
               <div class="mb-3 form-password-toggle">
                 <div class="d-flex justify-content-between">
-                  <label class="form-label" for="password">Password</label>
+                  <label class="form-label" for="password">Kata Sandi</label>
                 </div>
                 <div class="input-group input-group-merge">
                   <input
@@ -109,17 +110,17 @@
               <div class="mb-3">
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" id="remember-me" />
-                  <label class="form-check-label" for="remember-me">Remember Me</label>
+                  <label class="form-check-label" for="remember-me">Ingat Saya</label>
                 </div>
               </div>
 
               <!-- Sign In Button -->
               <div class="mb-3">
-                <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
+                <button class="btn btn-primary d-grid w-100" type="submit">Masuk</button>
               </div>
                 <div class="mb-3">
               <a href="{{ route('login.google') }}" class="btn btn-outline-danger d-grid w-100">
-                <i class="bx bxl-google me-2"></i> Login with Google
+                <i class="bx bxl-google me-2"></i> Masuk dengan Google
               </a>
             </div>
 
@@ -127,7 +128,7 @@
               @if (Route::has('password.request'))
                 <div class="text-center">
                   <a class="btn btn-link p-0" href="{{ route('password.request') }}">
-                    Forgot Your Password?
+                    Lupa Kata Sandi?
                   </a>
                 </div>
               @endif
@@ -138,8 +139,8 @@
 
             <!-- Register -->
             <p class="text-center">
-              <span>New on our platform?</span>
-              <a href="{{ route('register') }}"><span>Create an account</span></a>
+              <span>Baru di platform kami?</span>
+              <a href="{{ route('register') }}"><span>Buat akun</span></a>
             </p>
           </div>
         </div>

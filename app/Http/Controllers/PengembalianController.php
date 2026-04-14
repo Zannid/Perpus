@@ -29,6 +29,9 @@ class PengembalianController extends Controller
                     ->orWhereHas('buku', function ($q) use ($search) {
                         $q->where('judul', 'LIKE', "%$search%");
                     })
+                    ->orWhereHas('peminjaman', function ($q) use ($search) {
+                        $q->where('kode_peminjaman', 'LIKE', "%$search%");
+                    })
                     ->orWhere('kondisi', 'LIKE', "%$search%");
             });
         }

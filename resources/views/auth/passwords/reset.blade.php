@@ -63,8 +63,8 @@
             </div>
             <!-- /Logo -->
 
-            <h4 class="mb-2 text-center">Reset Your Password 🔒</h4>
-            <p class="mb-4 text-center">Enter your new password below</p>
+            <h4 class="mb-2 text-center">Reset Kata Sandi Anda 🔒</h4>
+            <p class="mb-4 text-center">Masukkan kata sandi baru Anda di bawah</p>
 
             <!-- Reset Password Form -->
             <form method="POST" action="{{ route('password.update') }}">
@@ -83,7 +83,7 @@
                   required
                   autocomplete="email"
                   autofocus
-                  placeholder="Enter your email"
+                  placeholder="Masukkan email Anda"
                 />
                 @error('email')
                   <span class="invalid-feedback" role="alert">
@@ -94,7 +94,7 @@
 
               <!-- New Password -->
               <div class="mb-3 form-password-toggle">
-                <label for="password" class="form-label">New Password</label>
+                <label for="password" class="form-label">Kata Sandi Baru</label>
                 <div class="input-group input-group-merge">
                   <input
                     id="password"
@@ -116,7 +116,7 @@
 
               <!-- Confirm Password -->
               <div class="mb-3 form-password-toggle">
-                <label for="password-confirm" class="form-label">Confirm Password</label>
+                <label for="password-confirm" class="form-label">Konfirmasi Kata Sandi</label>
                 <div class="input-group input-group-merge">
                   <input
                     id="password-confirm"
@@ -134,14 +134,14 @@
               <!-- Submit Button -->
               <div class="mb-3">
                 <button type="submit" class="btn btn-primary d-grid w-100">
-                  Reset Password
+                  Reset Kata Sandi
                 </button>
               </div>
 
               <!-- Back to Login -->
               <div class="text-center">
                 <a href="{{ route('login') }}" class="btn btn-link p-0">
-                  Back to Login
+                  Kembali ke Login
                 </a>
               </div>
             </form>

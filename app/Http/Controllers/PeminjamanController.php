@@ -601,7 +601,8 @@ class PeminjamanController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->whereHas('user', fn($uq) => $uq->where('name', 'like', "%$search%"))
                     ->orWhereHas('buku', fn($bq) => $bq->where('judul', 'like', "%$search%"))
-                    ->orWhere('kondisi', 'like', "%$search%");
+                    ->orWhere('kondisi', 'like', "%$search%")
+                    ->orWhereHas('peminjaman', fn($pq) => $pq->where('kode_peminjaman', 'like', "%$search%"));
             });
         }
 

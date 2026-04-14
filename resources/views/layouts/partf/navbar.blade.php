@@ -7,18 +7,18 @@
 
        <nav id="navmenu" class="navmenu">
             <ul>
-                <li><a href="{{ Route('welcome')}}" class="active">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#features">Features</a></li>
+                <li><a href="{{ Route('welcome')}}" class="active">Beranda</a></li>
+                <li><a href="#about">Tentang</a></li>
+                <li><a href="#features">Fitur</a></li>
                 <li><a href="{{ route('katalog') }}">Katalog</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#contact">Kontak</a></li>
 
-                {{-- Item Dashboard/Login hanya muncul di mobile (dalam nav) --}}
+                
                 <li class="mobile-only-nav-action">
                     @if(Auth::check())
-                        <a href="{{ url('/dashboard') }}">Dashboard</a>
+                        <a href="{{ url('/dashboard') }}">Dasbor</a>
                     @else
-                        <a href="{{ url('login') }}">Login</a>
+                        <a href="{{ url('login') }}">Masuk</a>
                     @endif
                 </li>
             </ul>
@@ -61,9 +61,9 @@
             {{-- Dashboard/Login hanya tampil di desktop --}}
             <div class="desktop-only-action">
                 @if(Auth::check())
-                    <a href="{{ url('/dashboard') }}" class="btn-getstarted">Dashboard</a>
+                    <a href="{{ url('/dashboard') }}" class="btn-getstarted">Dasbor</a>
                 @else
-                    <a href="{{ url('login') }}" class="btn-getstarted">Login</a>
+                    <a href="{{ url('login') }}" class="btn-getstarted">Masuk</a>
                 @endif
             </div>
         </div>

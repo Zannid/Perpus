@@ -60,12 +60,6 @@
                 <input type="text" name="penulis" class="form-control" placeholder="Masukkan nama penulis" required>
               </div>
 
-              {{-- Penerbit --}}
-              <div class="col-md-6">
-                <label class="form-label">Penerbit</label>
-                <input type="text" name="penerbit" class="form-control" placeholder="Masukkan nama penerbit" required>
-              </div>
-
               {{-- Tahun Terbit --}}
               <div class="col-md-6">
                 <label class="form-label">Tahun Terbit</label>

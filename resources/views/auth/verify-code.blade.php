@@ -15,7 +15,7 @@
     <input type="password" name="password" required>
     <label>Konfirmasi Password:</label>
     <input type="password" name="password_confirmation" required>
-    <button type="submit">Reset Password</button>
+    <button type="submit">Reset Kata Sandi</button>
   </form>
 </body>
 </html>

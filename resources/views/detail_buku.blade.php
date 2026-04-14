@@ -100,7 +100,7 @@
                                         Pinjam Langsung
                                     </button>
                                 </form>
-                                <button type="button" class="btn-wishlist" title="Tambah ke Wishlist">
+                                <button type="button" class="btn-wishlist" title="Tambah ke Wishlist" style="flex:1;">
                                     <i class="bi bi-heart"></i>
                                 </button>
                             @else
@@ -110,7 +110,7 @@
                                 <a href="{{ route('login') }}" class="btn-borrow btn-borrow-green" style="flex:1; text-decoration:none;">
                                     <i class="bi bi-check-circle"></i> Pinjam Langsung
                                 </a>
-                                <button type="button" class="btn-wishlist" title="Tambah ke Wishlist">
+                                <button type="button" class="btn-wishlist" title="Tambah ke Wishlist" style="flex:1;">
                                     <i class="bi bi-heart"></i>
                                 </button>
                             @endauth

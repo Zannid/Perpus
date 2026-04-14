@@ -259,14 +259,14 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
                         <a class="dropdown-item" href="{{ route('profile.index') }}">
-                            <i class="bx bx-user me-2"></i> My Profile
+                            <i class="bx bx-user me-2"></i> Profil Saya
                         </a>
                     </li>
                     <li><div class="dropdown-divider"></div></li>
                     <li>
                         <a class="dropdown-item" href="{{ route('logout') }}"
                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="bx bx-power-off me-2"></i> Log Out
+                            <i class="bx bx-power-off me-2"></i> Keluar
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
                     </li>

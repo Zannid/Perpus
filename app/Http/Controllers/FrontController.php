@@ -18,7 +18,8 @@ class FrontController extends Controller
         $buku     = Buku::with('kategori')->get();
         $kategori = Kategori::all();
 
-        $bukuRate = Buku::orderBy('rating_avg', 'DESC')
+        $bukuRate = Buku::withAvg('ratings', 'rating')
+            ->orderBy('ratings_avg_rating', 'DESC')
             ->take(4)
             ->get();
 

@@ -240,7 +240,7 @@
         </div>
         <div class="filter-field">
           <label for="searchInput">Cari</label>
-          <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Nama, buku, status...">
+          <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari kode, nama, buku, status...">
         </div>
         <button class="btn btn-outline-secondary btn-sm btn-reset" id="resetBtn" type="button">Reset</button>
       </div>
@@ -292,7 +292,7 @@
             @foreach($peminjaman as $data)
             <tr>
               <td>{{ $no++ }}</td>
-              <td>{{ $data->kode_peminjaman }}</td>
+              <td class="kode">{{ $data->kode_peminjaman }}</td>
               <td class="nama">{{ $data->user->name ?? '-' }}</td>
               <td class="buku">
                 @if($data->details->count() > 1)
@@ -422,7 +422,8 @@
         <div class="pm-card" data-nama="{{ strtolower($data->user->name ?? '') }}"
              data-buku="{{ strtolower($data->details->pluck('buku.judul')->implode(' ')) }}"
              data-status="{{ strtolower($data->status) }}"
-             data-tgl="{{ $data->tgl_pinjam }}">
+             data-tgl="{{ $data->tgl_pinjam }}"
+             data-kode="{{ strtolower($data->kode_peminjaman) }}">
 
           {{-- Card Header --}}
           <div class="pm-card-header">
@@ -555,10 +556,11 @@
       </div>
 
       {{-- Pagination --}}
-      <div class="mt-3">
-        {{ $peminjaman->appends(request()->all())->links('vendor.pagination.bootstrap-5') }}
-      </div>
-
+     @if(!request()->has('search') || empty(request('search')))
+            <div class="mt-4">
+                {{ $peminjaman->appends(request()->all())->links('vendor.pagination.bootstrap-4') }}
+            </div>
+        @endif
     </div>
   </div>
 </div>
@@ -704,10 +706,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const nama   = row.querySelector('.nama')?.textContent.toLowerCase()   ?? '';
       const buku   = row.querySelector('.buku')?.textContent.toLowerCase()   ?? '';
       const status = row.querySelector('.status')?.textContent.toLowerCase() ?? '';
+      const kode   = row.querySelector('.kode')?.textContent.toLowerCase()   ?? '';
       const tgl    = row.querySelector('.tgl_pinjam')?.textContent ?? '';
       const tglDate = tgl ? new Date(tgl) : null;
 
-      let matchKw   = nama.includes(keyword) || buku.includes(keyword) || status.includes(keyword);
+      let matchKw   = nama.includes(keyword) || buku.includes(keyword) || status.includes(keyword) || kode.includes(keyword);
       let matchDate = true;
       if (startDate && tglDate) matchDate = tglDate >= startDate;
       if (endDate   && tglDate) matchDate = matchDate && tglDate <= endDate;
@@ -720,10 +723,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const nama   = card.dataset.nama   ?? '';
       const buku   = card.dataset.buku   ?? '';
       const status = card.dataset.status ?? '';
+      const kode   = card.dataset.kode   ?? '';
       const tgl    = card.dataset.tgl    ?? '';
       const tglDate = tgl ? new Date(tgl) : null;
 
-      let matchKw   = nama.includes(keyword) || buku.includes(keyword) || status.includes(keyword);
+      let matchKw   = nama.includes(keyword) || buku.includes(keyword) || status.includes(keyword) || kode.includes(keyword);
       let matchDate = true;
       if (startDate && tglDate) matchDate = tglDate >= startDate;
       if (endDate   && tglDate) matchDate = matchDate && tglDate <= endDate;

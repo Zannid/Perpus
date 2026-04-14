@@ -43,9 +43,9 @@
               <tr>
                 <th scope="row">{{ $no++ }}</th>
                 <td>
-                  <img src="{{ asset('storage/admin/' . $data->foto) }}" 
-                       alt="cover" 
-                       class="img-thumbnail rounded-circle" 
+                  <img src="{{ asset('storage/admin/' . $data->foto) }}"
+                       alt="cover"
+                       class="img-thumbnail rounded-circle"
                        width="50" height="50"
                        style="object-fit: cover;">
                 </td>
@@ -54,7 +54,7 @@
                 <td>
                   <div class="d-flex gap-2">
                     <a href="{{ route('admin.edit', $data->id) }}" class="btn btn-sm btn-warning">
-                      <i class="mdi mdi-pencil"></i> Edit
+                      <i class="mdi mdi-pencil"></i> Sunting
                     </a>
                     <form action="{{ route('admin.destroy', $data->id) }}" method="post" style="display:inline;">
                       @csrf

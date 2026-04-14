@@ -49,7 +49,6 @@ class BukuController extends Controller
         $validated = $request->validate([
             'judul'        => 'required|string|max:255',
             'penulis'      => 'required|string|max:255',
-            'penerbit'     => 'required|string|max:255',
             'tahun_terbit' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
             'id_kategori'  => 'required|exists:kategoris,id',
             'id_lokasi'    => 'required|exists:lokasis,id',
@@ -67,7 +66,6 @@ class BukuController extends Controller
             $buku->kode_buku    = $kodeBuku;
             $buku->judul        = $validated['judul'];
             $buku->penulis      = $validated['penulis'];
-            $buku->penerbit     = $validated['penerbit'];
             $buku->tahun_terbit = $validated['tahun_terbit'];
             $buku->id_kategori  = $validated['id_kategori'];
             $buku->id_lokasi    = $validated['id_lokasi'];
@@ -114,7 +112,6 @@ class BukuController extends Controller
         $validated = $request->validate([
             'judul'        => 'required|string|max:255',
             'penulis'      => 'required|string|max:255',
-            'penerbit'     => 'required|string|max:255',
             'tahun_terbit' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
             'id_kategori'  => 'required|exists:kategoris,id',
             'id_lokasi'    => 'required|exists:lokasis,id',
@@ -127,7 +124,6 @@ class BukuController extends Controller
 
         $buku->judul        = $validated['judul'];
         $buku->penulis      = $validated['penulis'];
-        $buku->penerbit     = $validated['penerbit'];
         $buku->tahun_terbit = $validated['tahun_terbit'];
         $buku->id_kategori  = $validated['id_kategori'];
         $buku->id_lokasi    = $validated['id_lokasi'];
@@ -167,23 +163,23 @@ class BukuController extends Controller
     public function ulasan($id, Request $request)
     {
         $buku = Buku::with('kategori', 'ratings.user')->findOrFail($id);
-    
+
         $query = $buku->ratings()->with('user');
-    
+
         // Filter bintang
         if ($request->filled('bintang') && $request->bintang > 0) {
             $query->where('rating', $request->bintang);
         }
-    
+
         // Sorting
         match ($request->get('sort', 'terbaru')) {
             'tertinggi' => $query->orderBy('rating', 'desc'),
             'terendah'  => $query->orderBy('rating', 'asc'),
             default     => $query->latest(),
         };
-    
+
         $ratings = $query->paginate(10)->withQueryString();
-    
+
         return view('ulasan', compact('buku', 'ratings'));
     }
 }

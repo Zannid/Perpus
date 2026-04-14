@@ -25,26 +25,26 @@
             @if(isset($about))
             @method('PUT')
             @endif
-    
+
             <div class="mb-3">
             <label for="title" class="form-label">Title</label>
             <input type="text" class="form-control" id="title" name="title" value="{{ old('title', isset($about) ? $about->title : '') }}" required>
             </div>
-    
+
             <div class="mb-3">
             <label for="content" class="form-label">Content</label>
             <textarea class="form-control" id="content" name="content" rows="5" required>{{ old('content', isset($about) ? $about->content : '') }}</textarea>
             </div>
-    
+
             <div class="form-check mb-3">
             <input class="form-check-input" type="checkbox" id="is_active" name="is_active" {{ old('is_active', isset($about) && $about->is_active ? 'checked' : '') }}>
             <label class="form-check-label" for="is_active">
-                Active
+                Aktif
             </label>
             </div>
 
             <button type="submit" class="btn btn-primary">
-            {{ isset($about) ? 'Update' : 'Create' }}
+            {{ isset($about) ? 'Perbarui' : 'Buat' }}
             </button>
         </form>
         </div>
