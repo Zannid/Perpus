@@ -27,7 +27,7 @@
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text">Menu Utama</span>
     </li>
-    
+
     @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
     <li class="menu-item {{ Request::is('buku*') ? 'active' : '' }}">
       <a href="{{ url('buku/daftarbuku') }}" class="menu-link">
