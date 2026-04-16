@@ -153,9 +153,7 @@ class PeminjamanController extends Controller
                 'jumlah'        => $request->jumlah[$index],
             ]);
 
-            // PERBAIKAN: Stok dikurangi jika:
-            // - Status request adalah Dipinjam, ATAU
-            // - Admin/Petugas yang membuat (karena langsung jadi Dipinjam)
+           
             if ($finalStatus == 'Dipinjam') {
                 Buku::find($bukuId)->decrement('stok', $request->jumlah[$index]);
             }
@@ -264,12 +262,12 @@ class PeminjamanController extends Controller
                 'total_buku' => $peminjaman->details->count(),
             ]);
 
-            // PERBAIKAN: Validasi hanya untuk status Pending
+
             if ($peminjaman->status !== 'Pending') {
                 return back()->with('error', 'Hanya peminjaman dengan status Pending yang dapat disetujui.');
             }
 
-            // Validasi stok
+
             foreach ($peminjaman->details as $detail) {
                 if (! $detail->buku) {
                     return back()->with('error', 'Data buku tidak ditemukan.');
@@ -590,12 +588,11 @@ class PeminjamanController extends Controller
     {
         $query = \App\Models\Pengembalian::with(['peminjaman', 'user', 'buku']);
 
-        // Filter user login
+ 
         if (auth()->check() && auth()->user()->role === 'user') {
             $query->where('id_user', auth()->id());
         }
 
-        // Search jika ada
         if ($request->filled('search')) {
             $search = $request->get('search');
             $query->where(function ($q) use ($search) {

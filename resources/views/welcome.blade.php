@@ -167,34 +167,6 @@
 
         </div>
 
-        <div class="metrics-section" data-aos="fade-up" data-aos-delay="400">
-          <div class="row text-center">
-            <div class="col-lg-3 col-md-6">
-              <div class="metric-card">
-                <div class="metric-value">5000+</div>
-                <div class="metric-label">Koleksi Buku Digital</div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-              <div class="metric-card">
-                <div class="metric-value">98%</div>
-                <div class="metric-label">Kepuasan Pengguna</div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-              <div class="metric-card">
-                <div class="metric-value">2500+</div>
-                <div class="metric-label">Anggota Terdaftar</div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-              <div class="metric-card">
-                <div class="metric-value">24/7</div>
-                <div class="metric-label">Akses Online</div>
-              </div>
-            </div>
-          </div>
-        </div>
 
       </div>
 
@@ -208,17 +180,6 @@
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="services-tabs">
-          <ul class="nav nav-pills justify-content-center mb-5" id="services-tabs" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="services-development-tab" data-bs-toggle="pill" data-bs-target="#services-development" type="button" role="tab">Semua Buku</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="services-marketing-tab" data-bs-toggle="pill" data-bs-target="#services-marketing" type="button" role="tab">Fiksi</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="services-support-tab" data-bs-toggle="pill" data-bs-target="#services-support" type="button" role="tab">Non-Fiksi</button>
-            </li>
-          </ul>
 
           <div class="tab-content" id="services-tabs-content">
             <div class="tab-pane fade show active" id="services-development" role="tabpanel">
